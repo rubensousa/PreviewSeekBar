@@ -10,10 +10,10 @@ public class PreviewSeekbarUtils {
     }
 
     public static int getCenterX(View view) {
-        return (int) (view.getX() + view.getWidth() / 2f);
+        return view.getWidth() / 2;
     }
 
     public static int getCenterY(View view) {
-        return (int) (view.getY() + view.getHeight() / 2f);
+        return view.getHeight() / 2;
     }
 }

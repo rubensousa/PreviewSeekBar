@@ -11,10 +11,10 @@ import android.view.animation.AccelerateInterpolator;
 
 class PreviewAnimator {
 
-    private static final int MORPH_REVEAL_DURATION = 2000;
+    private static final int MORPH_REVEAL_DURATION = 200;
     private static final int MORPH_MOVE_DURATION = 200;
     private static final int UNMORPH_MOVE_DURATION = 200;
-    private static final int UNMORPH_UNREVEAL_DURATION = 2000;
+    private static final int UNMORPH_UNREVEAL_DURATION = 200;
 
     private PreviewSeekBar previewSeekBar;
     private View previewView;
@@ -72,11 +72,12 @@ class PreviewAnimator {
     }
 
     public void unmorph() {
-        previewView.setVisibility(View.INVISIBLE);
         startUnreveal();
     }
 
     void startReveal() {
+        previewView.setVisibility(View.VISIBLE);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             startRevealLollipop();
             return;
@@ -98,8 +99,8 @@ class PreviewAnimator {
                 morphView.getWidth(),
                 PreviewSeekbarUtils.getRadius(previewView));
 
+        animation.setTarget(this);
         animation.setDuration(MORPH_REVEAL_DURATION).setInterpolator(new AccelerateInterpolator());
-        previewView.setVisibility(View.VISIBLE);
         animation.start();
     }
 
@@ -110,6 +111,7 @@ class PreviewAnimator {
                 PreviewSeekbarUtils.getCenterY(previewView),
                 PreviewSeekbarUtils.getRadius(previewView), morphView.getWidth());
 
+        animation.setTarget(this);
         animation.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
