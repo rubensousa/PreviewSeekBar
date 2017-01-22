@@ -8,7 +8,6 @@ class PreviewAnimator {
     private PreviewSeekBar previewSeekBar;
     private View previewView;
     private View previewParentView;
-    private int marginEnd;
 
     public PreviewAnimator(PreviewSeekBar previewSeekBar) {
         this.previewSeekBar = previewSeekBar;
