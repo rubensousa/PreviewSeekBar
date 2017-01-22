@@ -12,6 +12,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBa
     private PreviewAnimator animator;
     private View previewView;
     private boolean isPreviewing;
+    private OnSeekBarChangeListener seekBarChangeListener;
 
     public PreviewSeekBar(Context context) {
         super(context);
@@ -29,26 +30,41 @@ public class PreviewSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBa
     }
 
     private void init(Context context, AttributeSet attrs) {
-        setOnSeekBarChangeListener(this);
+        super.setOnSeekBarChangeListener(this);
+        animator = new PreviewAnimator(this);
+    }
+
+    @Override
+    public void setOnSeekBarChangeListener(OnSeekBarChangeListener l) {
+        seekBarChangeListener = l;
     }
 
     public void setPreviewView(View view) {
         this.previewView = view;
+        animator.setPreviewView(view);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+        animator.move((float) progress / seekBar.getMax());
+        if (seekBarChangeListener != null) {
+            seekBarChangeListener.onProgressChanged(seekBar, progress, fromUser);
+        }
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         animator.morph();
-        seekBar.getProgress();
+        if (seekBarChangeListener != null) {
+            seekBarChangeListener.onStartTrackingTouch(seekBar);
+        }
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         animator.unmorph();
+        if (seekBarChangeListener != null) {
+            seekBarChangeListener.onStopTrackingTouch(seekBar);
+        }
     }
 }
