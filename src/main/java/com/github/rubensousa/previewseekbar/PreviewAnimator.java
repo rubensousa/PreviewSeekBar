@@ -27,10 +27,10 @@ class PreviewAnimator {
     }
 
     public void morph() {
-
+        previewView.setVisibility(View.VISIBLE);
     }
 
     public void unmorph() {
-
+        previewView.setVisibility(View.INVISIBLE);
     }
 }

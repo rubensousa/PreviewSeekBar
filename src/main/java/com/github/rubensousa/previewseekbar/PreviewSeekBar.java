@@ -40,7 +40,8 @@ public class PreviewSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBa
     }
 
     public void setPreviewView(View view) {
-        this.previewView = view;
+        previewView = view;
+        previewView.setVisibility(View.INVISIBLE);
         animator.setPreviewView(view);
     }
 
