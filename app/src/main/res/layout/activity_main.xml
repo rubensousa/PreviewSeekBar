@@ -27,6 +27,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:gravity="center"
@@ -41,8 +45,14 @@
 
         <com.github.rubensousa.previewseekbar.PreviewSeekBar
             android:id="@+id/previewSeekBar"
+            app:paddingStart="0dp"
+            app:paddingEnd="0dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="62dp"
+            android:layout_marginLeft="62dp"
+            android:layout_marginRight="62dp"
+            android:layout_marginEnd="62dp"
             android:layout_marginTop="40dp"
             android:max="800" />
 
