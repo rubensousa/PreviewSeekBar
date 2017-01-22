@@ -7,7 +7,8 @@ class PreviewAnimator {
 
     private PreviewSeekBar previewSeekBar;
     private View previewView;
-    private View previewRootView;
+    private View previewParentView;
+    private int marginEnd;
 
     public PreviewAnimator(PreviewSeekBar previewSeekBar) {
         this.previewSeekBar = previewSeekBar;
@@ -15,7 +16,7 @@ class PreviewAnimator {
 
     public void setPreviewView(View previewView) {
         this.previewView = previewView;
-        this.previewRootView = previewView.getRootView();
+        this.previewParentView = (View) previewView.getParent();
     }
 
     public PreviewSeekBar getPreviewSeekBar() {
@@ -23,7 +24,7 @@ class PreviewAnimator {
     }
 
     public void move(float widthOffset) {
-        previewView.setX((previewRootView.getWidth() - previewView.getWidth()) * widthOffset);
+        previewView.setX((previewParentView.getWidth() - previewView.getWidth()) * widthOffset);
     }
 
     public void morph() {
