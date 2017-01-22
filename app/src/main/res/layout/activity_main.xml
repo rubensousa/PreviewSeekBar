@@ -23,39 +23,8 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <View
-            android:id="@+id/previewView"
-            android:layout_width="160dp"
-            android:layout_height="90dp"
-            android:layout_gravity="start|left"
-            android:background="@color/colorPrimary" />
-
-        <com.github.rubensousa.previewseekbar.PreviewSeekBar
-            android:id="@+id/previewSeekBar"
-            app:paddingStart="0dp"
-            app:paddingEnd="0dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="62dp"
-            android:layout_marginLeft="62dp"
-            android:layout_marginRight="62dp"
-            android:layout_marginEnd="62dp"
-            android:layout_marginTop="40dp"
-            android:max="800" />
-
-    </LinearLayout>
-
+ <include layout="@layout/activity_seekbar"
+     android:layout_height="match_parent"
+     android:layout_gravity="center"
+     android:layout_width="wrap_content"/>
 </android.support.design.widget.CoordinatorLayout>
