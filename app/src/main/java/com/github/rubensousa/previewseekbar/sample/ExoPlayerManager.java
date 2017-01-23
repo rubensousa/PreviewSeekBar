@@ -39,13 +39,37 @@ public class ExoPlayerManager {
     public ExoPlayerManager(SimpleExoPlayerView playerView, View seekSurfaceView) {
         this.playerView = playerView;
         this.seekSurfaceView = seekSurfaceView;
-        this.player = buildPlayer();
         this.playerView.setPlayer(player);
         this.defaultSurfaceView = playerView.getVideoSurfaceView();
     }
 
     public void preview(float offset) {
         player.seekTo((long) (offset * player.getDuration()));
+        player.setPlayWhenReady(false);
+    }
+
+    public void onStart() {
+        if (Util.SDK_INT > 23) {
+            createPlayer();
+        }
+    }
+
+    public void onResume() {
+        if ((Util.SDK_INT <= 23 || player == null)) {
+            createPlayer();
+        }
+    }
+
+    public void onPause() {
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+    }
+
+    public void onStop() {
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
     }
 
     public void startPreview() {
@@ -68,7 +92,14 @@ public class ExoPlayerManager {
         }
     }
 
-    private SimpleExoPlayer buildPlayer() {
+    private void releasePlayer() {
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
+    private void createPlayer() {
         // 1. Create a default TrackSelector
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory =
@@ -80,7 +111,11 @@ public class ExoPlayerManager {
         LoadControl loadControl = new DefaultLoadControl();
 
         // 3. Create the player
-        return ExoPlayerFactory.newSimpleInstance(playerView.getContext(), trackSelector, loadControl);
+        player = ExoPlayerFactory.newSimpleInstance(playerView.getContext(),
+                trackSelector, loadControl);
+        playerView.setPlayer(player);
+        player.setPlayWhenReady(true);
+        prepareMedia();
     }
 
 
