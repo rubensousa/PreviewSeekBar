@@ -3,7 +3,7 @@ package com.github.rubensousa.previewseekbar;
 
 import android.view.View;
 
-public class PreviewSeekbarUtils {
+class PreviewSeekbarUtils {
 
     public static int getRadius(View view) {
         return (int) Math.hypot(view.getWidth() / 2, view.getHeight() / 2);

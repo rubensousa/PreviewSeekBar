@@ -3,6 +3,7 @@ package com.github.rubensousa.previewseekbar;
 import android.content.Context;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -14,6 +15,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBa
     private PreviewAnimator animator;
     private View previewView;
     private View morphView;
+    private View frameView;
     private boolean firstLayout;
     private boolean isPreviewing;
     private OnSeekBarChangeListener seekBarChangeListener;
@@ -36,14 +38,25 @@ public class PreviewSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBa
     private void init(Context context, AttributeSet attrs) {
         super.setOnSeekBarChangeListener(this);
 
+        TypedValue outValue = new TypedValue();
+
+        getContext().getTheme().resolveAttribute(R.attr.colorAccent, outValue, true);
+        int colorRes = outValue.resourceId;
+
         // Create morph view
         morphView = new View(getContext());
         morphView.setBackgroundResource(R.drawable.previewseekbar_morph);
         morphView.setVisibility(View.INVISIBLE);
 
+        // Create frame view for the circular reveal
+        frameView = new View(getContext());
+        frameView.setBackgroundResource(colorRes);
+        frameView.setVisibility(View.INVISIBLE);
+
         // Create animator
         animator = new PreviewAnimator(this);
         animator.setMorphView(morphView);
+        animator.setFrameView(frameView);
         firstLayout = true;
     }
 
@@ -53,15 +66,22 @@ public class PreviewSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBa
         if (getWidth() == 0 || getHeight() == 0) {
             return;
         } else if (firstLayout) {
-            // Attach morph view
+            // Setup morph view
             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(0, 0);
             layoutParams.width = getResources()
                     .getDimensionPixelSize(R.dimen.previewseekbar_indicator_width);
             layoutParams.height = layoutParams.width;
+
+            ViewGroup.LayoutParams frameLayoutParams
+                    = new ViewGroup.LayoutParams(previewView.getWidth(), previewView.getHeight());
+
+            // Add views to the parent layout
             ViewParent parent = getParent();
             if (parent instanceof ViewGroup) {
                 ((ViewGroup) parent).addView(morphView, layoutParams);
+                ((ViewGroup) parent).addView(frameView, frameLayoutParams);
             }
+
             firstLayout = false;
         }
     }
