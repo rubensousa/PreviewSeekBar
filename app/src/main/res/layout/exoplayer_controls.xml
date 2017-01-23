@@ -72,10 +72,10 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:paddingStart="10dp"
                 android:layout_below="@id/previewFrameLayout"
                 android:layout_marginTop="10dp"
-                android:max="800" />
+                android:max="800"
+                app:paddingStart="10dp" />
 
 
         </com.github.rubensousa.previewseekbar.PreviewSeekBarLayout>
