@@ -7,13 +7,10 @@ import android.widget.SeekBar;
 
 class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
 
-    private PreviewSeekBarLayout previewSeekBarLayout;
     private PreviewAnimator animator;
     private boolean showing;
 
     public PreviewDelegate(PreviewSeekBarLayout previewSeekBarLayout) {
-        this.previewSeekBarLayout = previewSeekBarLayout;
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             this.animator = new PreviewAnimatorLollipopImpl(previewSeekBarLayout);
         } else {
