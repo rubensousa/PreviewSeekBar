@@ -14,7 +14,7 @@
         android:gravity="start"
         android:orientation="vertical">
 
-        <com.github.rubensousa.previewseekbar.PreviewFrameLayout
+        <FrameLayout
             android:id="@+id/previewFrameLayout"
             android:layout_width="160dp"
             android:layout_height="90dp">
@@ -27,7 +27,7 @@
                 android:background="@color/colorPrimary" />
 
 
-        </com.github.rubensousa.previewseekbar.PreviewFrameLayout>
+        </FrameLayout>
 
         <com.github.rubensousa.previewseekbar.PreviewSeekBar
             android:id="@+id/previewSeekBar"
