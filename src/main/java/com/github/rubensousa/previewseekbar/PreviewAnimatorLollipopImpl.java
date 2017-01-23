@@ -40,6 +40,7 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
     @Override
     public void cancel() {
         morphView.animate().cancel();
+        previewView.animate().cancel();
         frameView.animate().cancel();
         if (animator != null) {
             animator.cancel();
@@ -51,11 +52,8 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
         morphView.setX(getPreviewCenterX(morphView.getWidth()));
         morphView.setY(previewSeekBar.getY());
         morphView.setVisibility(View.VISIBLE);
-
-        int endY = (int) (previewView.getY() + previewView.getHeight() / 2f);
-
         morphView.animate()
-                .y(endY)
+                .y(getShowY())
                 .scaleY(4.0f)
                 .scaleX(4.0f)
                 .setDuration(MORPH_MOVE_DURATION)
@@ -65,9 +63,13 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
     @Override
     public void hide() {
-        frameView.setAlpha(0f);
+        frameView.setAlpha(1f);
         frameView.setVisibility(View.VISIBLE);
         previewView.setVisibility(View.VISIBLE);
+        morphView.setY(getShowY());
+        morphView.setScaleX(4.0f);
+        morphView.setScaleY(4.0f);
+        morphView.setVisibility(View.INVISIBLE);
         startUnreveal();
     }
 
@@ -86,9 +88,11 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
             @Override
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
+                frameView.setAlpha(1f);
                 previewView.setVisibility(View.VISIBLE);
                 frameView.setVisibility(View.VISIBLE);
                 morphView.setVisibility(View.INVISIBLE);
+                frameView.animate().alpha(0f).setDuration(MORPH_REVEAL_DURATION);
             }
 
             @Override
@@ -101,11 +105,12 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
         });
 
         animator.start();
-        frameView.animate().alpha(0f).setDuration(MORPH_REVEAL_DURATION);
+
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startUnreveal() {
+
         animator = ViewAnimationUtils.createCircularReveal(previewView,
                 PreviewSeekbarUtils.getCenterX(previewView),
                 PreviewSeekbarUtils.getCenterY(previewView),
@@ -120,7 +125,8 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
                 previewView.setVisibility(View.INVISIBLE);
                 morphView.setVisibility(View.VISIBLE);
                 morphView.animate()
-                        .y(getMorphY())
+                        .setStartDelay(50)
+                        .y(getHideY())
                         .scaleY(0.5f)
                         .scaleX(0.5f)
                         .setDuration(UNMORPH_MOVE_DURATION)
@@ -128,7 +134,6 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
                         .setListener(hideListener);
             }
         });
-        frameView.animate().alpha(1f).setDuration(UNMORPH_UNREVEAL_DURATION);
         animator.setDuration(UNMORPH_UNREVEAL_DURATION).setInterpolator(new AccelerateInterpolator());
         animator.start();
     }

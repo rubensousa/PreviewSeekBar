@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -12,7 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-public class PreviewSeekBarLayout extends LinearLayoutCompat{
+import java.util.ArrayList;
+import java.util.List;
+
+public class PreviewSeekBarLayout extends LinearLayoutCompat {
 
     private PreviewDelegate delegate;
     private PreviewSeekBar seekBar;
@@ -85,12 +89,11 @@ public class PreviewSeekBarLayout extends LinearLayoutCompat{
                     = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
             frameLayoutParams.gravity = Gravity.CENTER;
-            previewFrameLayout.addView(frameView, previewFrameLayout.getChildCount(),
-                    frameLayoutParams);
-
+            previewFrameLayout.addView(frameView, frameLayoutParams);
             firstLayout = false;
         }
     }
+
 
     public PreviewFrameLayout getPreviewFrameLayout() {
         return previewFrameLayout;

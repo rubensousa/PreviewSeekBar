@@ -50,7 +50,11 @@ abstract class PreviewAnimator {
                 * getWidthOffset(previewSeekBar.getProgress());
     }
 
-    float getMorphY() {
+    float getHideY() {
         return previewSeekBar.getY() + previewSeekBar.getThumbOffset();
+    }
+
+    float getShowY(){
+       return (int) (previewView.getY() + previewView.getHeight() / 2f);
     }
 }
