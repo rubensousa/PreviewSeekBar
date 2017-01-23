@@ -1,10 +1,5 @@
 package com.github.rubensousa.previewseekbar.sample;
 
-
-import android.graphics.PixelFormat;
-import android.view.SurfaceView;
-import android.view.View;
-
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
@@ -33,8 +28,9 @@ public class ExoPlayerManager {
     }
 
     public void preview(float offset) {
+        float offsetRounded = roundOffset(offset);
         player.setPlayWhenReady(false);
-        previewPlayer.seekTo((long) (offset * player.getDuration()));
+        previewPlayer.seekTo((long) (offsetRounded * previewPlayer.getDuration()));
         previewPlayer.setPlayWhenReady(false);
     }
 
@@ -68,6 +64,10 @@ public class ExoPlayerManager {
 
     public void stopPreview() {
         player.setPlayWhenReady(true);
+    }
+
+    private float roundOffset(float offset) {
+        return (float) (Math.round(offset * Math.pow(10, 2)) / Math.pow(10, 2));
     }
 
     private void releasePlayers() {
