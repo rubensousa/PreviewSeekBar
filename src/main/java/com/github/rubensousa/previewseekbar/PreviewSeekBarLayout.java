@@ -7,16 +7,16 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SeekBar;
+import android.widget.FrameLayout;
 
-public class PreviewSeekBarLayout extends LinearLayoutCompat
-        implements SeekBar.OnSeekBarChangeListener {
+public class PreviewSeekBarLayout extends LinearLayoutCompat{
 
+    private PreviewDelegate delegate;
     private PreviewSeekBar seekBar;
     private PreviewFrameLayout previewFrameLayout;
-    private PreviewAnimator animator;
     private View morphView;
     private View frameView;
     private boolean firstLayout = true;
@@ -45,7 +45,6 @@ public class PreviewSeekBarLayout extends LinearLayoutCompat
         // Create morph view
         morphView = new View(getContext());
         morphView.setBackgroundResource(R.drawable.previewseekbar_morph);
-        morphView.setVisibility(View.INVISIBLE);
 
         // Tint to accent color
         Drawable drawable = morphView.getBackground();
@@ -57,7 +56,6 @@ public class PreviewSeekBarLayout extends LinearLayoutCompat
         // Create frame view for the circular reveal
         frameView = new View(getContext());
         frameView.setBackgroundResource(colorRes);
-        frameView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -73,10 +71,7 @@ public class PreviewSeekBarLayout extends LinearLayoutCompat
                         "and a PreviewFrameLayout as direct childs");
             }
 
-            seekBar.addOnSeekBarChangeListener(this);
-
-            // Create animator
-            animator = new PreviewAnimator(this, seekBar, previewFrameLayout, morphView, frameView);
+            delegate = new PreviewDelegate(this);
 
             // Setup morph view
             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(0, 0);
@@ -86,28 +81,31 @@ public class PreviewSeekBarLayout extends LinearLayoutCompat
             addView(morphView, layoutParams);
 
             // Add frame view to the preview layout
-            ViewGroup.LayoutParams frameLayoutParams
-                    = new ViewGroup.LayoutParams(previewFrameLayout.getWidth(),
-                    previewFrameLayout.getHeight());
-            previewFrameLayout.addView(frameView, frameLayoutParams);
+            FrameLayout.LayoutParams frameLayoutParams
+                    = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+            frameLayoutParams.gravity = Gravity.CENTER;
+            previewFrameLayout.addView(frameView, previewFrameLayout.getChildCount(),
+                    frameLayoutParams);
 
             firstLayout = false;
         }
     }
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        animator.move();
+    public PreviewFrameLayout getPreviewFrameLayout() {
+        return previewFrameLayout;
     }
 
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        animator.morph();
+    public PreviewSeekBar getSeekBar() {
+        return seekBar;
     }
 
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        animator.unmorph();
+    View getFrameView() {
+        return frameView;
+    }
+
+    View getMorphView() {
+        return morphView;
     }
 
     private boolean checkChilds() {
