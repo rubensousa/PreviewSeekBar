@@ -49,17 +49,20 @@
 
             <FrameLayout
                 android:id="@+id/previewFrameLayout"
-                android:layout_width="160dp"
-                android:layout_height="90dp">
+                android:layout_width="@dimen/video_preview_width"
+                android:layout_height="@dimen/video_preview_height"
+                android:background="@drawable/video_frame">
+
 
                 <com.google.android.exoplayer2.ui.SimpleExoPlayerView
                     android:id="@+id/previewPlayerView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:surface_type="texture_view"
                     app:controller_layout_id="@layout/exo_simple_player_view"
+                    app:surface_type="texture_view"
                     app:use_artwork="false"
                     app:use_controller="false" />
+
 
             </FrameLayout>
 
@@ -69,10 +72,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/previewFrameLayout"
-                android:layout_marginEnd="62dp"
-                android:layout_marginLeft="62dp"
-                android:layout_marginRight="62dp"
-                android:layout_marginStart="62dp"
+                android:layout_marginEnd="@dimen/seekbar_horizontal_margin"
+                android:layout_marginLeft="@dimen/seekbar_horizontal_margin"
+                android:layout_marginRight="@dimen/seekbar_horizontal_margin"
+                android:layout_marginStart="@dimen/seekbar_horizontal_margin"
                 android:layout_marginTop="25dp"
                 android:max="800" />
 
