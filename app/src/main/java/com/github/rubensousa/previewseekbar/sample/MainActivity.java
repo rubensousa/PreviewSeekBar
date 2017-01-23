@@ -62,7 +62,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         // load video progress
-        exoPlayerManager.preview((float) progress / seekBar.getMax());
+        if (fromUser) {
+            exoPlayerManager.preview((float) progress / seekBar.getMax());
+        }
     }
 
     @Override

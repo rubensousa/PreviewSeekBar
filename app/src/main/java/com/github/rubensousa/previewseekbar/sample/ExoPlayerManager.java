@@ -1,14 +1,16 @@
 package com.github.rubensousa.previewseekbar.sample;
 
 
+import android.graphics.PixelFormat;
+import android.view.SurfaceView;
+import android.view.View;
+
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
@@ -32,8 +34,8 @@ public class ExoPlayerManager {
 
     public void preview(float offset) {
         player.setPlayWhenReady(false);
-        previewPlayer.setPlayWhenReady(false);
         previewPlayer.seekTo((long) (offset * player.getDuration()));
+        previewPlayer.setPlayWhenReady(false);
     }
 
     public void onStart() {
@@ -104,8 +106,7 @@ public class ExoPlayerManager {
     }
 
     private SimpleExoPlayer createPreviewPlayer() {
-        TrackSelection.Factory videoTrackSelectionFactory
-                = new AdaptiveVideoTrackSelection.Factory(new DefaultBandwidthMeter());
+        TrackSelection.Factory videoTrackSelectionFactory = new SingleVideoTrackSelection.Factory();
 
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
@@ -113,7 +114,7 @@ public class ExoPlayerManager {
         LoadControl loadControl = new DefaultLoadControl();
 
         // 3. Create the player
-        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(playerView.getContext(),
+        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(previewPlayerView.getContext(),
                 trackSelector, loadControl);
         player.setPlayWhenReady(false);
         player.prepare(mediaSourceBuilder.getMediaSourceHls());
