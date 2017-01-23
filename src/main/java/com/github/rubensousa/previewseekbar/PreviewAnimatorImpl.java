@@ -36,13 +36,6 @@ class PreviewAnimatorImpl extends PreviewAnimator {
     }
 
     @Override
-    public void cancel() {
-        morphView.animate().cancel();
-        previewView.animate().cancel();
-        frameView.animate().cancel();
-    }
-
-    @Override
     public void show() {
         previewView.setScaleX(getScaleXStart());
         previewView.setScaleY(getScaleYStart());

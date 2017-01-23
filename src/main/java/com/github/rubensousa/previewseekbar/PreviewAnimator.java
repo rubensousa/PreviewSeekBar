@@ -33,8 +33,6 @@ abstract class PreviewAnimator {
 
     public abstract void hide();
 
-    public abstract void cancel();
-
     float getWidthOffset(int progress) {
         return (float) progress / previewSeekBar.getMax();
     }

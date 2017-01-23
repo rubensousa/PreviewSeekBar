@@ -31,20 +31,8 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
         }
     };
 
-    private Animator animator;
-
     public PreviewAnimatorLollipopImpl(PreviewSeekBarLayout previewSeekBarLayout) {
         super(previewSeekBarLayout);
-    }
-
-    @Override
-    public void cancel() {
-        morphView.animate().cancel();
-        previewView.animate().cancel();
-        frameView.animate().cancel();
-        if (animator != null) {
-            animator.cancel();
-        }
     }
 
     @Override
@@ -74,7 +62,7 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startReveal() {
-        animator = ViewAnimationUtils.createCircularReveal(previewView,
+        Animator animator = ViewAnimationUtils.createCircularReveal(previewView,
                 PreviewSeekbarUtils.getCenterX(previewView),
                 PreviewSeekbarUtils.getCenterY(previewView),
                 morphView.getWidth() * 2,
@@ -109,7 +97,7 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startUnreveal() {
-        animator = ViewAnimationUtils.createCircularReveal(previewView,
+        Animator animator = ViewAnimationUtils.createCircularReveal(previewView,
                 PreviewSeekbarUtils.getCenterX(previewView),
                 PreviewSeekbarUtils.getCenterY(previewView),
                 PreviewSeekbarUtils.getRadius(previewView), morphView.getWidth() * 2);

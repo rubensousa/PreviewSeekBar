@@ -9,6 +9,7 @@ class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
 
     private PreviewAnimator animator;
     private boolean showing;
+    private boolean startTouch;
 
     public PreviewDelegate(PreviewSeekBarLayout previewSeekBarLayout) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -26,26 +27,25 @@ class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         animator.move();
+        if (!showing && !startTouch) {
+            animator.show();
+            showing = true;
+        }
+        startTouch = false;
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        animator.cancel();
-
-        if (!showing) {
-            animator.show();
-        }
-        showing = true;
+        startTouch = true;
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        animator.cancel();
-
         if (showing) {
             animator.hide();
         }
         showing = false;
+        startTouch = false;
     }
 
 }
