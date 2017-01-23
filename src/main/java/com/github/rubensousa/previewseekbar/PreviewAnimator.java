@@ -1,7 +1,6 @@
 package com.github.rubensousa.previewseekbar;
 
 
-
 import android.view.View;
 
 abstract class PreviewAnimator {
@@ -21,19 +20,20 @@ abstract class PreviewAnimator {
         this.previewSeekBarLayout = previewSeekBarLayout;
         this.previewSeekBar = previewSeekBarLayout.getSeekBar();
         this.previewView = previewSeekBarLayout.getPreviewFrameLayout();
-        this.morphView =  previewSeekBarLayout.getMorphView();
+        this.morphView = previewSeekBarLayout.getMorphView();
         this.frameView = previewSeekBarLayout.getFrameView();
     }
 
     public void move() {
         previewView.setX(getPreviewX());
-        frameView.setX(previewView.getX());
         morphView.setX(getPreviewCenterX(morphView.getWidth()));
     }
 
     public abstract void show();
 
     public abstract void hide();
+
+    public abstract void cancel();
 
     float getWidthOffset(int progress) {
         return (float) progress / previewSeekBar.getMax();
@@ -48,5 +48,9 @@ abstract class PreviewAnimator {
     float getPreviewX() {
         return ((float) (previewSeekBarLayout.getWidth() - previewView.getWidth()))
                 * getWidthOffset(previewSeekBar.getProgress());
+    }
+
+    float getMorphY() {
+        return previewSeekBar.getY() + previewSeekBar.getThumbOffset();
     }
 }

@@ -9,6 +9,7 @@ class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
 
     private PreviewSeekBarLayout previewSeekBarLayout;
     private PreviewAnimator animator;
+    private boolean showing;
 
     public PreviewDelegate(PreviewSeekBarLayout previewSeekBarLayout) {
         this.previewSeekBarLayout = previewSeekBarLayout;
@@ -32,12 +33,22 @@ class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        animator.show();
+        animator.cancel();
+
+        if (!showing) {
+            animator.show();
+        }
+        showing = true;
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        animator.hide();
+        animator.cancel();
+
+        if (showing) {
+            animator.hide();
+        }
+        showing = false;
     }
 
 }
