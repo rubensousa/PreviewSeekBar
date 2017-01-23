@@ -10,6 +10,7 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
@@ -51,13 +52,13 @@
                 android:layout_width="160dp"
                 android:layout_height="90dp">
 
-                <TextureView
-                    android:id="@+id/surfaceView"
+                <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                    android:id="@+id/previewPlayerView"
                     android:layout_width="match_parent"
-                    android:outlineProvider="paddedBounds"
                     android:layout_height="match_parent"
-                    android:layout_gravity="start" />
-
+                    app:controller_layout_id="@layout/exo_simple_player_view"
+                    app:use_artwork="false"
+                    app:use_controller="false" />
 
             </FrameLayout>
 

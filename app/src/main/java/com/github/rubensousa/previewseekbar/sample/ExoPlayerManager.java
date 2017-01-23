@@ -1,158 +1,122 @@
 package com.github.rubensousa.previewseekbar.sample;
 
 
-import android.net.Uri;
-import android.os.Handler;
-import android.view.SurfaceView;
-import android.view.TextureView;
-import android.view.View;
-
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
+import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 public class ExoPlayerManager {
 
+    private ExoPlayerMediaSourceBuilder mediaSourceBuilder;
     private SimpleExoPlayerView playerView;
+    private SimpleExoPlayerView previewPlayerView;
     private SimpleExoPlayer player;
-    private View seekSurfaceView;
-    private View defaultSurfaceView;
+    private SimpleExoPlayer previewPlayer;
 
-    public ExoPlayerManager(SimpleExoPlayerView playerView, View seekSurfaceView) {
+    public ExoPlayerManager(SimpleExoPlayerView playerView, SimpleExoPlayerView previewPlayerView,
+                            String url) {
         this.playerView = playerView;
-        this.seekSurfaceView = seekSurfaceView;
-        this.playerView.setPlayer(player);
-        this.defaultSurfaceView = playerView.getVideoSurfaceView();
+        this.previewPlayerView = previewPlayerView;
+        this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext(), url);
     }
 
     public void preview(float offset) {
-        player.seekTo((long) (offset * player.getDuration()));
         player.setPlayWhenReady(false);
+        previewPlayer.setPlayWhenReady(false);
+        previewPlayer.seekTo((long) (offset * player.getDuration()));
     }
 
     public void onStart() {
         if (Util.SDK_INT > 23) {
-            createPlayer();
+            createPlayers();
         }
     }
 
     public void onResume() {
-        if ((Util.SDK_INT <= 23 || player == null)) {
-            createPlayer();
+        if ((Util.SDK_INT <= 23 || player == null || previewPlayer == null)) {
+            createPlayers();
         }
     }
 
     public void onPause() {
         if (Util.SDK_INT <= 23) {
-            releasePlayer();
+            releasePlayers();
         }
     }
 
     public void onStop() {
         if (Util.SDK_INT > 23) {
-            releasePlayer();
+            releasePlayers();
         }
     }
 
     public void startPreview() {
-        if (seekSurfaceView instanceof SurfaceView) {
-            ((SurfaceView) seekSurfaceView).setZOrderMediaOverlay(true);
-            player.setVideoSurfaceView((SurfaceView) seekSurfaceView);
-        } else if (seekSurfaceView instanceof TextureView) {
-            player.setVideoTextureView((TextureView) seekSurfaceView);
-        }
+        player.setPlayWhenReady(false);
     }
 
     public void stopPreview() {
-        if (seekSurfaceView instanceof SurfaceView) {
-            ((SurfaceView) seekSurfaceView).setZOrderMediaOverlay(false);
-        }
-        if (defaultSurfaceView instanceof TextureView) {
-            player.setVideoTextureView((TextureView) defaultSurfaceView);
-        } else if (defaultSurfaceView instanceof SurfaceView) {
-            player.setVideoSurfaceView((SurfaceView) defaultSurfaceView);
-        }
+        player.setPlayWhenReady(true);
     }
 
-    private void releasePlayer() {
+    private void releasePlayers() {
         if (player != null) {
             player.release();
             player = null;
         }
+        if (previewPlayer != null) {
+            previewPlayer.release();
+            previewPlayer = null;
+        }
     }
 
-    private void createPlayer() {
-        // 1. Create a default TrackSelector
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
-        TrackSelector trackSelector =
-                new DefaultTrackSelector(videoTrackSelectionFactory);
+    private void createPlayers() {
+        player = createFullPlayer();
+        playerView.setPlayer(player);
+        previewPlayer = createPreviewPlayer();
+        previewPlayerView.setPlayer(previewPlayer);
+    }
+
+    private SimpleExoPlayer createFullPlayer() {
+        TrackSelection.Factory videoTrackSelectionFactory
+                = new AdaptiveVideoTrackSelection.Factory(new DefaultBandwidthMeter());
+
+        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
         // 2. Create a default LoadControl
         LoadControl loadControl = new DefaultLoadControl();
 
         // 3. Create the player
-        player = ExoPlayerFactory.newSimpleInstance(playerView.getContext(),
+        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(playerView.getContext(),
                 trackSelector, loadControl);
-        playerView.setPlayer(player);
         player.setPlayWhenReady(true);
-        prepareMedia();
+        player.prepare(mediaSourceBuilder.getMediaSourceHls());
+        return player;
     }
 
+    private SimpleExoPlayer createPreviewPlayer() {
+        TrackSelection.Factory videoTrackSelectionFactory
+                = new AdaptiveVideoTrackSelection.Factory(new DefaultBandwidthMeter());
 
-    private void prepareMedia() {
-        // Measures bandwidth during playback. Can be null if not required.
-        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
-        // Produces DataSource instances through which media data is loaded.
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(playerView.getContext(),
-                Util.getUserAgent(playerView.getContext(), playerView.getContext().getPackageName()), bandwidthMeter);
+        // 2. Create a default LoadControl
+        LoadControl loadControl = new DefaultLoadControl();
 
-        // Produces Extractor instances for parsing the media data.
-        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-
-        Uri uri = Uri.parse(playerView.getContext().getString(R.string.url_dash));
-
-        // This is the MediaSource representing the media to be played.
-        /*MediaSource videoSource = new SsMediaSource(uri, buildDataSourceFactory(bandwidthMeter),
-                new DefaultSsChunkSource.Factory(buildDataSourceFactory(bandwidthMeter)),
-                new Handler(), null);*/
-
-        MediaSource videoSource = new DashMediaSource(uri,
-                dataSourceFactory,
-                new DefaultDashChunkSource.Factory(buildDataSourceFactory(bandwidthMeter)),
-                new Handler(), null);
-
-        // Prepare the player with the source.
-        player.prepare(videoSource);
-    }
-
-    private DataSource.Factory buildDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
-        return new DefaultDataSourceFactory(playerView.getContext(), bandwidthMeter,
-                buildHttpDataSourceFactory(bandwidthMeter));
-    }
-
-    private HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
-        return new DefaultHttpDataSourceFactory(Util.getUserAgent(playerView.getContext(),
-                "ExoPlayerDemo"), bandwidthMeter);
+        // 3. Create the player
+        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(playerView.getContext(),
+                trackSelector, loadControl);
+        player.setPlayWhenReady(false);
+        player.prepare(mediaSourceBuilder.getMediaSourceHls());
+        return player;
     }
 }

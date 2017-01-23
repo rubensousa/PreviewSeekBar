@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         Toolbar.OnMenuItemClickListener {
 
     private ExoPlayerManager exoPlayerManager;
-    private SimpleExoPlayerView playerView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +24,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.main);
         toolbar.setOnMenuItemClickListener(this);
-        playerView = (SimpleExoPlayerView) findViewById(R.id.player_view);
+
+        SimpleExoPlayerView playerView = (SimpleExoPlayerView) findViewById(R.id.player_view);
+        SimpleExoPlayerView previewPlayerView
+                = (SimpleExoPlayerView) findViewById(R.id.previewPlayerView);
         PreviewSeekBar seekBar = (PreviewSeekBar) playerView.findViewById(R.id.exo_progress);
 
         seekBar.addOnSeekBarChangeListener(this);
-        exoPlayerManager = new ExoPlayerManager(playerView, findViewById(R.id.surfaceView));
+        exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView,
+                getString(R.string.url_hls));
     }
 
     @Override
