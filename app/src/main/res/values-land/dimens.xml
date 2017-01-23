@@ -9,6 +9,6 @@
 
     <dimen name="video_preview_width">160dp</dimen>
     <dimen name="video_preview_height">90dp</dimen>
-
+    <dimen name="video_frame_width">2dp</dimen>
     <dimen name="seekbar_horizontal_margin">64dp</dimen>
 </resources>

@@ -51,7 +51,8 @@
                 android:id="@+id/previewFrameLayout"
                 android:layout_width="@dimen/video_preview_width"
                 android:layout_height="@dimen/video_preview_height"
-                android:background="@drawable/video_frame">
+                android:background="@drawable/video_frame"
+                android:padding="@dimen/video_frame_width">
 
 
                 <com.google.android.exoplayer2.ui.SimpleExoPlayerView
