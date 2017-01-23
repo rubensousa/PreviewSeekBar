@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.SeekBar;
 
 import com.github.rubensousa.previewseekbar.PreviewSeekBar;
+import com.github.rubensousa.previewseekbar.PreviewSeekBarLayout;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
@@ -16,7 +17,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         Toolbar.OnMenuItemClickListener {
 
     private ExoPlayerManager exoPlayerManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +30,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         SimpleExoPlayerView previewPlayerView
                 = (SimpleExoPlayerView) findViewById(R.id.previewPlayerView);
         PreviewSeekBar seekBar = (PreviewSeekBar) playerView.findViewById(R.id.exo_progress);
+        PreviewSeekBarLayout seekBarLayout
+                = (PreviewSeekBarLayout) findViewById(R.id.previewSeekBarLayout);
+
+        seekBarLayout.setTintColorResource(R.color.colorPrimary);
 
         seekBar.addOnSeekBarChangeListener(this);
         exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView,

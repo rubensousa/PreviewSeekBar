@@ -75,6 +75,8 @@
                 android:layout_below="@id/previewFrameLayout"
                 android:layout_marginTop="10dp"
                 android:max="800"
+                android:progressTint="@color/colorPrimary"
+                android:thumbTint="@color/colorPrimary"
                 app:paddingStart="10dp" />
 
 
