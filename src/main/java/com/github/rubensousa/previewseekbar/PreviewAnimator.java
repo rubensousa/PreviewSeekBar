@@ -19,8 +19,8 @@ class PreviewAnimator {
     private static final int UNMORPH_UNREVEAL_DURATION = 250;
 
     private PreviewSeekBar previewSeekBar;
+    private PreviewSeekBarLayout previewSeekBarLayout;
     private View previewView;
-    private View previewParentView;
     private View frameView;
     private View morphView;
     private Animator.AnimatorListener morphListener = new AnimatorListenerAdapter() {
@@ -40,20 +40,12 @@ class PreviewAnimator {
         }
     };
 
-    public PreviewAnimator(PreviewSeekBar previewSeekBar) {
+    public PreviewAnimator(PreviewSeekBarLayout previewSeekBarLayout, PreviewSeekBar previewSeekBar,
+                           View previewView, View morphView, View frameView) {
+        this.previewSeekBarLayout = previewSeekBarLayout;
         this.previewSeekBar = previewSeekBar;
-    }
-
-    public void setPreviewView(View previewView) {
         this.previewView = previewView;
-        this.previewParentView = (View) previewView.getParent();
-    }
-
-    public void setMorphView(View morphView) {
         this.morphView = morphView;
-    }
-
-    public void setFrameView(View frameView) {
         this.frameView = frameView;
     }
 
@@ -90,9 +82,9 @@ class PreviewAnimator {
     }
 
     void startUnreveal() {
-        frameView.setAlpha(1f);
+        frameView.setAlpha(0f);
         frameView.setVisibility(View.VISIBLE);
-        previewView.setVisibility(View.INVISIBLE);
+        previewView.setVisibility(View.VISIBLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             startUnrevealLollipop();
@@ -102,36 +94,20 @@ class PreviewAnimator {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startRevealLollipop() {
-        Animator animation = ViewAnimationUtils.createCircularReveal(frameView,
-                PreviewSeekbarUtils.getCenterX(frameView),
-                PreviewSeekbarUtils.getCenterY(frameView),
-                morphView.getWidth() * 2,
-                PreviewSeekbarUtils.getRadius(frameView));
-
-        Animator animationReal = ViewAnimationUtils.createCircularReveal(previewView,
+        Animator animation = ViewAnimationUtils.createCircularReveal(previewView,
                 PreviewSeekbarUtils.getCenterX(previewView),
                 PreviewSeekbarUtils.getCenterY(previewView),
                 morphView.getWidth() * 2,
                 PreviewSeekbarUtils.getRadius(previewView));
 
-        animationReal.setTarget(this);
-        animationReal.setDuration(MORPH_REVEAL_DURATION);
-        animationReal.addListener(new AnimatorListenerAdapter() {
+        animation.setTarget(previewView);
+        animation.setDuration(MORPH_REVEAL_DURATION);
+        animation.setInterpolator(new AccelerateInterpolator());
+        animation.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 previewView.setVisibility(View.VISIBLE);
-            }
-        });
-
-        animation.setTarget(this);
-        animation.setDuration(MORPH_REVEAL_DURATION / 2)
-                .setInterpolator(new AccelerateDecelerateInterpolator());
-        animation.addListener(new AnimatorListenerAdapter() {
-
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
                 frameView.setVisibility(View.VISIBLE);
                 morphView.setVisibility(View.INVISIBLE);
             }
@@ -142,19 +118,20 @@ class PreviewAnimator {
                 previewView.setVisibility(View.VISIBLE);
                 frameView.setVisibility(View.INVISIBLE);
             }
+
         });
+
         animation.start();
-        animationReal.start();
-        frameView.animate().alpha(0.5f).setDuration(MORPH_REVEAL_DURATION);
+        frameView.animate().alpha(0f).setDuration(MORPH_REVEAL_DURATION);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startUnrevealLollipop() {
-        Animator animation = ViewAnimationUtils.createCircularReveal(frameView,
-                PreviewSeekbarUtils.getCenterX(frameView),
-                PreviewSeekbarUtils.getCenterY(frameView),
-                PreviewSeekbarUtils.getRadius(frameView), morphView.getWidth());
-        animation.setTarget(this);
+        Animator animation = ViewAnimationUtils.createCircularReveal(previewView,
+                PreviewSeekbarUtils.getCenterX(previewView),
+                PreviewSeekbarUtils.getCenterY(previewView),
+                PreviewSeekbarUtils.getRadius(previewView), morphView.getWidth());
+        animation.setTarget(previewView);
         animation.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -171,6 +148,7 @@ class PreviewAnimator {
                         .setListener(unmorphListener);
             }
         });
+        frameView.animate().alpha(1f).setDuration(UNMORPH_UNREVEAL_DURATION);
         animation.setDuration(UNMORPH_UNREVEAL_DURATION).setInterpolator(new AccelerateInterpolator());
         animation.start();
     }
@@ -181,13 +159,13 @@ class PreviewAnimator {
     }
 
     private float getPreviewCenterX(int width) {
-        return (previewParentView.getWidth() - previewView.getWidth())
+        return (previewSeekBarLayout.getWidth() - previewView.getWidth())
                 * getWidthOffset(previewSeekBar.getProgress()) + previewView.getWidth() / 2f
                 - width / 2f;
     }
 
     private float getPreviewX() {
-        return ((float) (previewParentView.getWidth() - previewView.getWidth()))
+        return ((float) (previewSeekBarLayout.getWidth() - previewView.getWidth()))
                 * getWidthOffset(previewSeekBar.getProgress());
     }
 }

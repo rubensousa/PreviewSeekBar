@@ -1,134 +1,68 @@
 package com.github.rubensousa.previewseekbar;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.SeekBar;
 
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * A SeekBar that should be used inside PreviewSeekBarLayout
+ */
 public class PreviewSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBarChangeListener {
 
-    private PreviewAnimator animator;
-    private View previewView;
-    private View morphView;
-    private View frameView;
-    private boolean firstLayout;
-    private boolean isPreviewing;
-    private OnSeekBarChangeListener seekBarChangeListener;
+    private List<OnSeekBarChangeListener> listeners;
 
     public PreviewSeekBar(Context context) {
         super(context);
-        init(context, null);
+        init();
     }
 
     public PreviewSeekBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
+        init();
     }
 
     public PreviewSeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
+        init();
     }
 
-    private void init(Context context, AttributeSet attrs) {
-        super.setOnSeekBarChangeListener(this);
-
-        TypedValue outValue = new TypedValue();
-
-        getContext().getTheme().resolveAttribute(R.attr.colorAccent, outValue, true);
-        int colorRes = outValue.resourceId;
-
-        // Create morph view
-        morphView = new View(getContext());
-        morphView.setBackgroundResource(R.drawable.previewseekbar_morph);
-        morphView.setVisibility(View.INVISIBLE);
-
-        // Tint to accent color
-        Drawable drawable = morphView.getBackground();
-        int colorInt = ContextCompat.getColor(getContext(), colorRes);
-        drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, colorInt);
-        morphView.setBackground(drawable);
-
-
-        // Create frame view for the circular reveal
-        frameView = new View(getContext());
-        frameView.setBackgroundResource(colorRes);
-        frameView.setVisibility(View.INVISIBLE);
-
-        // Create animator
-        animator = new PreviewAnimator(this);
-        animator.setMorphView(morphView);
-        animator.setFrameView(frameView);
-        firstLayout = true;
+    private void init() {
+        listeners = new ArrayList<>();
+        setOnSeekBarChangeListener(this);
     }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-        if (getWidth() == 0 || getHeight() == 0) {
-            return;
-        } else if (firstLayout) {
-            // Setup morph view
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(0, 0);
-            layoutParams.width = getResources()
-                    .getDimensionPixelSize(R.dimen.previewseekbar_indicator_width);
-            layoutParams.height = layoutParams.width;
-
-            ViewGroup.LayoutParams frameLayoutParams
-                    = new ViewGroup.LayoutParams(previewView.getWidth(), previewView.getHeight());
-
-            // Add views to the parent layout
-            ViewParent parent = getParent();
-            if (parent instanceof ViewGroup) {
-                ((ViewGroup) parent).addView(morphView, layoutParams);
-                ((ViewGroup) parent).addView(frameView, frameLayoutParams);
-            }
-
-            firstLayout = false;
+    public void addOnSeekBarChangeListener(OnSeekBarChangeListener listener) {
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
         }
     }
 
-    @Override
-    public void setOnSeekBarChangeListener(OnSeekBarChangeListener l) {
-        seekBarChangeListener = l;
-    }
-
-    public void setPreviewView(View view) {
-        previewView = view;
-        previewView.setVisibility(View.INVISIBLE);
-        animator.setPreviewView(view);
+    public void removeOnSeekBarChangeListener(OnSeekBarChangeListener listener) {
+        listeners.remove(listener);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        animator.move();
-        if (seekBarChangeListener != null) {
-            seekBarChangeListener.onProgressChanged(seekBar, progress, fromUser);
+        for (OnSeekBarChangeListener listener : listeners) {
+            listener.onProgressChanged(seekBar, progress, fromUser);
         }
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        animator.morph();
-        if (seekBarChangeListener != null) {
-            seekBarChangeListener.onStartTrackingTouch(seekBar);
+        for (OnSeekBarChangeListener listener : listeners) {
+            listener.onStartTrackingTouch(seekBar);
         }
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        animator.unmorph();
-        if (seekBarChangeListener != null) {
-            seekBarChangeListener.onStopTrackingTouch(seekBar);
+        for (OnSeekBarChangeListener listener : listeners) {
+            listener.onStopTrackingTouch(seekBar);
         }
     }
 }
