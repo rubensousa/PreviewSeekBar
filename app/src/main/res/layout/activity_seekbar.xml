@@ -1,34 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:gravity="center"
     android:orientation="vertical">
 
-    <View
-        android:id="@+id/previewView"
-        android:layout_width="160dp"
-        android:layout_height="90dp"
-        android:layout_gravity="start"
-        android:background="@color/colorPrimary" />
-
-    <com.github.rubensousa.previewseekbar.PreviewSeekBar
-        android:id="@+id/previewSeekBar"
+    <com.github.rubensousa.previewseekbar.PreviewSeekBarLayout
+        android:id="@+id/previewSeekBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/previewView"
-        android:layout_marginEnd="62dp"
-        android:layout_marginLeft="62dp"
-        android:layout_marginRight="62dp"
-        android:layout_marginStart="62dp"
-        android:layout_marginTop="25dp"
-        android:max="800"
-        app:paddingEnd="0dp"
-        app:paddingStart="0dp" />
+        android:gravity="start"
+        android:orientation="vertical">
+
+        <com.github.rubensousa.previewseekbar.PreviewFrameLayout
+            android:id="@+id/previewFrameLayout"
+            android:layout_width="160dp"
+            android:layout_height="90dp">
+
+            <View
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:background="@color/colorPrimary" />
 
 
-</RelativeLayout>
+        </com.github.rubensousa.previewseekbar.PreviewFrameLayout>
+
+
+        <com.github.rubensousa.previewseekbar.PreviewSeekBar
+            android:id="@+id/previewSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="62dp"
+            android:layout_marginLeft="62dp"
+            android:layout_marginRight="62dp"
+            android:layout_marginStart="62dp"
+            android:layout_marginTop="25dp"
+            android:max="800" />
+
+
+    </com.github.rubensousa.previewseekbar.PreviewSeekBarLayout>
+
+
+</LinearLayout>
