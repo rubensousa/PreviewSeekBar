@@ -27,7 +27,7 @@ class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         animator.move();
-        if (!showing && !startTouch) {
+        if (!showing && !startTouch && fromUser) {
             animator.show();
             showing = true;
         }
