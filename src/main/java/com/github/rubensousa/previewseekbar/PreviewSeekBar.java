@@ -1,6 +1,11 @@
 package com.github.rubensousa.previewseekbar;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
 import android.widget.SeekBar;
@@ -38,6 +43,20 @@ public class PreviewSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBa
     @Override
     public void setOnSeekBarChangeListener(OnSeekBarChangeListener l) {
         addOnSeekBarChangeListener(l);
+    }
+
+    public void setTintColorResource(@ColorRes int colorResource) {
+        setTintColor(ContextCompat.getColor(getContext(), colorResource));
+    }
+
+    public void setTintColor(@ColorInt int color) {
+        Drawable drawable = DrawableCompat.wrap(getThumb());
+        DrawableCompat.setTint(drawable, color);
+        setThumb(drawable);
+
+        drawable = DrawableCompat.wrap(getProgressDrawable());
+        DrawableCompat.setTint(drawable, color);
+        setProgressDrawable(drawable);
     }
 
     public void addOnSeekBarChangeListener(OnSeekBarChangeListener listener) {

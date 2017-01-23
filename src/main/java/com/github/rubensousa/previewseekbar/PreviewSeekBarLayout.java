@@ -25,6 +25,7 @@ public class PreviewSeekBarLayout extends RelativeLayout {
     private View morphView;
     private View frameView;
     private boolean firstLayout = true;
+    private int tintColor;
 
     public PreviewSeekBarLayout(Context context) {
         super(context);
@@ -45,7 +46,7 @@ public class PreviewSeekBarLayout extends RelativeLayout {
         TypedValue outValue = new TypedValue();
 
         getContext().getTheme().resolveAttribute(R.attr.colorAccent, outValue, true);
-        int colorRes = outValue.resourceId;
+        tintColor = ContextCompat.getColor(context, outValue.resourceId);
 
         // Create morph view
         morphView = new View(getContext());
@@ -53,8 +54,6 @@ public class PreviewSeekBarLayout extends RelativeLayout {
 
         // Create frame view for the circular reveal
         frameView = new View(getContext());
-
-        setTintColorResource(colorRes);
     }
 
     @Override
@@ -74,9 +73,7 @@ public class PreviewSeekBarLayout extends RelativeLayout {
             setupSeekbarMargins();
 
             // Setup colors for the morph view and frame view
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                setupColors();
-            }
+            setupColors();
 
             delegate = new PreviewDelegate(this);
 
@@ -114,7 +111,13 @@ public class PreviewSeekBarLayout extends RelativeLayout {
     }
 
     public void setTintColor(@ColorInt int color) {
-        // Tint to accent color
+        tintColor = color;
+
+        // The view may have not been laid out yet
+        if (seekBar == null) {
+            return;
+        }
+
         Drawable drawable = DrawableCompat.wrap(morphView.getBackground());
         DrawableCompat.setTint(drawable, color);
         morphView.setBackground(drawable);
@@ -122,15 +125,21 @@ public class PreviewSeekBarLayout extends RelativeLayout {
     }
 
     public void setTintColorResource(@ColorRes int color) {
-        setTintColor(ContextCompat.getColor(getContext(), color));
+        tintColor = ContextCompat.getColor(getContext(), color);
+
+        // The view may have not been laid out yet
+        if (seekBar != null) {
+            setTintColor(tintColor);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void setupColors() {
         ColorStateList list = seekBar.getThumbTintList();
         if (list != null) {
-            setTintColor(list.getDefaultColor());
+            tintColor = list.getDefaultColor();
         }
+        setTintColor(tintColor);
     }
 
     /**
