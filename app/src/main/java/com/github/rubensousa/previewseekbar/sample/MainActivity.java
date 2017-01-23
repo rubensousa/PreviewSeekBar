@@ -1,9 +1,12 @@
 package com.github.rubensousa.previewseekbar.sample;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
@@ -34,7 +37,8 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 
-public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
+public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener,
+        Toolbar.OnMenuItemClickListener {
 
     private View defaultSurfaceView;
     private View seekSurfaceView;
@@ -46,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.main);
+        toolbar.setOnMenuItemClickListener(this);
         previewSeekBarLayout = (PreviewSeekBarLayout) findViewById(R.id.previewSeekBarLayout);
         playerView = (SimpleExoPlayerView) findViewById(R.id.player_view);
         seekSurfaceView = findViewById(R.id.surfaceView);
@@ -138,5 +145,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
         return new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "ExoPlayerDemo"),
                 bandwidthMeter);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        startActivity(new Intent(this, LocalActivity.class));
+        return true;
     }
 }
