@@ -10,5 +10,4 @@
     <dimen name="video_preview_width">120dp</dimen>
     <dimen name="video_preview_height">68dp</dimen>
     <dimen name="video_frame_width">2dp</dimen>
-    <dimen name="seekbar_horizontal_margin">45dp</dimen>
 </resources>
