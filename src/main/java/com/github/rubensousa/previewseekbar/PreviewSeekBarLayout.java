@@ -16,7 +16,7 @@ public class PreviewSeekBarLayout extends RelativeLayout{
 
     private PreviewDelegate delegate;
     private PreviewSeekBar seekBar;
-    private PreviewFrameLayout previewFrameLayout;
+    private FrameLayout previewFrameLayout;
     private View morphView;
     private View frameView;
     private boolean firstLayout = true;
@@ -68,7 +68,7 @@ public class PreviewSeekBarLayout extends RelativeLayout{
             // Check if we have the proper views
             if (!checkChilds()) {
                 throw new IllegalStateException("You need to add a PreviewSeekBar" +
-                        "and a PreviewFrameLayout as direct childs");
+                        "and a FrameLayout as direct childs");
             }
 
             delegate = new PreviewDelegate(this);
@@ -91,7 +91,7 @@ public class PreviewSeekBarLayout extends RelativeLayout{
     }
 
 
-    public PreviewFrameLayout getPreviewFrameLayout() {
+    public FrameLayout getPreviewFrameLayout() {
         return previewFrameLayout;
     }
 
@@ -123,8 +123,8 @@ public class PreviewSeekBarLayout extends RelativeLayout{
             if (child instanceof PreviewSeekBar) {
                 hasSeekbar = true;
                 seekBar = (PreviewSeekBar) child;
-            } else if (child instanceof PreviewFrameLayout) {
-                previewFrameLayout = (PreviewFrameLayout) child;
+            } else if (child instanceof FrameLayout) {
+                previewFrameLayout = (FrameLayout) child;
                 hasFrameLayout = true;
             }
 
