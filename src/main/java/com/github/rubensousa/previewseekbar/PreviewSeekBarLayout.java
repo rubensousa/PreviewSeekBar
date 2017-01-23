@@ -1,8 +1,12 @@
 package com.github.rubensousa.previewseekbar;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.AttributeSet;
@@ -47,16 +51,10 @@ public class PreviewSeekBarLayout extends RelativeLayout {
         morphView = new View(getContext());
         morphView.setBackgroundResource(R.drawable.previewseekbar_morph);
 
-        // Tint to accent color
-        Drawable drawable = morphView.getBackground();
-        int colorInt = ContextCompat.getColor(getContext(), colorRes);
-        drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, colorInt);
-        morphView.setBackground(drawable);
-
         // Create frame view for the circular reveal
         frameView = new View(getContext());
-        frameView.setBackgroundResource(colorRes);
+
+        setTintColorResource(colorRes);
     }
 
     @Override
@@ -74,6 +72,11 @@ public class PreviewSeekBarLayout extends RelativeLayout {
 
             // Set proper seek bar margins
             setupSeekbarMargins();
+
+            // Setup colors for the morph view and frame view
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                setupColors();
+            }
 
             delegate = new PreviewDelegate(this);
 
@@ -94,7 +97,6 @@ public class PreviewSeekBarLayout extends RelativeLayout {
         }
     }
 
-
     public FrameLayout getPreviewFrameLayout() {
         return previewFrameLayout;
     }
@@ -109,6 +111,26 @@ public class PreviewSeekBarLayout extends RelativeLayout {
 
     View getMorphView() {
         return morphView;
+    }
+
+    public void setTintColor(@ColorInt int color) {
+        // Tint to accent color
+        Drawable drawable = DrawableCompat.wrap(morphView.getBackground());
+        DrawableCompat.setTint(drawable, color);
+        morphView.setBackground(drawable);
+        frameView.setBackgroundColor(color);
+    }
+
+    public void setTintColorResource(@ColorRes int color) {
+        setTintColor(ContextCompat.getColor(getContext(), color));
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setupColors() {
+        ColorStateList list = seekBar.getThumbTintList();
+        if (list != null) {
+            setTintColor(list.getDefaultColor());
+        }
     }
 
     /**
