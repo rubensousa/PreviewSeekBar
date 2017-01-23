@@ -2,6 +2,7 @@ package com.github.rubensousa.previewseekbar;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.AttributeSet;
@@ -12,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
-public class PreviewSeekBarLayout extends RelativeLayout{
+public class PreviewSeekBarLayout extends RelativeLayout {
 
     private PreviewDelegate delegate;
     private PreviewSeekBar seekBar;
@@ -71,6 +72,9 @@ public class PreviewSeekBarLayout extends RelativeLayout{
                         "and a FrameLayout as direct childs");
             }
 
+            // Set proper seek bar margins
+            setupSeekbarMargins();
+
             delegate = new PreviewDelegate(this);
 
             // Setup morph view
@@ -105,6 +109,26 @@ public class PreviewSeekBarLayout extends RelativeLayout{
 
     View getMorphView() {
         return morphView;
+    }
+
+    /**
+     * Align seekbar thumb with the frame layout center
+     */
+    private void setupSeekbarMargins() {
+        LayoutParams layoutParams = (LayoutParams) seekBar.getLayoutParams();
+
+        layoutParams.rightMargin = (previewFrameLayout.getWidth() / 2
+                - seekBar.getThumb().getIntrinsicWidth());
+        layoutParams.leftMargin = layoutParams.rightMargin;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            layoutParams.setMarginEnd(layoutParams.leftMargin);
+            layoutParams.setMarginStart(layoutParams.leftMargin);
+        }
+
+        seekBar.setLayoutParams(layoutParams);
+        requestLayout();
+        invalidate();
     }
 
     private boolean checkChilds() {
