@@ -32,7 +32,12 @@ public class PreviewSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBa
 
     private void init() {
         listeners = new ArrayList<>();
-        setOnSeekBarChangeListener(this);
+        super.setOnSeekBarChangeListener(this);
+    }
+
+    @Override
+    public void setOnSeekBarChangeListener(OnSeekBarChangeListener l) {
+        addOnSeekBarChangeListener(l);
     }
 
     public void addOnSeekBarChangeListener(OnSeekBarChangeListener listener) {
