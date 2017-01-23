@@ -63,7 +63,6 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
     @Override
     public void hide() {
-        frameView.setAlpha(1f);
         frameView.setVisibility(View.VISIBLE);
         previewView.setVisibility(View.VISIBLE);
         morphView.setY(getShowY());
@@ -110,11 +109,10 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startUnreveal() {
-
         animator = ViewAnimationUtils.createCircularReveal(previewView,
                 PreviewSeekbarUtils.getCenterX(previewView),
                 PreviewSeekbarUtils.getCenterY(previewView),
-                PreviewSeekbarUtils.getRadius(previewView), morphView.getWidth());
+                PreviewSeekbarUtils.getRadius(previewView), morphView.getWidth() * 2);
         animator.setTarget(previewView);
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -125,16 +123,18 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
                 previewView.setVisibility(View.INVISIBLE);
                 morphView.setVisibility(View.VISIBLE);
                 morphView.animate()
-                        .setStartDelay(50)
                         .y(getHideY())
                         .scaleY(0.5f)
                         .scaleX(0.5f)
                         .setDuration(UNMORPH_MOVE_DURATION)
-                        .setInterpolator(new DecelerateInterpolator())
+                        .setInterpolator(new AccelerateInterpolator())
                         .setListener(hideListener);
             }
         });
-        animator.setDuration(UNMORPH_UNREVEAL_DURATION).setInterpolator(new AccelerateInterpolator());
+        frameView.animate().alpha(1f).setDuration(UNMORPH_UNREVEAL_DURATION)
+                .setInterpolator(new AccelerateInterpolator());
+        animator.setDuration(UNMORPH_UNREVEAL_DURATION)
+                .setInterpolator(new AccelerateInterpolator());
         animator.start();
     }
 }
