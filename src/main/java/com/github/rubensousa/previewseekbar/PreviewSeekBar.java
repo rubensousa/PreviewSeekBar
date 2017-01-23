@@ -1,6 +1,9 @@
 package com.github.rubensousa.previewseekbar;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -47,6 +50,14 @@ public class PreviewSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBa
         morphView = new View(getContext());
         morphView.setBackgroundResource(R.drawable.previewseekbar_morph);
         morphView.setVisibility(View.INVISIBLE);
+
+        // Tint to accent color
+        Drawable drawable = morphView.getBackground();
+        int colorInt = ContextCompat.getColor(getContext(), colorRes);
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, colorInt);
+        morphView.setBackground(drawable);
+
 
         // Create frame view for the circular reveal
         frameView = new View(getContext());
