@@ -4,19 +4,15 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class PreviewSeekBarLayout extends LinearLayoutCompat {
+public class PreviewSeekBarLayout extends RelativeLayout{
 
     private PreviewDelegate delegate;
     private PreviewSeekBar seekBar;
@@ -114,28 +110,30 @@ public class PreviewSeekBarLayout extends LinearLayoutCompat {
     private boolean checkChilds() {
         int childs = getChildCount();
 
-        if (childs != 2) {
+        if (childs < 2) {
             return false;
         }
 
-        View firstChild = getChildAt(0);
-        View secondChild = getChildAt(1);
+        boolean hasSeekbar = false;
+        boolean hasFrameLayout = false;
 
-        if (firstChild instanceof PreviewSeekBar) {
-            seekBar = (PreviewSeekBar) firstChild;
-            if (secondChild instanceof PreviewFrameLayout) {
-                previewFrameLayout = (PreviewFrameLayout) secondChild;
-                return true;
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+
+            if (child instanceof PreviewSeekBar) {
+                hasSeekbar = true;
+                seekBar = (PreviewSeekBar) child;
+            } else if (child instanceof PreviewFrameLayout) {
+                previewFrameLayout = (PreviewFrameLayout) child;
+                hasFrameLayout = true;
             }
-        } else if (secondChild instanceof PreviewSeekBar) {
-            seekBar = (PreviewSeekBar) secondChild;
-            if (firstChild instanceof PreviewFrameLayout) {
-                previewFrameLayout = (PreviewFrameLayout) firstChild;
+
+            if (hasSeekbar && hasFrameLayout) {
                 return true;
             }
         }
 
-        return false;
+        return hasSeekbar && hasFrameLayout;
     }
 
 }
