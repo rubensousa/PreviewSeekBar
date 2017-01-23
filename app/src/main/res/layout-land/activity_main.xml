@@ -25,7 +25,7 @@
     <com.google.android.exoplayer2.ui.SimpleExoPlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="match_parent"
         app:controller_layout_id="@layout/exoplayer_controls"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
