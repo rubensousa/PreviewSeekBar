@@ -117,8 +117,8 @@ public class PreviewSeekBarLayout extends RelativeLayout {
     private void setupSeekbarMargins() {
         LayoutParams layoutParams = (LayoutParams) seekBar.getLayoutParams();
 
-        layoutParams.rightMargin = (previewFrameLayout.getWidth() / 2
-                - seekBar.getThumb().getIntrinsicWidth());
+        layoutParams.rightMargin = (int) (previewFrameLayout.getWidth() / 2
+                - seekBar.getThumb().getIntrinsicWidth() * 0.9f);
         layoutParams.leftMargin = layoutParams.rightMargin;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
