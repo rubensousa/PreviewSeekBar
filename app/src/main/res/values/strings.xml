@@ -6,5 +6,7 @@
 
     <string name="action_settings">Settings</string>
 
-    <string name="url">http://www.youtube.com/api/manifest/dash/id/3aa39fa2cc27967f/source/youtube?as=fmp4_audio_clear,fmp4_sd_hd_clear&amp;sparams=ip,ipbits,expire,source,id,as&amp;ip=0.0.0.0&amp;ipbits=0&amp;expire=19000000000&amp;signature=A2716F75795F5D2AF0E88962FFCD10DB79384F29.84308FF04844498CE6FBCE4731507882B8307798&amp;key=ik0</string>
+    <string name="url_dash">https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_sd.mpd</string>
+    <string name="url_smooth">http://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism</string>
+
 </resources>

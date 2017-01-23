@@ -13,7 +13,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-
+    android:elevation="4dp"
     android:layoutDirection="ltr"
     android:orientation="vertical">
 
@@ -51,12 +51,12 @@
                 android:layout_width="160dp"
                 android:layout_height="90dp">
 
-                <View
-                    android:id="@+id/videoView"
+                <TextureView
+                    android:id="@+id/surfaceView"
                     android:layout_width="match_parent"
+                    android:outlineProvider="paddedBounds"
                     android:layout_height="match_parent"
-                    android:layout_gravity="start"
-                    android:background="@color/colorPrimary" />
+                    android:layout_gravity="start" />
 
 
             </com.github.rubensousa.previewseekbar.PreviewFrameLayout>
