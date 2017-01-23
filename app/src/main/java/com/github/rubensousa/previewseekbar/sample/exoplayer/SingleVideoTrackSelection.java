@@ -1,4 +1,4 @@
-package com.github.rubensousa.previewseekbar.sample;
+package com.github.rubensousa.previewseekbar.sample.exoplayer;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.TrackGroup;

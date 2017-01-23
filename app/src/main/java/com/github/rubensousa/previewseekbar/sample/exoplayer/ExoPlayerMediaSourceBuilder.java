@@ -1,4 +1,4 @@
-package com.github.rubensousa.previewseekbar.sample;
+package com.github.rubensousa.previewseekbar.sample.exoplayer;
 
 
 import android.content.Context;

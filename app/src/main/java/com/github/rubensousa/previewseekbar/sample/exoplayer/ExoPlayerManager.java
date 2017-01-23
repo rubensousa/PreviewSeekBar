@@ -1,4 +1,4 @@
-package com.github.rubensousa.previewseekbar.sample;
+package com.github.rubensousa.previewseekbar.sample.exoplayer;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -101,7 +101,7 @@ public class ExoPlayerManager {
         SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(playerView.getContext(),
                 trackSelector, loadControl);
         player.setPlayWhenReady(true);
-        player.prepare(mediaSourceBuilder.getMediaSourceHls());
+        player.prepare(mediaSourceBuilder.getMediaSourceDash());
         return player;
     }
 
@@ -110,14 +110,13 @@ public class ExoPlayerManager {
 
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
-        // 2. Create a default LoadControl
-        LoadControl loadControl = new DefaultLoadControl();
+        LoadControl loadControl = new PreviewLoadControl();
 
         // 3. Create the player
         SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(previewPlayerView.getContext(),
                 trackSelector, loadControl);
         player.setPlayWhenReady(false);
-        player.prepare(mediaSourceBuilder.getMediaSourceHls());
+        player.prepare(mediaSourceBuilder.getMediaSourceDash());
         return player;
     }
 }

@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.SeekBar;
 
 import com.github.rubensousa.previewseekbar.PreviewSeekBar;
+import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         seekBar.addOnSeekBarChangeListener(this);
         exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView,
-                getString(R.string.url_hls));
+                getString(R.string.url_dash));
     }
 
     @Override
