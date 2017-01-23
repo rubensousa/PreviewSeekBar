@@ -38,10 +38,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/previewFrameLayout"
-            android:layout_marginEnd="@dimen/seekbar_horizontal_margin"
-            android:layout_marginLeft="@dimen/seekbar_horizontal_margin"
-            android:layout_marginRight="@dimen/seekbar_horizontal_margin"
-            android:layout_marginStart="@dimen/seekbar_horizontal_margin"
             android:layout_marginTop="25dp"
             android:max="800" />
 
