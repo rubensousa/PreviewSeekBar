@@ -17,6 +17,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         Toolbar.OnMenuItemClickListener {
 
     private ExoPlayerManager exoPlayerManager;
+    private PreviewSeekBarLayout seekBarLayout;
+    private PreviewSeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +31,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         SimpleExoPlayerView playerView = (SimpleExoPlayerView) findViewById(R.id.player_view);
         SimpleExoPlayerView previewPlayerView
                 = (SimpleExoPlayerView) findViewById(R.id.previewPlayerView);
-        PreviewSeekBar seekBar = (PreviewSeekBar) playerView.findViewById(R.id.exo_progress);
-        PreviewSeekBarLayout seekBarLayout
-                = (PreviewSeekBarLayout) findViewById(R.id.previewSeekBarLayout);
+        seekBar = (PreviewSeekBar) playerView.findViewById(R.id.exo_progress);
+        seekBarLayout = (PreviewSeekBarLayout) findViewById(R.id.previewSeekBarLayout);
 
         seekBarLayout.setTintColorResource(R.color.colorPrimary);
 
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        exoPlayerManager.startPreview();
+
     }
 
     @Override
@@ -84,7 +85,19 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        startActivity(new Intent(this, LocalActivity.class));
+        if (item.getItemId() == R.id.action_local) {
+            startActivity(new Intent(this, LocalActivity.class));
+        }
+        if (item.getItemId() == R.id.action_toggle) {
+            if (seekBarLayout.isShowingPreview()) {
+                seekBarLayout.hidePreview();
+                exoPlayerManager.stopPreview();
+            } else {
+                seekBarLayout.showPreview();
+                exoPlayerManager.preview((float) seekBar.getProgress() / seekBar.getMax());
+            }
+
+        }
         return true;
     }
 }

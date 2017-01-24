@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_local"
+        android:orderInCategory="200"
+        android:title="Local"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_toggle"
         android:orderInCategory="100"
-        android:title="LOCAL"
+        android:title="Toggle"
         app:showAsAction="always" />
 </menu>
