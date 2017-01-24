@@ -1,18 +1,24 @@
 package com.github.rubensousa.previewseekbar.sample.exoplayer;
 
+import com.github.rubensousa.previewseekbar.PreviewSeekBarLayout;
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 
-public class ExoPlayerManager {
+public class ExoPlayerManager implements ExoPlayer.EventListener {
 
     // 5 minutes
     private static final int ROUND_DECIMALS_THRESHOLD = 1 * 60 * 1000;
@@ -22,15 +28,21 @@ public class ExoPlayerManager {
     private SimpleExoPlayerView previewPlayerView;
     private SimpleExoPlayer player;
     private SimpleExoPlayer previewPlayer;
+    private PreviewSeekBarLayout seekBarLayout;
 
     public ExoPlayerManager(SimpleExoPlayerView playerView, SimpleExoPlayerView previewPlayerView,
-                            String url) {
+                            PreviewSeekBarLayout seekBarLayout, String url) {
         this.playerView = playerView;
         this.previewPlayerView = previewPlayerView;
+        this.seekBarLayout = seekBarLayout;
         this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext(), url);
     }
 
-    public void preview(float offset) {
+    public void preview(boolean fromUser, float offset) {
+        if (!fromUser) {
+            seekBarLayout.hidePreview();
+            return;
+        }
         int scale = player.getDuration() >= ROUND_DECIMALS_THRESHOLD ? 2 : 1;
         float offsetRounded = roundOffset(offset, scale);
         player.setPlayWhenReady(false);
@@ -106,6 +118,7 @@ public class ExoPlayerManager {
                 trackSelector, loadControl);
         player.setPlayWhenReady(true);
         player.prepare(mediaSourceBuilder.getMediaSourceHls());
+        player.addListener(this);
         return player;
     }
 
@@ -122,5 +135,37 @@ public class ExoPlayerManager {
         player.setPlayWhenReady(false);
         player.prepare(mediaSourceBuilder.getMediaSourceHls());
         return player;
+    }
+
+    @Override
+    public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+    }
+
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+    }
+
+    @Override
+    public void onLoadingChanged(boolean isLoading) {
+
+    }
+
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        if (playbackState == ExoPlayer.STATE_READY && playWhenReady) {
+            seekBarLayout.hidePreview();
+        }
+    }
+
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+
+    }
+
+    @Override
+    public void onPositionDiscontinuity() {
+
     }
 }

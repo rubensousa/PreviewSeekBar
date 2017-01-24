@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         seekBarLayout.setTintColorResource(R.color.colorPrimary);
 
         seekBar.addOnSeekBarChangeListener(this);
-        exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView,
+        exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView, seekBarLayout,
                 getString(R.string.url_hls));
     }
 
@@ -68,9 +68,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         // load video progress
-        if (fromUser) {
-            exoPlayerManager.preview((float) progress / seekBar.getMax());
-        }
+        exoPlayerManager.preview(fromUser, (float) progress / seekBar.getMax());
     }
 
     @Override
@@ -94,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 exoPlayerManager.stopPreview();
             } else {
                 seekBarLayout.showPreview();
-                exoPlayerManager.preview((float) seekBar.getProgress() / seekBar.getMax());
+                exoPlayerManager.preview(true, (float) seekBar.getProgress() / seekBar.getMax());
             }
 
         }
