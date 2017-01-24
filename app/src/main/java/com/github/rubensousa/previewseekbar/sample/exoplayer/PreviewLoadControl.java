@@ -37,11 +37,6 @@ public class PreviewLoadControl implements LoadControl {
     }
 
     @Override
-    public void onPrepared() {
-
-    }
-
-    @Override
     public void onTracksSelected(Renderer[] renderers, TrackGroupArray trackGroups,
                                  TrackSelectionArray trackSelections) {
         int targetBufferSize = 0;
@@ -51,16 +46,6 @@ public class PreviewLoadControl implements LoadControl {
             }
         }
         allocator.setTargetBufferSize(targetBufferSize);
-    }
-
-    @Override
-    public void onStopped() {
-
-    }
-
-    @Override
-    public void onReleased() {
-
     }
 
     @Override
@@ -77,4 +62,20 @@ public class PreviewLoadControl implements LoadControl {
     public boolean shouldContinueLoading(long bufferedDurationUs) {
         return true;
     }
+
+    @Override
+    public void onPrepared() {
+        // No-op
+    }
+
+    @Override
+    public void onStopped() {
+        // No-op
+    }
+
+    @Override
+    public void onReleased() {
+        // No-op
+    }
+
 }

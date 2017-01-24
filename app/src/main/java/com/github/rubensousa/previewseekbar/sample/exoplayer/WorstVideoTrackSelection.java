@@ -23,7 +23,7 @@ import com.google.android.exoplayer2.trackselection.BaseTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 
 
-public class SingleVideoTrackSelection extends BaseTrackSelection {
+public class WorstVideoTrackSelection extends BaseTrackSelection {
 
 
     public static final class Factory implements TrackSelection.Factory {
@@ -32,18 +32,19 @@ public class SingleVideoTrackSelection extends BaseTrackSelection {
         }
 
         @Override
-        public SingleVideoTrackSelection createTrackSelection(TrackGroup group, int... tracks) {
-            return new SingleVideoTrackSelection(group, tracks);
+        public WorstVideoTrackSelection createTrackSelection(TrackGroup group, int... tracks) {
+            return new WorstVideoTrackSelection(group, tracks);
         }
 
     }
 
-    public SingleVideoTrackSelection(TrackGroup group, int... tracks) {
+    public WorstVideoTrackSelection(TrackGroup group, int... tracks) {
         super(group, tracks);
     }
 
     @Override
     public int getSelectedIndex() {
+        // last index has the stream with the lowest bitrate
         return getTrackGroup().length - 1;
     }
 
@@ -59,6 +60,6 @@ public class SingleVideoTrackSelection extends BaseTrackSelection {
 
     @Override
     public void updateSelectedTrack(long bufferedDurationUs) {
-
+        // No-op
     }
 }

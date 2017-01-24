@@ -135,7 +135,7 @@ public class ExoPlayerManager implements ExoPlayer.EventListener {
     }
 
     private SimpleExoPlayer createPreviewPlayer() {
-        TrackSelection.Factory videoTrackSelectionFactory = new SingleVideoTrackSelection.Factory();
+        TrackSelection.Factory videoTrackSelectionFactory = new WorstVideoTrackSelection.Factory();
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         LoadControl loadControl = new PreviewLoadControl();
         SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(previewPlayerView.getContext(),
