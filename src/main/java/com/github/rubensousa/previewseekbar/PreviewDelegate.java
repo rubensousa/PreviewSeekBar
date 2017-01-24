@@ -24,6 +24,24 @@ class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
         previewSeekBarLayout.getSeekBar().addOnSeekBarChangeListener(this);
     }
 
+    public boolean isShowing() {
+        return showing;
+    }
+
+    public void show() {
+        if (!showing) {
+            animator.show();
+            showing = true;
+        }
+    }
+
+    public void hide() {
+        if (showing) {
+            animator.hide();
+            showing = false;
+        }
+    }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         animator.move();

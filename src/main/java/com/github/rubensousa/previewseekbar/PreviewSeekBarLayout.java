@@ -94,6 +94,18 @@ public class PreviewSeekBarLayout extends RelativeLayout {
         }
     }
 
+    public boolean isShowingPreview(){
+        return delegate.isShowing();
+    }
+
+    public void showPreview() {
+        delegate.show();
+    }
+
+    public void hidePreview() {
+        delegate.hide();
+    }
+
     public FrameLayout getPreviewFrameLayout() {
         return previewFrameLayout;
     }
