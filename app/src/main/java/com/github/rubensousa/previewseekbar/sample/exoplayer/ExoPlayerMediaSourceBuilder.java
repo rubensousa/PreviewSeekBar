@@ -5,6 +5,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
@@ -20,43 +23,50 @@ import com.google.android.exoplayer2.util.Util;
 
 public class ExoPlayerMediaSourceBuilder {
 
-    private HttpDataSource.Factory httpDataSourceFactory;
-    private DataSource.Factory dataSourceFactory;
     private DefaultBandwidthMeter bandwidthMeter;
     private Context context;
-    private String url;
+    private Uri uri;
+    private int streamType;
     private Handler mainHandler = new Handler();
 
     public ExoPlayerMediaSourceBuilder(Context context, String url) {
         this.context = context;
-        this.url = url;
-
-        // Measures bandwidth during playback. Can be null if not required.
-        bandwidthMeter = new DefaultBandwidthMeter();
-
-        httpDataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(context,
-                "ExoPlayerDemo"), bandwidthMeter);
-
-        // Produces DataSource instances through which media data is loaded.
-        dataSourceFactory = new DefaultDataSourceFactory(context, bandwidthMeter,
-                httpDataSourceFactory);
+        this.uri = Uri.parse(url);
+        this.bandwidthMeter = new DefaultBandwidthMeter();
+        this.streamType = Util.inferContentType(uri.getLastPathSegment());
     }
 
-
-    public MediaSource getMediaSourceDash() {
-        return new DashMediaSource(Uri.parse(url), dataSourceFactory,
-                new DefaultDashChunkSource.Factory(dataSourceFactory),
-                mainHandler, null);
+    public MediaSource getMediaSource(boolean preview) {
+        switch (streamType) {
+            case C.TYPE_SS:
+                return new SsMediaSource(uri, new DefaultDataSourceFactory(context, null,
+                        getHttpDataSourceFactory(preview)),
+                        new DefaultSsChunkSource.Factory(getDataSourceFactory(preview)),
+                        mainHandler, null);
+            case C.TYPE_DASH:
+                return new DashMediaSource(uri,
+                        new DefaultDataSourceFactory(context, null,
+                                getHttpDataSourceFactory(preview)),
+                        new DefaultDashChunkSource.Factory(getDataSourceFactory(preview)),
+                        mainHandler, null);
+            case C.TYPE_HLS:
+                return new HlsMediaSource(uri, getDataSourceFactory(preview), mainHandler, null);
+            case C.TYPE_OTHER:
+                return new ExtractorMediaSource(uri, getDataSourceFactory(preview),
+                        new DefaultExtractorsFactory(), mainHandler, null);
+            default: {
+                throw new IllegalStateException("Unsupported type: " + streamType);
+            }
+        }
     }
 
-    public MediaSource getMediaSourceHls() {
-        return new HlsMediaSource(Uri.parse(url), dataSourceFactory, mainHandler, null);
+    private DataSource.Factory getDataSourceFactory(boolean preview) {
+        return new DefaultDataSourceFactory(context, preview ? null : bandwidthMeter,
+                getHttpDataSourceFactory(preview));
     }
 
-    public MediaSource getMediaSourceSs() {
-        return new SsMediaSource(Uri.parse(url),
-                new DefaultDataSourceFactory(context, null, httpDataSourceFactory),
-                new DefaultSsChunkSource.Factory(dataSourceFactory), mainHandler, null);
+    private DataSource.Factory getHttpDataSourceFactory(boolean preview) {
+        return new DefaultHttpDataSourceFactory(Util.getUserAgent(context,
+                "ExoPlayerDemo"), preview ? null : bandwidthMeter);
     }
-
 }

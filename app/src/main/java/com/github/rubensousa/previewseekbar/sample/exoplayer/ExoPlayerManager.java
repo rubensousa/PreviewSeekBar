@@ -117,7 +117,7 @@ public class ExoPlayerManager implements ExoPlayer.EventListener {
         SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(playerView.getContext(),
                 trackSelector, loadControl);
         player.setPlayWhenReady(true);
-        player.prepare(mediaSourceBuilder.getMediaSourceHls());
+        player.prepare(mediaSourceBuilder.getMediaSource(false));
         player.addListener(this);
         return player;
     }
@@ -133,7 +133,7 @@ public class ExoPlayerManager implements ExoPlayer.EventListener {
         SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(previewPlayerView.getContext(),
                 trackSelector, loadControl);
         player.setPlayWhenReady(false);
-        player.prepare(mediaSourceBuilder.getMediaSourceHls());
+        player.prepare(mediaSourceBuilder.getMediaSource(true));
         return player;
     }
 
