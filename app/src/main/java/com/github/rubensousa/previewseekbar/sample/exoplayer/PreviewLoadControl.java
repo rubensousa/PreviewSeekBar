@@ -30,28 +30,10 @@ import com.google.android.exoplayer2.util.Util;
 
 public class PreviewLoadControl implements LoadControl {
 
-    /**
-     * The default duration of media that must be buffered for playback to start or resume following a
-     * user action such as a seek, in milliseconds.
-     */
-    public static final int DEFAULT_BUFFER_FOR_PLAYBACK_MS = 50;
-
-    /**
-     * The default duration of media that must be buffered for playback to resume after a rebuffer,
-     * in milliseconds. A rebuffer is defined to be caused by buffer depletion rather than a user
-     * action.
-     */
-    public static final int DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = 50;
-
-    private final long bufferForPlaybackUs;
-    private final long bufferForPlaybackAfterRebufferUs;
-    private int targetBufferSize;
     private DefaultAllocator allocator;
 
     public PreviewLoadControl() {
         allocator = new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE);
-        bufferForPlaybackUs = DEFAULT_BUFFER_FOR_PLAYBACK_MS * 1000L;
-        bufferForPlaybackAfterRebufferUs = DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS * 1000L;
     }
 
     @Override
@@ -60,8 +42,9 @@ public class PreviewLoadControl implements LoadControl {
     }
 
     @Override
-    public void onTracksSelected(Renderer[] renderers, TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-        targetBufferSize = 0;
+    public void onTracksSelected(Renderer[] renderers, TrackGroupArray trackGroups,
+                                 TrackSelectionArray trackSelections) {
+        int targetBufferSize = 0;
         for (int i = 0; i < renderers.length; i++) {
             if (trackSelections.get(i) != null) {
                 targetBufferSize += Util.getDefaultBufferSize(renderers[i].getTrackType());
@@ -87,8 +70,7 @@ public class PreviewLoadControl implements LoadControl {
 
     @Override
     public boolean shouldStartPlayback(long bufferedDurationUs, boolean rebuffering) {
-        long minBufferDurationUs = rebuffering ? bufferForPlaybackAfterRebufferUs : bufferForPlaybackUs;
-        return minBufferDurationUs <= 0 || bufferedDurationUs >= minBufferDurationUs;
+        return bufferedDurationUs >= 1000L * 50; // around 1 frame
     }
 
     @Override
