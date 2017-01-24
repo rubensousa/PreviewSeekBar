@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         seekBar.addOnSeekBarChangeListener(this);
         exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView, seekBarLayout,
-                getString(R.string.url_dash));
+                getString(R.string.url_hls));
     }
 
     @Override
