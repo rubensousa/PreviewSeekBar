@@ -7,7 +7,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <dimen name="video_preview_width">120dp</dimen>
-    <dimen name="video_preview_height">68dp</dimen>
+    <dimen name="video_preview_width">100dp</dimen>
+    <dimen name="video_preview_height">56dp</dimen>
     <dimen name="video_frame_width">2dp</dimen>
 </resources>

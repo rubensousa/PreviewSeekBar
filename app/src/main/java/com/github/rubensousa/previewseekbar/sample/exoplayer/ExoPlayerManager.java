@@ -14,6 +14,9 @@ import com.google.android.exoplayer2.util.Util;
 
 public class ExoPlayerManager {
 
+    // 5 minutes
+    private static final int ROUND_DECIMALS_THRESHOLD = 1 * 60 * 1000;
+
     private ExoPlayerMediaSourceBuilder mediaSourceBuilder;
     private SimpleExoPlayerView playerView;
     private SimpleExoPlayerView previewPlayerView;
@@ -28,7 +31,8 @@ public class ExoPlayerManager {
     }
 
     public void preview(float offset) {
-        float offsetRounded = roundOffset(offset);
+        int scale = player.getDuration() >= ROUND_DECIMALS_THRESHOLD ? 2 : 1;
+        float offsetRounded = roundOffset(offset, scale);
         player.setPlayWhenReady(false);
         previewPlayer.seekTo((long) (offsetRounded * previewPlayer.getDuration()));
         previewPlayer.setPlayWhenReady(false);
@@ -66,8 +70,8 @@ public class ExoPlayerManager {
         player.setPlayWhenReady(true);
     }
 
-    private float roundOffset(float offset) {
-        return (float) (Math.round(offset * Math.pow(10, 2)) / Math.pow(10, 2));
+    private float roundOffset(float offset, int scale) {
+        return (float) (Math.round(offset * Math.pow(10, scale)) / Math.pow(10, scale));
     }
 
     private void releasePlayers() {
@@ -101,7 +105,7 @@ public class ExoPlayerManager {
         SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(playerView.getContext(),
                 trackSelector, loadControl);
         player.setPlayWhenReady(true);
-        player.prepare(mediaSourceBuilder.getMediaSourceDash());
+        player.prepare(mediaSourceBuilder.getMediaSourceHls());
         return player;
     }
 
@@ -116,7 +120,7 @@ public class ExoPlayerManager {
         SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(previewPlayerView.getContext(),
                 trackSelector, loadControl);
         player.setPlayWhenReady(false);
-        player.prepare(mediaSourceBuilder.getMediaSourceDash());
+        player.prepare(mediaSourceBuilder.getMediaSourceHls());
         return player;
     }
 }

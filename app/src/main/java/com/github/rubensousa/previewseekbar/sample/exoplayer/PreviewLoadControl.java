@@ -33,14 +33,14 @@ public class PreviewLoadControl implements LoadControl {
      * The default duration of media that must be buffered for playback to start or resume following a
      * user action such as a seek, in milliseconds.
      */
-    public static final int DEFAULT_BUFFER_FOR_PLAYBACK_MS = 100;
+    public static final int DEFAULT_BUFFER_FOR_PLAYBACK_MS = 50;
 
     /**
      * The default duration of media that must be buffered for playback to resume after a rebuffer,
      * in milliseconds. A rebuffer is defined to be caused by buffer depletion rather than a user
      * action.
      */
-    public static final int DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = 300;
+    public static final int DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = 50;
 
     private final long bufferForPlaybackUs;
     private final long bufferForPlaybackAfterRebufferUs;
