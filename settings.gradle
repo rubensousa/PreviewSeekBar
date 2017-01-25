@@ -1,1 +1,1 @@
-include ':sample', ':previewseekbar'
+include ':sample'

@@ -27,6 +27,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
     compile 'com.google.android.exoplayer:exoplayer:r2.1.1'
-    compile project (':previewseekbar')
     testCompile 'junit:junit:4.12'
 }
