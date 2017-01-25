@@ -37,8 +37,8 @@ import com.google.android.exoplayer2.util.Util;
 
 public class ExoPlayerManager implements ExoPlayer.EventListener {
 
-    // 5 minutes
-    private static final int ROUND_DECIMALS_THRESHOLD = 5 * 60 * 1000;
+    // 1 minute
+    private static final int ROUND_DECIMALS_THRESHOLD = 1 * 60 * 1000;
 
     private ExoPlayerMediaSourceBuilder mediaSourceBuilder;
     private SimpleExoPlayerView playerView;
