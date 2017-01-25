@@ -1,5 +1,7 @@
 *.iml
 .gradle
+/sample/sample.iml
+/previewseekbar/previewseekbar.iml
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
