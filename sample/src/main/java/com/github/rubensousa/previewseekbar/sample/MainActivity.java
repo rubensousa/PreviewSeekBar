@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.SeekBar;
 
 import com.github.rubensousa.previewseekbar.PreviewSeekBar;
@@ -41,9 +42,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.main);
-        toolbar.setOnMenuItemClickListener(this);
 
         SimpleExoPlayerView playerView = (SimpleExoPlayerView) findViewById(R.id.player_view);
         SimpleExoPlayerView previewPlayerView
@@ -56,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         seekBar.addOnSeekBarChangeListener(this);
         exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView, seekBarLayout,
                 getString(R.string.url_hls));
+
+        requestFullScreenIfLandscape();
     }
 
     @Override
@@ -114,5 +114,20 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         }
         return true;
+    }
+
+    private void requestFullScreenIfLandscape() {
+        if (getResources().getBoolean(R.bool.landscape)) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        } else {
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar.inflateMenu(R.menu.main);
+            toolbar.setOnMenuItemClickListener(this);
+        }
     }
 }
