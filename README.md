@@ -1,4 +1,5 @@
 # PreviewSeekBar
-A SeekBar suited to show a preview of something. As seen in Google Play Movies.
+
+A SeekBar suited for showing a preview of something. As seen in Google Play Movies.
 
 
