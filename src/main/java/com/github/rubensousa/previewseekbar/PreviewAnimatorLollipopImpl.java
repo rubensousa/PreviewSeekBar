@@ -63,10 +63,10 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startReveal() {
         Animator animator = ViewAnimationUtils.createCircularReveal(previewView,
-                PreviewSeekbarUtils.getCenterX(previewView),
-                PreviewSeekbarUtils.getCenterY(previewView),
+                getCenterX(previewView),
+                getCenterY(previewView),
                 morphView.getWidth() * 2,
-                PreviewSeekbarUtils.getRadius(previewView));
+                getRadius(previewView));
 
         animator.setTarget(previewView);
         animator.setDuration(MORPH_REVEAL_DURATION);
@@ -98,9 +98,9 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startUnreveal() {
         Animator animator = ViewAnimationUtils.createCircularReveal(previewView,
-                PreviewSeekbarUtils.getCenterX(previewView),
-                PreviewSeekbarUtils.getCenterY(previewView),
-                PreviewSeekbarUtils.getRadius(previewView), morphView.getWidth() * 2);
+                getCenterX(previewView),
+                getCenterY(previewView),
+                getRadius(previewView), morphView.getWidth() * 2);
         animator.setTarget(previewView);
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -124,5 +124,17 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
         animator.setDuration(UNMORPH_UNREVEAL_DURATION)
                 .setInterpolator(new AccelerateInterpolator());
         animator.start();
+    }
+
+    private int getRadius(View view) {
+        return (int) Math.hypot(view.getWidth() / 2, view.getHeight() / 2);
+    }
+
+    private int getCenterX(View view) {
+        return view.getWidth() / 2;
+    }
+
+    private int getCenterY(View view) {
+        return view.getHeight() / 2;
     }
 }
