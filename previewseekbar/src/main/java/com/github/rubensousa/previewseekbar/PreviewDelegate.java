@@ -7,21 +7,27 @@ import android.widget.SeekBar;
 
 class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
 
+    private PreviewSeekBarLayout previewSeekBarLayout;
     private PreviewAnimator animator;
     private boolean showing;
     private boolean startTouch;
+    private boolean setup;
 
     public PreviewDelegate(PreviewSeekBarLayout previewSeekBarLayout) {
+        this.previewSeekBarLayout = previewSeekBarLayout;
+    }
+
+    public void setup() {
+        previewSeekBarLayout.getPreviewFrameLayout().setVisibility(View.INVISIBLE);
+        previewSeekBarLayout.getMorphView().setVisibility(View.INVISIBLE);
+        previewSeekBarLayout.getFrameView().setVisibility(View.INVISIBLE);
+        previewSeekBarLayout.getSeekBar().addOnSeekBarChangeListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             this.animator = new PreviewAnimatorLollipopImpl(previewSeekBarLayout);
         } else {
             this.animator = new PreviewAnimatorImpl(previewSeekBarLayout);
         }
-
-        previewSeekBarLayout.getPreviewFrameLayout().setVisibility(View.INVISIBLE);
-        previewSeekBarLayout.getMorphView().setVisibility(View.INVISIBLE);
-        previewSeekBarLayout.getFrameView().setVisibility(View.INVISIBLE);
-        previewSeekBarLayout.getSeekBar().addOnSeekBarChangeListener(this);
+        setup = true;
     }
 
     public boolean isShowing() {
@@ -29,7 +35,7 @@ class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
     }
 
     public void show() {
-        if (!showing) {
+        if (!showing && setup) {
             animator.show();
             showing = true;
         }
@@ -44,10 +50,12 @@ class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        animator.move();
-        if (!showing && !startTouch && fromUser) {
-            animator.show();
-            showing = true;
+        if (setup) {
+            animator.move();
+            if (!showing && !startTouch && fromUser) {
+                animator.show();
+                showing = true;
+            }
         }
         startTouch = false;
     }

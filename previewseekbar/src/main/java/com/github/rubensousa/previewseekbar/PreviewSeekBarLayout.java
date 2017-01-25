@@ -54,6 +54,7 @@ public class PreviewSeekBarLayout extends RelativeLayout {
 
         // Create frame view for the circular reveal
         frameView = new View(getContext());
+        delegate = new PreviewDelegate(this);
     }
 
     @Override
@@ -75,7 +76,7 @@ public class PreviewSeekBarLayout extends RelativeLayout {
             // Setup colors for the morph view and frame view
             setupColors();
 
-            delegate = new PreviewDelegate(this);
+            delegate.setup();
 
             // Setup morph view
             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(0, 0);
@@ -94,7 +95,7 @@ public class PreviewSeekBarLayout extends RelativeLayout {
         }
     }
 
-    public boolean isShowingPreview(){
+    public boolean isShowingPreview() {
         return delegate.isShowing();
     }
 
