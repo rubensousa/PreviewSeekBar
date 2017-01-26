@@ -154,9 +154,21 @@ SimpleExoPlayer previewPlayer = ExoPlayerFactory.newSimpleInstance(previewPlayer
 previewPlayer.setPlayWhenReady(false);        
 ```
 
-PreviewLoadControl: https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/java/com/github/rubensousa/previewseekbar/sample/exoplayer/PreviewLoadControl.java
+[PreviewLoadControl](https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/java/com/github/rubensousa/previewseekbar/sample/exoplayer/PreviewLoadControl.java) and [WorstVideoTrackSelection](https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/java/com/github/rubensousa/previewseekbar/sample/exoplayer/WorstVideoTrackSelection.java) are used in the sample. Check the next section for some improvements notes.
 
-WorstVideoTrackSelection: https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/java/com/github/rubensousa/previewseekbar/sample/exoplayer/WorstVideoTrackSelection.java
+#### Seek the player onProgressChanged
+
+```java
+@Override
+public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    if(fromUser){
+        int offset = (float) progress / seekBar.getMax()
+        // Round the offset before seeking. The sample uses 1% or 10% of the video per each thumbnail
+        previewPlayer.seekTo((long) (offset * previewPlayer.getDuration()));
+        previewPlayer.setPlayWhenReady(false);
+    }
+}
+```
 
 ## Improvements
 
@@ -164,9 +176,11 @@ The sample uses some code adapted from the ExoPlayer official demo: https://gith
 
 A few improvements would be:
 
-- Adding a stream with lower bitrate to load and display the images faster
+- Adding a stream with lower bitrate to load and display the images faster.
 
 - Using some kind of special stream just for the thumbnails. Maybe this is how the Google Play team did it, I don't know. They load the thumbnails a lot faster than this sample.
+
+- Caching thumbnails in disk for offline use.
 
 Any ideas for improving this would be welcomed!
 
