@@ -156,7 +156,7 @@ previewPlayer.setPlayWhenReady(false);
 
 [PreviewLoadControl](https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/java/com/github/rubensousa/previewseekbar/sample/exoplayer/PreviewLoadControl.java) and [WorstVideoTrackSelection](https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/java/com/github/rubensousa/previewseekbar/sample/exoplayer/WorstVideoTrackSelection.java) are used in the sample. Check the next section for some improvements notes.
 
-#### Seek the player onProgressChanged
+#### Seek the player in onProgressChanged
 
 ```java
 @Override
