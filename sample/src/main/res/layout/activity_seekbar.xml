@@ -38,9 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/previewFrameLayout"
             android:layout_marginTop="25dp"
-            android:max="800"
-            android:progressTint="@color/colorPrimary"
-            android:thumbTint="@color/colorPrimary" />
+            android:max="800" />
 
 
     </com.github.rubensousa.previewseekbar.PreviewSeekBarLayout>
