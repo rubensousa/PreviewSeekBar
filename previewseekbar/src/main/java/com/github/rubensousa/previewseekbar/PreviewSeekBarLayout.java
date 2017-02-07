@@ -125,12 +125,6 @@ public class PreviewSeekBarLayout extends RelativeLayout {
 
     public void setTintColor(@ColorInt int color) {
         tintColor = color;
-
-        // The view may have not been laid out yet
-        if (seekBar == null) {
-            return;
-        }
-
         Drawable drawable = DrawableCompat.wrap(morphView.getBackground());
         DrawableCompat.setTint(drawable, color);
         morphView.setBackground(drawable);
@@ -138,12 +132,7 @@ public class PreviewSeekBarLayout extends RelativeLayout {
     }
 
     public void setTintColorResource(@ColorRes int color) {
-        tintColor = ContextCompat.getColor(getContext(), color);
-
-        // The view may have not been laid out yet
-        if (seekBar != null) {
-            setTintColor(tintColor);
-        }
+        setTintColor(ContextCompat.getColor(getContext(), color));
     }
 
     private void setupColors() {
