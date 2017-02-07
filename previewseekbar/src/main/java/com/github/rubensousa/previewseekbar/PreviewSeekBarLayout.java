@@ -1,6 +1,5 @@
 package com.github.rubensousa.previewseekbar;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
