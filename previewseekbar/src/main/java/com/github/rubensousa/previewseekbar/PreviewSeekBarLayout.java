@@ -146,11 +146,12 @@ public class PreviewSeekBarLayout extends RelativeLayout {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void setupColors() {
-        ColorStateList list = seekBar.getThumbTintList();
-        if (list != null) {
-            tintColor = list.getDefaultColor();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ColorStateList list = seekBar.getThumbTintList();
+            if (list != null) {
+                tintColor = list.getDefaultColor();
+            }
         }
         setTintColor(tintColor);
     }
