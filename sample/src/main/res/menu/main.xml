@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_local"
+        android:icon="@drawable/ic_sd_card"
         android:orderInCategory="200"
         android:title="Local"
         app:showAsAction="always" />

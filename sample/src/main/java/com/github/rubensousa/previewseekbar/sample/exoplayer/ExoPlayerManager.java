@@ -17,6 +17,8 @@
 
 package com.github.rubensousa.previewseekbar.sample.exoplayer;
 
+import android.net.Uri;
+
 import com.github.rubensousa.previewseekbar.PreviewSeekBarLayout;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -65,6 +67,17 @@ public class ExoPlayerManager implements ExoPlayer.EventListener {
         player.setPlayWhenReady(false);
         previewPlayer.seekTo((long) (offsetRounded * previewPlayer.getDuration()));
         previewPlayer.setPlayWhenReady(false);
+    }
+
+    public void play(Uri uri) {
+        mediaSourceBuilder.setUri(uri);
+        if (player != null) {
+            player.release();
+        }
+        if (previewPlayer != null) {
+            previewPlayer.release();
+        }
+        createPlayers();
     }
 
     public void onStart() {

@@ -34,6 +34,8 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener,
         Toolbar.OnMenuItemClickListener {
 
+    private static final int PICK_FILE_REQUEST_CODE = 2;
+
     private ExoPlayerManager exoPlayerManager;
     private PreviewSeekBarLayout seekBarLayout;
     private PreviewSeekBar seekBar;
@@ -56,6 +58,14 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 getString(R.string.url_hls));
 
         requestFullScreenIfLandscape();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            exoPlayerManager.play(data.getData());
+        }
     }
 
     @Override
@@ -101,9 +111,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (item.getItemId() == R.id.action_local) {
-            startActivity(new Intent(this, LocalActivity.class));
-        }
-        if (item.getItemId() == R.id.action_toggle) {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("video/*.mp4");
+            startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
+        } else if (item.getItemId() == R.id.action_toggle) {
             if (seekBarLayout.isShowingPreview()) {
                 seekBarLayout.hidePreview();
                 exoPlayerManager.stopPreview();
@@ -111,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 seekBarLayout.showPreview();
                 exoPlayerManager.preview(true, (float) seekBar.getProgress() / seekBar.getMax());
             }
-
         }
         return true;
     }

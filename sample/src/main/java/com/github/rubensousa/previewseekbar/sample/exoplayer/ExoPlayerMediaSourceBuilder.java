@@ -52,6 +52,11 @@ public class ExoPlayerMediaSourceBuilder {
         this.streamType = Util.inferContentType(uri.getLastPathSegment());
     }
 
+    public void setUri(Uri uri) {
+        this.uri = uri;
+        this.streamType = Util.inferContentType(uri.getLastPathSegment());
+    }
+
     public MediaSource getMediaSource(boolean preview) {
         switch (streamType) {
             case C.TYPE_SS:
