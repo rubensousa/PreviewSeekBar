@@ -57,11 +57,7 @@ public class ExoPlayerManager implements ExoPlayer.EventListener {
         this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext(), url);
     }
 
-    public void preview(boolean fromUser, float offset) {
-        if (!fromUser) {
-            seekBarLayout.hidePreview();
-            return;
-        }
+    public void preview(float offset) {
         int scale = player.getDuration() >= ROUND_DECIMALS_THRESHOLD ? 2 : 1;
         float offsetRounded = roundOffset(offset, scale);
         player.setPlayWhenReady(false);
@@ -102,10 +98,6 @@ public class ExoPlayerManager implements ExoPlayer.EventListener {
         if (Util.SDK_INT > 23) {
             releasePlayers();
         }
-    }
-
-    public void startPreview() {
-        player.setPlayWhenReady(false);
     }
 
     public void stopPreview() {
