@@ -45,11 +45,9 @@ public class ExoPlayerMediaSourceBuilder {
     private int streamType;
     private Handler mainHandler = new Handler();
 
-    public ExoPlayerMediaSourceBuilder(Context context, String url) {
+    public ExoPlayerMediaSourceBuilder(Context context) {
         this.context = context;
-        this.uri = Uri.parse(url);
         this.bandwidthMeter = new DefaultBandwidthMeter();
-        this.streamType = Util.inferContentType(uri.getLastPathSegment());
     }
 
     public void setUri(Uri uri) {

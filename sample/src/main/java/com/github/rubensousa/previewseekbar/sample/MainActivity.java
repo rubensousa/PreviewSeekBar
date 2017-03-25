@@ -18,7 +18,7 @@
 package com.github.rubensousa.previewseekbar.sample;
 
 import android.content.Intent;
-import android.graphics.PixelFormat;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,7 +27,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.SeekBar;
 
-import com.github.rubensousa.previewseekbar.PreviewLoader;
 import com.github.rubensousa.previewseekbar.PreviewSeekBar;
 import com.github.rubensousa.previewseekbar.PreviewSeekBarLayout;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
@@ -58,8 +57,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         seekBarLayout.setTintColorResource(R.color.colorPrimary);
 
         seekBar.addOnSeekBarChangeListener(this);
-        exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView, seekBarLayout,
-                getString(R.string.url_hls));
+        exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView, seekBarLayout);
+        exoPlayerManager.play(Uri.parse(getString(R.string.url_hls)));
         seekBarLayout.setup(exoPlayerManager);
 
         View view = previewPlayerView.getVideoSurfaceView();

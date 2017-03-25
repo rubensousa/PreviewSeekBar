@@ -53,11 +53,11 @@ public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader 
     private PreviewSeekBarLayout seekBarLayout;
 
     public ExoPlayerManager(SimpleExoPlayerView playerView, SimpleExoPlayerView previewPlayerView,
-                            PreviewSeekBarLayout seekBarLayout, String url) {
+                            PreviewSeekBarLayout seekBarLayout) {
         this.playerView = playerView;
         this.previewPlayerView = previewPlayerView;
         this.seekBarLayout = seekBarLayout;
-        this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext(), url);
+        this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext());
     }
 
     public void play(Uri uri) {
