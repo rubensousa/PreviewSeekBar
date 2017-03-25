@@ -27,6 +27,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.SeekBar;
 
+import com.github.rubensousa.previewseekbar.PreviewLoader;
 import com.github.rubensousa.previewseekbar.PreviewSeekBar;
 import com.github.rubensousa.previewseekbar.PreviewSeekBarLayout;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
@@ -53,11 +54,13 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         seekBar = (PreviewSeekBar) playerView.findViewById(R.id.exo_progress);
         seekBarLayout = (PreviewSeekBarLayout) findViewById(R.id.previewSeekBarLayout);
 
+
         seekBarLayout.setTintColorResource(R.color.colorPrimary);
 
         seekBar.addOnSeekBarChangeListener(this);
         exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView, seekBarLayout,
                 getString(R.string.url_hls));
+        seekBarLayout.setup(exoPlayerManager);
 
         View view = previewPlayerView.getVideoSurfaceView();
 
@@ -105,10 +108,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        // load video progress
-        if (fromUser) {
-            exoPlayerManager.preview((float) progress / seekBar.getMax());
-        }
+
     }
 
     @Override
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 exoPlayerManager.stopPreview();
             } else {
                 seekBarLayout.showPreview();
-                exoPlayerManager.preview((float) seekBar.getProgress() / seekBar.getMax());
+                exoPlayerManager.loadPreview(seekBar.getProgress(), seekBar.getMax());
             }
         }
         return true;

@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.view.SurfaceView;
 import android.view.View;
 
+import com.github.rubensousa.previewseekbar.PreviewLoader;
 import com.github.rubensousa.previewseekbar.PreviewSeekBarLayout;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -39,7 +40,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 
-public class ExoPlayerManager implements ExoPlayer.EventListener {
+public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader {
 
     // 1 minute
     private static final int ROUND_DECIMALS_THRESHOLD = 1 * 60 * 1000;
@@ -57,18 +58,6 @@ public class ExoPlayerManager implements ExoPlayer.EventListener {
         this.previewPlayerView = previewPlayerView;
         this.seekBarLayout = seekBarLayout;
         this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext(), url);
-    }
-
-    public void preview(float offset) {
-        int scale = player.getDuration() >= ROUND_DECIMALS_THRESHOLD ? 2 : 1;
-        float offsetRounded = roundOffset(offset, scale);
-        player.setPlayWhenReady(false);
-        previewPlayer.seekTo((long) (offsetRounded * previewPlayer.getDuration()));
-        previewPlayer.setPlayWhenReady(false);
-        View view = previewPlayerView.getVideoSurfaceView();
-        if (view instanceof SurfaceView) {
-            view.setVisibility(View.VISIBLE);
-        }
     }
 
     public void play(Uri uri) {
@@ -190,5 +179,19 @@ public class ExoPlayerManager implements ExoPlayer.EventListener {
     @Override
     public void onPositionDiscontinuity() {
 
+    }
+
+    @Override
+    public void loadPreview(long currentPosition, long max) {
+        float offset = (float) currentPosition / max;
+        int scale = player.getDuration() >= ROUND_DECIMALS_THRESHOLD ? 2 : 1;
+        float offsetRounded = roundOffset(offset, scale);
+        player.setPlayWhenReady(false);
+        previewPlayer.seekTo((long) (offsetRounded * previewPlayer.getDuration()));
+        previewPlayer.setPlayWhenReady(false);
+        View view = previewPlayerView.getVideoSurfaceView();
+        if (view instanceof SurfaceView) {
+            view.setVisibility(View.VISIBLE);
+        }
     }
 }

@@ -15,8 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 
-public class PreviewSeekBarLayout extends RelativeLayout {
+public class PreviewSeekBarLayout extends RelativeLayout implements SeekBar.OnSeekBarChangeListener {
 
     private PreviewDelegate delegate;
     private PreviewSeekBar seekBar;
@@ -25,6 +26,7 @@ public class PreviewSeekBarLayout extends RelativeLayout {
     private View frameView;
     private boolean firstLayout = true;
     private int tintColor;
+    private PreviewLoader loader;
 
     public PreviewSeekBarLayout(Context context) {
         super(context);
@@ -77,6 +79,10 @@ public class PreviewSeekBarLayout extends RelativeLayout {
 
             delegate.setup();
 
+            if (loader != null) {
+                setup(loader);
+            }
+
             // Setup morph view
             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(0, 0);
             layoutParams.width = getResources()
@@ -91,6 +97,13 @@ public class PreviewSeekBarLayout extends RelativeLayout {
             frameLayoutParams.gravity = Gravity.CENTER;
             previewFrameLayout.addView(frameView, frameLayoutParams);
             firstLayout = false;
+        }
+    }
+
+    public void setup(PreviewLoader loader) {
+        this.loader = loader;
+        if (this.loader != null && seekBar != null) {
+            seekBar.addOnSeekBarChangeListener(this);
         }
     }
 
@@ -191,6 +204,26 @@ public class PreviewSeekBarLayout extends RelativeLayout {
         }
 
         return hasSeekbar && hasFrameLayout;
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (fromUser) {
+            if (loader != null) {
+                loader.loadPreview(progress, seekBar.getMax());
+            }
+            showPreview();
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        hidePreview();
     }
 
 }
