@@ -18,6 +18,8 @@
 package com.github.rubensousa.previewseekbar.sample.exoplayer;
 
 import android.net.Uri;
+import android.view.SurfaceView;
+import android.view.View;
 
 import com.github.rubensousa.previewseekbar.PreviewSeekBarLayout;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -63,6 +65,10 @@ public class ExoPlayerManager implements ExoPlayer.EventListener {
         player.setPlayWhenReady(false);
         previewPlayer.seekTo((long) (offsetRounded * previewPlayer.getDuration()));
         previewPlayer.setPlayWhenReady(false);
+        View view = previewPlayerView.getVideoSurfaceView();
+        if (view instanceof SurfaceView) {
+            view.setVisibility(View.VISIBLE);
+        }
     }
 
     public void play(Uri uri) {
@@ -102,6 +108,10 @@ public class ExoPlayerManager implements ExoPlayer.EventListener {
 
     public void stopPreview() {
         player.setPlayWhenReady(true);
+        View view = previewPlayerView.getVideoSurfaceView();
+        if (view instanceof SurfaceView) {
+            view.setVisibility(View.INVISIBLE);
+        }
     }
 
     private float roundOffset(float offset, int scale) {

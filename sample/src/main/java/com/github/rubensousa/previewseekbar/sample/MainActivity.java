@@ -18,10 +18,12 @@
 package com.github.rubensousa.previewseekbar.sample;
 
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.SeekBar;
 
@@ -56,6 +58,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         seekBar.addOnSeekBarChangeListener(this);
         exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView, seekBarLayout,
                 getString(R.string.url_hls));
+
+        View view = previewPlayerView.getVideoSurfaceView();
+
+        if (view instanceof SurfaceView) {
+            SurfaceView surfaceView = (SurfaceView) view;
+            surfaceView.setZOrderMediaOverlay(true);
+            surfaceView.setZOrderOnTop(true);
+            surfaceView.setVisibility(View.INVISIBLE);
+        }
 
         requestFullScreenIfLandscape();
     }
