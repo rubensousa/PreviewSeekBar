@@ -1,6 +1,7 @@
 package com.github.rubensousa.previewseekbar;
 
 
+import android.os.Build;
 import android.view.View;
 
 abstract class PreviewAnimator {
@@ -38,21 +39,38 @@ abstract class PreviewAnimator {
     }
 
     float getPreviewCenterX(int width) {
-        return (previewSeekBarLayout.getWidth() - previewView.getWidth())
+        float ltr = (previewSeekBarLayout.getWidth() - previewView.getWidth())
                 * getWidthOffset(previewSeekBar.getProgress()) + previewView.getWidth() / 2f
                 - width / 2f;
+        float rtl = (previewSeekBarLayout.getWidth() - previewView.getWidth())
+                * (1 - getWidthOffset(previewSeekBar.getProgress())) + previewView.getWidth() / 2f
+                - width / 2f;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return previewSeekBar.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR ?
+                    ltr : rtl;
+        } else {
+            return ltr;
+        }
     }
 
     float getPreviewX() {
-        return ((float) (previewSeekBarLayout.getWidth() - previewView.getWidth()))
+        float ltr = ((float) (previewSeekBarLayout.getWidth() - previewView.getWidth()))
                 * getWidthOffset(previewSeekBar.getProgress());
+        float rtl = ((float) (previewSeekBarLayout.getWidth() - previewView.getWidth()))
+                * (1 - getWidthOffset(previewSeekBar.getProgress()));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return previewSeekBar.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR ?
+                    ltr : rtl;
+        } else {
+            return ltr;
+        }
     }
 
     float getHideY() {
         return previewSeekBar.getY() + previewSeekBar.getThumbOffset();
     }
 
-    float getShowY(){
-       return (int) (previewView.getY() + previewView.getHeight() / 2f);
+    float getShowY() {
+        return (int) (previewView.getY() + previewView.getHeight() / 2f);
     }
 }

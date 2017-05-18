@@ -199,6 +199,11 @@ public class PreviewSeekBarLayout extends RelativeLayout implements SeekBar.OnSe
             }
 
             if (hasSeekbar && hasFrameLayout) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
+                        && getResources().getConfiguration().getLayoutDirection()
+                        == View.LAYOUT_DIRECTION_RTL) {
+                    seekBar.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                }
                 return true;
             }
         }
