@@ -62,13 +62,6 @@ public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader 
 
     public void play(Uri uri) {
         mediaSourceBuilder.setUri(uri);
-        if (player != null) {
-            player.release();
-        }
-        if (previewPlayer != null) {
-            previewPlayer.release();
-        }
-        createPlayers();
     }
 
     public void onStart() {
@@ -78,7 +71,7 @@ public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader 
     }
 
     public void onResume() {
-        if ((Util.SDK_INT <= 23 || player == null || previewPlayer == null)) {
+        if (Util.SDK_INT <= 23) {
             createPlayers();
         }
     }
@@ -119,6 +112,12 @@ public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader 
     }
 
     private void createPlayers() {
+        if (player != null) {
+            player.release();
+        }
+        if (previewPlayer != null) {
+            previewPlayer.release();
+        }
         player = createFullPlayer();
         playerView.setPlayer(player);
         previewPlayer = createPreviewPlayer();
@@ -145,6 +144,7 @@ public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader 
         SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(previewPlayerView.getContext(),
                 trackSelector, loadControl);
         player.setPlayWhenReady(false);
+        player.setVolume(0f);
         player.prepare(mediaSourceBuilder.getMediaSource(true));
         return player;
     }
