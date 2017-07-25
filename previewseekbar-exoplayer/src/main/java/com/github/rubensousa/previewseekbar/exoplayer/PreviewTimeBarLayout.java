@@ -13,7 +13,7 @@ import com.github.rubensousa.previewseekbar.base.PreviewView;
 public class PreviewTimeBarLayout extends PreviewGeneralLayout {
 
     private PreviewTimeBar previewTimeBar;
-    private View previewFrameLayout;
+    private FrameLayout previewFrameLayout;
 
 
     public PreviewTimeBarLayout(Context context) {
@@ -87,7 +87,7 @@ public class PreviewTimeBarLayout extends PreviewGeneralLayout {
     }
 
     @Override
-    public View getPreviewFrameLayout() {
+    public FrameLayout getPreviewFrameLayout() {
         return previewFrameLayout;
     }
 }

@@ -2,6 +2,7 @@ package com.github.rubensousa.previewseekbar.base;
 
 
 import android.view.View;
+import android.widget.FrameLayout;
 
 public interface PreviewLayout {
 
@@ -11,5 +12,5 @@ public interface PreviewLayout {
 
     View getFrameView();
 
-    View getPreviewFrameLayout();
+    FrameLayout getPreviewFrameLayout();
 }

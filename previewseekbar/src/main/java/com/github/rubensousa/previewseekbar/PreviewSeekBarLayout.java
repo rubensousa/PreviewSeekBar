@@ -32,7 +32,7 @@ public class PreviewSeekBarLayout extends PreviewGeneralLayout {
     }
 
     @Override
-    public View getPreviewFrameLayout() {
+    public FrameLayout getPreviewFrameLayout() {
         return previewFrameLayout;
     }
 
