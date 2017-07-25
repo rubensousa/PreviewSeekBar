@@ -11,22 +11,22 @@ abstract class PreviewAnimator {
     static final int UNMORPH_MOVE_DURATION = 200;
     static final int UNMORPH_UNREVEAL_DURATION = 250;
 
-    PreviewSeekBar previewSeekBar;
-    PreviewSeekBarLayout previewSeekBarLayout;
-    View previewView;
+    PreviewView previewView;
+    PreviewLayout previewLayout;
+    View previewChildView;
     View frameView;
     View morphView;
 
-    public PreviewAnimator(PreviewSeekBarLayout previewSeekBarLayout) {
-        this.previewSeekBarLayout = previewSeekBarLayout;
-        this.previewSeekBar = previewSeekBarLayout.getSeekBar();
-        this.previewView = previewSeekBarLayout.getPreviewFrameLayout();
-        this.morphView = previewSeekBarLayout.getMorphView();
-        this.frameView = previewSeekBarLayout.getFrameView();
+    PreviewAnimator(PreviewLayout previewLayout) {
+        this.previewLayout = previewLayout;
+        this.previewView = this.previewLayout.getPreviewView();
+        this.previewChildView = this.previewLayout.getPreviewFrameLayout();
+        this.morphView = this.previewLayout.getMorphView();
+        this.frameView = this.previewLayout.getFrameView();
     }
 
-    public void move() {
-        previewView.setX(getPreviewX());
+    void move() {
+        previewChildView.setX(getPreviewX());
         morphView.setX(getPreviewCenterX(morphView.getWidth()));
     }
 
@@ -35,18 +35,18 @@ abstract class PreviewAnimator {
     public abstract void hide();
 
     float getWidthOffset(int progress) {
-        return (float) progress / previewSeekBar.getMax();
+        return (float) progress / previewView.getMax();
     }
 
     float getPreviewCenterX(int width) {
-        float ltr = (previewSeekBarLayout.getWidth() - previewView.getWidth())
-                * getWidthOffset(previewSeekBar.getProgress()) + previewView.getWidth() / 2f
+        float ltr = (((View) previewLayout).getWidth() - previewChildView.getWidth())
+                * getWidthOffset(previewView.getProgress()) + previewChildView.getWidth() / 2f
                 - width / 2f;
-        float rtl = (previewSeekBarLayout.getWidth() - previewView.getWidth())
-                * (1 - getWidthOffset(previewSeekBar.getProgress())) + previewView.getWidth() / 2f
+        float rtl = (((View) previewLayout).getWidth() - previewChildView.getWidth())
+                * (1 - getWidthOffset(previewView.getProgress())) + previewChildView.getWidth() / 2f
                 - width / 2f;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return previewSeekBar.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR ?
+            return ((View) previewView).getLayoutDirection() == View.LAYOUT_DIRECTION_LTR ?
                     ltr : rtl;
         } else {
             return ltr;
@@ -54,12 +54,12 @@ abstract class PreviewAnimator {
     }
 
     float getPreviewX() {
-        float ltr = ((float) (previewSeekBarLayout.getWidth() - previewView.getWidth()))
-                * getWidthOffset(previewSeekBar.getProgress());
-        float rtl = ((float) (previewSeekBarLayout.getWidth() - previewView.getWidth()))
-                * (1 - getWidthOffset(previewSeekBar.getProgress()));
+        float ltr = ((float) (((View) previewLayout).getWidth() - previewChildView.getWidth()))
+                * getWidthOffset(previewView.getProgress());
+        float rtl = ((float) (((View) previewLayout).getWidth() - previewChildView.getWidth()))
+                * (1 - getWidthOffset(previewView.getProgress()));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return previewSeekBar.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR ?
+            return ((View) previewView).getLayoutDirection() == View.LAYOUT_DIRECTION_LTR ?
                     ltr : rtl;
         } else {
             return ltr;
@@ -67,10 +67,10 @@ abstract class PreviewAnimator {
     }
 
     float getHideY() {
-        return previewSeekBar.getY() + previewSeekBar.getThumbOffset();
+        return ((View) previewView).getY() + previewView.getThumbOffset();
     }
 
     float getShowY() {
-        return (int) (previewView.getY() + previewView.getHeight() / 2f);
+        return (int) (previewChildView.getY() + previewChildView.getHeight() / 2f);
     }
 }

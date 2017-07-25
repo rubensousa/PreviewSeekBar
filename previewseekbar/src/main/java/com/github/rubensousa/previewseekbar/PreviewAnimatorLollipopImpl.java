@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 
 class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
@@ -31,14 +30,14 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
         }
     };
 
-    public PreviewAnimatorLollipopImpl(PreviewSeekBarLayout previewSeekBarLayout) {
-        super(previewSeekBarLayout);
+    public PreviewAnimatorLollipopImpl(PreviewLayout previewLayout) {
+        super(previewLayout);
     }
 
     @Override
     public void show() {
         morphView.setX(getPreviewCenterX(morphView.getWidth()));
-        morphView.setY(previewSeekBar.getY());
+        morphView.setY(((View) previewView).getY());
         morphView.setVisibility(View.VISIBLE);
         morphView.animate()
                 .y(getShowY())
@@ -52,7 +51,7 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
     @Override
     public void hide() {
         frameView.setVisibility(View.VISIBLE);
-        previewView.setVisibility(View.VISIBLE);
+        previewChildView.setVisibility(View.VISIBLE);
         morphView.setY(getShowY());
         morphView.setScaleX(4.0f);
         morphView.setScaleY(4.0f);
@@ -62,13 +61,13 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startReveal() {
-        Animator animator = ViewAnimationUtils.createCircularReveal(previewView,
-                getCenterX(previewView),
-                getCenterY(previewView),
+        Animator animator = ViewAnimationUtils.createCircularReveal(previewChildView,
+                getCenterX(previewChildView),
+                getCenterY(previewChildView),
                 morphView.getWidth() * 2,
-                getRadius(previewView));
+                getRadius(previewChildView));
 
-        animator.setTarget(previewView);
+        animator.setTarget(previewChildView);
         animator.setDuration(MORPH_REVEAL_DURATION);
         animator.setInterpolator(new AccelerateInterpolator());
         animator.addListener(new AnimatorListenerAdapter() {
@@ -76,7 +75,7 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 frameView.setAlpha(1f);
-                previewView.setVisibility(View.VISIBLE);
+                previewChildView.setVisibility(View.VISIBLE);
                 frameView.setVisibility(View.VISIBLE);
                 morphView.setVisibility(View.INVISIBLE);
                 frameView.animate().alpha(0f).setDuration(MORPH_REVEAL_DURATION);
@@ -85,7 +84,7 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                previewView.animate().setListener(null);
+                previewChildView.animate().setListener(null);
                 frameView.setVisibility(View.INVISIBLE);
             }
 
@@ -97,18 +96,18 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startUnreveal() {
-        Animator animator = ViewAnimationUtils.createCircularReveal(previewView,
-                getCenterX(previewView),
-                getCenterY(previewView),
-                getRadius(previewView), morphView.getWidth() * 2);
-        animator.setTarget(previewView);
+        Animator animator = ViewAnimationUtils.createCircularReveal(previewChildView,
+                getCenterX(previewChildView),
+                getCenterY(previewChildView),
+                getRadius(previewChildView), morphView.getWidth() * 2);
+        animator.setTarget(previewChildView);
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                previewView.animate().setListener(null);
+                previewChildView.animate().setListener(null);
                 frameView.setVisibility(View.INVISIBLE);
-                previewView.setVisibility(View.INVISIBLE);
+                previewChildView.setVisibility(View.INVISIBLE);
                 morphView.setVisibility(View.VISIBLE);
                 morphView.animate()
                         .y(getHideY())

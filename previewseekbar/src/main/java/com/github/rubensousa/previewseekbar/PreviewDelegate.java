@@ -7,25 +7,25 @@ import android.widget.SeekBar;
 
 class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
 
-    private PreviewSeekBarLayout previewSeekBarLayout;
+    private PreviewLayout previewLayout;
     private PreviewAnimator animator;
     private boolean showing;
     private boolean startTouch;
     private boolean setup;
 
-    public PreviewDelegate(PreviewSeekBarLayout previewSeekBarLayout) {
-        this.previewSeekBarLayout = previewSeekBarLayout;
+    public PreviewDelegate(PreviewLayout previewLayout) {
+        this.previewLayout = previewLayout;
     }
 
     public void setup() {
-        previewSeekBarLayout.getPreviewFrameLayout().setVisibility(View.INVISIBLE);
-        previewSeekBarLayout.getMorphView().setVisibility(View.INVISIBLE);
-        previewSeekBarLayout.getFrameView().setVisibility(View.INVISIBLE);
-        previewSeekBarLayout.getSeekBar().addOnSeekBarChangeListener(this);
+        previewLayout.getPreviewFrameLayout().setVisibility(View.INVISIBLE);
+        previewLayout.getMorphView().setVisibility(View.INVISIBLE);
+        previewLayout.getFrameView().setVisibility(View.INVISIBLE);
+        previewLayout.getPreviewView().addOnSeekBarChangeListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.animator = new PreviewAnimatorLollipopImpl(previewSeekBarLayout);
+            this.animator = new PreviewAnimatorLollipopImpl(previewLayout);
         } else {
-            this.animator = new PreviewAnimatorImpl(previewSeekBarLayout);
+            this.animator = new PreviewAnimatorImpl(previewLayout);
         }
         setup = true;
     }

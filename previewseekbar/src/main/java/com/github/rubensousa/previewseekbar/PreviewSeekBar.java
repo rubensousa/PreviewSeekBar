@@ -16,7 +16,8 @@ import java.util.List;
 /**
  * A SeekBar that should be used inside PreviewSeekBarLayout
  */
-public class PreviewSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBarChangeListener {
+public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
+        SeekBar.OnSeekBarChangeListener {
 
     private List<OnSeekBarChangeListener> listeners;
 

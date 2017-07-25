@@ -24,14 +24,16 @@ import android.view.View;
 import com.github.rubensousa.previewseekbar.PreviewLoader;
 import com.github.rubensousa.previewseekbar.PreviewSeekBarLayout;
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
@@ -39,6 +41,9 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
+
+import io.github.rubensousa.previewseekbar.exoplayer.PreviewLoadControl;
+import io.github.rubensousa.previewseekbar.exoplayer.WorstVideoTrackSelection;
 
 public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader {
 
@@ -126,10 +131,11 @@ public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader 
 
     private SimpleExoPlayer createFullPlayer() {
         TrackSelection.Factory videoTrackSelectionFactory
-                = new AdaptiveVideoTrackSelection.Factory(new DefaultBandwidthMeter());
+                = new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         LoadControl loadControl = new DefaultLoadControl();
-        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(playerView.getContext(),
+        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(
+                new DefaultRenderersFactory(playerView.getContext()),
                 trackSelector, loadControl);
         player.setPlayWhenReady(true);
         player.prepare(mediaSourceBuilder.getMediaSource(false));
@@ -141,7 +147,8 @@ public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader 
         TrackSelection.Factory videoTrackSelectionFactory = new WorstVideoTrackSelection.Factory();
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         LoadControl loadControl = new PreviewLoadControl();
-        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(previewPlayerView.getContext(),
+        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(
+                new DefaultRenderersFactory(playerView.getContext()),
                 trackSelector, loadControl);
         player.setPlayWhenReady(false);
         player.setVolume(0f);
@@ -178,6 +185,11 @@ public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader 
 
     @Override
     public void onPositionDiscontinuity() {
+
+    }
+
+    @Override
+    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
 
     }
 
