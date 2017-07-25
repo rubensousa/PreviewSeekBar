@@ -183,8 +183,7 @@ Check the next section for some improvements notes.
 ```java
 @Override
 public void loadPreview(long currentPosition, long max) {
-    float offset = (float) currentPosition / max;
-    previewPlayer.seekTo((long) (offset * previewPlayer.getDuration()));
+    previewPlayer.seekTo(currentPosition);
     previewPlayer.setPlayWhenReady(false);
 }
 ```
