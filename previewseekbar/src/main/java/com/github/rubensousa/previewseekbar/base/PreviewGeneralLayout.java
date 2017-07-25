@@ -70,7 +70,7 @@ public abstract class PreviewGeneralLayout extends RelativeLayout implements Pre
 
             // Check if we have the proper views
             if (!checkChilds()) {
-                throw new IllegalStateException("You need to add a PreviewSeekBar" +
+                throw new IllegalStateException("You need to add a view that implements PreviewView" +
                         "and a FrameLayout as direct childs");
             }
 
@@ -100,7 +100,7 @@ public abstract class PreviewGeneralLayout extends RelativeLayout implements Pre
                     = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
             frameLayoutParams.gravity = Gravity.CENTER;
-            ((ViewGroup) getPreviewFrameLayout()).addView(frameView, frameLayoutParams);
+            (getPreviewFrameLayout()).addView(frameView, frameLayoutParams);
             firstLayout = false;
         }
     }

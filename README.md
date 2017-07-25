@@ -16,7 +16,7 @@ A SeekBar suited for showing a preview of something. As seen in Google Play Movi
 
 ```groovy
 dependencies {
-    compile 'com.github.rubensousa:previewseekbar:0.3'
+    compile 'com.github.rubensousa:previewseekbar:1.0'
 }
 ```
 
@@ -188,7 +188,7 @@ Any ideas for improving this would be welcomed!
 
 ## License
 
-    Copyright 2016 The Android Open Source Project
+    Copyright 2017 The Android Open Source Project
     Copyright 2017 Rúben Sousa
     
     Licensed under the Apache License, Version 2.0 (the "License");
