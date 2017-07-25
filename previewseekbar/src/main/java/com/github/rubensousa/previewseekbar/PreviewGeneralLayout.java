@@ -87,10 +87,7 @@ public abstract class PreviewGeneralLayout extends RelativeLayout implements Pre
             }
 
             delegate.setup();
-
-            if (loader != null) {
-                setup(loader);
-            }
+            getPreviewView().addOnPreviewChangeListener(this);
 
             // Setup morph view
             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(0, 0);
@@ -111,9 +108,6 @@ public abstract class PreviewGeneralLayout extends RelativeLayout implements Pre
 
     public void setup(PreviewLoader loader) {
         this.loader = loader;
-        if (this.loader != null && getPreviewView() != null) {
-            getPreviewView().addOnPreviewChangeListener(this);
-        }
     }
 
     public boolean isShowingPreview() {
