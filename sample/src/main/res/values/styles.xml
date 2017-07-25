@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="played_color">@color/colorPrimary</item>
+        <item name="scrubber_color">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
