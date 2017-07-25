@@ -2,6 +2,7 @@ package com.github.rubensousa.previewseekbar;
 
 
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 
 abstract class PreviewAnimator {

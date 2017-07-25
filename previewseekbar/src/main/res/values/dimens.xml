@@ -2,4 +2,5 @@
 <resources>
 
     <dimen name="previewseekbar_indicator_width">10dp</dimen>
+    <dimen name="previewseekbar_thumb_offset">10dp</dimen>
 </resources>

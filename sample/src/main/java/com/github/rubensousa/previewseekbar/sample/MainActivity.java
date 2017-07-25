@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
     }
 
+
     @Override
     public void onStartPreview(PreviewView previewView) {
 

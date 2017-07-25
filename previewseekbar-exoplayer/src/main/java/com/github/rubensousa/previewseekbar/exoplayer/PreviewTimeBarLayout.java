@@ -65,7 +65,20 @@ public class PreviewTimeBarLayout extends PreviewGeneralLayout {
 
     @Override
     public void setupMargins() {
+        LayoutParams layoutParams = (LayoutParams) previewTimeBar.getLayoutParams();
 
+        layoutParams.rightMargin = (int) (previewFrameLayout.getWidth() / 2
+                - previewTimeBar.getThumbOffset() * 0.9f);
+        layoutParams.leftMargin = layoutParams.rightMargin;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            layoutParams.setMarginEnd(layoutParams.leftMargin);
+            layoutParams.setMarginStart(layoutParams.leftMargin);
+        }
+
+        previewTimeBar.setLayoutParams(layoutParams);
+        requestLayout();
+        invalidate();
     }
 
     @Override

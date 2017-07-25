@@ -5,57 +5,25 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import com.github.rubensousa.previewseekbar.PreviewView;
+import com.google.android.exoplayer2.ui.TimeBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class PreviewTimeBar extends CustomTimeBar implements PreviewView {
+public class PreviewTimeBar extends CustomTimeBar implements PreviewView, TimeBar.OnScrubListener {
 
     private List<OnPreviewChangeListener> listeners;
 
     public PreviewTimeBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         listeners = new ArrayList<>();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        boolean wasScrubbing = isScrubbing();
-        boolean returnValue = super.onTouchEvent(event);
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if (isScrubbing()) {
-                    if (!wasScrubbing) {
-                        for (OnPreviewChangeListener listener : listeners) {
-                            listener.onStartPreview(this);
-                        }
-                    }
-                }
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if (wasScrubbing) {
-                    for (OnPreviewChangeListener listener : listeners) {
-                        listener.onPreview(this, getProgress(), true);
-                    }
-                }
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                if (wasScrubbing) {
-                    for (OnPreviewChangeListener listener : listeners) {
-                        listener.onStopPreview(this);
-                    }
-                }
-                break;
-        }
-
-        return returnValue;
+        setListener(this);
     }
 
     @Override
     public int getProgress() {
-        return (int) getPosition();
+        return (int) getScrubPosition();
     }
 
     @Override
@@ -65,7 +33,7 @@ public class PreviewTimeBar extends CustomTimeBar implements PreviewView {
 
     @Override
     public int getThumbOffset() {
-        return getResources().getDimensionPixelOffset(R.dimen.previewseekbar_indicator_width);
+        return getResources().getDimensionPixelOffset(R.dimen.previewseekbar_thumb_offset);
     }
 
     @Override
@@ -83,4 +51,24 @@ public class PreviewTimeBar extends CustomTimeBar implements PreviewView {
         listeners.remove(listener);
     }
 
+    @Override
+    public void onScrubStart(TimeBar timeBar, long position) {
+        for (OnPreviewChangeListener listener : listeners) {
+            listener.onStartPreview(this);
+        }
+    }
+
+    @Override
+    public void onScrubMove(TimeBar timeBar, long position) {
+        for (OnPreviewChangeListener listener : listeners) {
+            listener.onPreview(this, (int) position, true);
+        }
+    }
+
+    @Override
+    public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
+        for (OnPreviewChangeListener listener : listeners) {
+            listener.onStopPreview(this);
+        }
+    }
 }
