@@ -47,11 +47,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SimpleExoPlayerView playerView = (SimpleExoPlayerView) findViewById(R.id.player_view);
+        SimpleExoPlayerView playerView = findViewById(R.id.player_view);
         SimpleExoPlayerView previewPlayerView
-                = (SimpleExoPlayerView) findViewById(R.id.previewPlayerView);
-        seekBar = (PreviewSeekBar) playerView.findViewById(R.id.exo_progress);
-        seekBarLayout = (PreviewSeekBarLayout) findViewById(R.id.previewSeekBarLayout);
+                = findViewById(R.id.previewPlayerView);
+        seekBar = playerView.findViewById(R.id.exo_progress);
+        seekBarLayout = findViewById(R.id.previewSeekBarLayout);
 
 
         seekBarLayout.setTintColorResource(R.color.colorPrimary);

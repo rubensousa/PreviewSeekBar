@@ -1,1 +1,1 @@
-include ':sample', ':previewseekbar'
+include ':sample', ':previewseekbar', ':previewseekbar-exoplayer'

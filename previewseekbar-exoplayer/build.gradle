@@ -1,15 +1,17 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
+
     defaultConfig {
-        applicationId "com.github.rubensousa.previewseekbar.sample"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
@@ -25,9 +27,14 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile "com.android.support:appcompat-v7:$supportLibVersion"
-    compile "com.android.support:design:$supportLibVersion"
-    compile 'com.github.rubensousa:previewseekbar-exoplayer:0.4'
-    compile 'com.google.android.exoplayer:exoplayer:r2.4.4'
-    compile project(':previewseekbar')
+    compile 'com.google.android.exoplayer:exoplayer-ui:r2.4.4'
     testCompile 'junit:junit:4.12'
 }
+
+ext {
+    POM_ARTIFACT_ID="previewseekbar-exoplayer"
+    POM_DESCRIPTION="ExoPlayer components for PreviewSeekBar"
+}
+
+apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
+apply from: rootProject.file('gradle/gradle-bintray-upload.gradle')
