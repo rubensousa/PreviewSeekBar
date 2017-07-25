@@ -36,6 +36,8 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
     @Override
     public void show() {
+        previewChildView.setVisibility(View.INVISIBLE);
+        frameView.setVisibility(View.INVISIBLE);
         morphView.setX(getPreviewCenterX(morphView.getWidth()));
         morphView.setY(((View) previewView).getY());
         morphView.setVisibility(View.VISIBLE);

@@ -2,7 +2,6 @@ package com.github.rubensousa.previewseekbar.exoplayer;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 
 import com.github.rubensousa.previewseekbar.PreviewView;
 import com.google.android.exoplayer2.ui.TimeBar;

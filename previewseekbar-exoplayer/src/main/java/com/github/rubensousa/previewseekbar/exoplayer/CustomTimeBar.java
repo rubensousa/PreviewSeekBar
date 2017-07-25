@@ -482,9 +482,10 @@ public class CustomTimeBar extends View implements TimeBar {
         if (parent != null) {
             parent.requestDisallowInterceptTouchEvent(false);
         }
+        scrubPosition = getScrubberPosition();
         invalidate();
         for (OnScrubListener listener : listeners) {
-            listener.onScrubStop(this, getScrubberPosition(), canceled);
+            listener.onScrubStop(this, scrubPosition, canceled);
         }
     }
 
