@@ -4,8 +4,14 @@
     <item
         android:id="@+id/action_local"
         android:icon="@drawable/ic_sd_card"
-        android:orderInCategory="200"
+        android:orderInCategory="300"
         android:title="Local"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_test"
+        android:orderInCategory="200"
+        android:title="Test"
         app:showAsAction="always" />
 
     <item

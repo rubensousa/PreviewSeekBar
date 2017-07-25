@@ -11,7 +11,7 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <io.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout
+    <com.github.rubensousa.previewseekbar.PreviewSeekBarLayout
         android:id="@+id/previewSeekBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
 
         </FrameLayout>
 
-        <io.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar
+        <com.github.rubensousa.previewseekbar.PreviewSeekBar
             android:id="@+id/previewSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             android:max="800" />
 
 
-    </io.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout>
+    </com.github.rubensousa.previewseekbar.PreviewSeekBarLayout>
 
 
 </LinearLayout>
