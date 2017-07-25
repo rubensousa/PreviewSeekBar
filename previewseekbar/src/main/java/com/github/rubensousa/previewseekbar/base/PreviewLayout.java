@@ -1,4 +1,4 @@
-package com.github.rubensousa.previewseekbar;
+package com.github.rubensousa.previewseekbar.base;
 
 
 import android.view.View;

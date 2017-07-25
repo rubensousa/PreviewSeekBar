@@ -3,7 +3,7 @@ package com.github.rubensousa.previewseekbar.exoplayer;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.github.rubensousa.previewseekbar.PreviewView;
+import com.github.rubensousa.previewseekbar.base.PreviewView;
 import com.google.android.exoplayer2.ui.TimeBar;
 
 import java.util.ArrayList;

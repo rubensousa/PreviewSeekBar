@@ -7,8 +7,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.github.rubensousa.previewseekbar.PreviewGeneralLayout;
-import com.github.rubensousa.previewseekbar.PreviewView;
+import com.github.rubensousa.previewseekbar.base.PreviewGeneralLayout;
+import com.github.rubensousa.previewseekbar.base.PreviewView;
 
 public class PreviewTimeBarLayout extends PreviewGeneralLayout {
 

@@ -1,21 +1,13 @@
 package com.github.rubensousa.previewseekbar;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
+
+import com.github.rubensousa.previewseekbar.base.PreviewGeneralLayout;
+import com.github.rubensousa.previewseekbar.base.PreviewView;
 
 public class PreviewSeekBarLayout extends PreviewGeneralLayout {
 

@@ -11,6 +11,8 @@ import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
 import android.widget.SeekBar;
 
+import com.github.rubensousa.previewseekbar.base.PreviewView;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,9 +1,8 @@
-package com.github.rubensousa.previewseekbar;
+package com.github.rubensousa.previewseekbar.base;
 
 
 import android.os.Build;
 import android.view.View;
-import android.widget.SeekBar;
 
 class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
 

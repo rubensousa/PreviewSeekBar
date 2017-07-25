@@ -26,7 +26,7 @@ import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 
-import com.github.rubensousa.previewseekbar.PreviewView;
+import com.github.rubensousa.previewseekbar.base.PreviewView;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;

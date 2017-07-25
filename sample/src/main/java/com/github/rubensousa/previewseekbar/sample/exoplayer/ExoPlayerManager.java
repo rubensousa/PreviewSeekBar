@@ -21,7 +21,7 @@ import android.net.Uri;
 import android.view.SurfaceView;
 import android.view.View;
 
-import com.github.rubensousa.previewseekbar.PreviewLoader;
+import com.github.rubensousa.previewseekbar.base.PreviewLoader;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewLoadControl;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout;
 import com.github.rubensousa.previewseekbar.exoplayer.WorstVideoTrackSelection;
