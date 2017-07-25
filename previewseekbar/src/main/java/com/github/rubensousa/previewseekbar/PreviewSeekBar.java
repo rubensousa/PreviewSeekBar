@@ -1,6 +1,7 @@
 package com.github.rubensousa.previewseekbar;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
@@ -19,7 +20,7 @@ import java.util.List;
 public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
         SeekBar.OnSeekBarChangeListener {
 
-    private List<OnSeekBarChangeListener> listeners;
+    private List<PreviewView.OnPreviewChangeListener> listeners;
 
     public PreviewSeekBar(Context context) {
         super(context);
@@ -43,7 +44,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
 
     @Override
     public void setOnSeekBarChangeListener(OnSeekBarChangeListener l) {
-        addOnSeekBarChangeListener(l);
+        // No-op
     }
 
     public void setTintColorResource(@ColorRes int colorResource) {
@@ -60,34 +61,51 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
         setProgressDrawable(drawable);
     }
 
-    public void addOnSeekBarChangeListener(OnSeekBarChangeListener listener) {
+    @Override
+    public int getDefaultColor() {
+        ColorStateList list = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            list = getThumbTintList();
+        }
+        if (list != null) {
+            return list.getDefaultColor();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public void addOnPreviewChangeListener(OnPreviewChangeListener listener) {
         if (!listeners.contains(listener)) {
             listeners.add(listener);
         }
     }
 
-    public void removeOnSeekBarChangeListener(OnSeekBarChangeListener listener) {
+    @Override
+    public void removeOnPreviewChangeListener(OnPreviewChangeListener listener) {
         listeners.remove(listener);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        for (OnSeekBarChangeListener listener : listeners) {
-            listener.onProgressChanged(seekBar, progress, fromUser);
+        for (OnPreviewChangeListener listener : listeners) {
+            listener.onPreview(this, progress, fromUser);
         }
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        for (OnSeekBarChangeListener listener : listeners) {
-            listener.onStartTrackingTouch(seekBar);
+        for (OnPreviewChangeListener listener : listeners) {
+            listener.onStartPreview(this);
         }
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        for (OnSeekBarChangeListener listener : listeners) {
-            listener.onStopTrackingTouch(seekBar);
+        for (OnPreviewChangeListener listener : listeners) {
+            listener.onStopPreview(this);
         }
     }
+
+
 }

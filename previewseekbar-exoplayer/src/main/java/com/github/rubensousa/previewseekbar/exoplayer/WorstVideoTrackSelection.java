@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.github.rubensousa.previewseekbar.exoplayer;
+package com.github.rubensousa.previewseekbar.exoplayer;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.TrackGroup;

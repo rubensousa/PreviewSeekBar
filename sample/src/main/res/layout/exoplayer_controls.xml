@@ -38,7 +38,7 @@
             android:textSize="12sp"
             android:textStyle="bold" />
 
-        <com.github.rubensousa.previewseekbar.PreviewSeekBarLayout
+        <com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout
             android:id="@+id/previewSeekBarLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -58,14 +58,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:controller_layout_id="@layout/exo_simple_player_view"
-                    app:surface_type="surface_view"
                     app:use_artwork="false"
                     app:use_controller="false" />
 
 
             </FrameLayout>
 
-            <com.github.rubensousa.previewseekbar.PreviewSeekBar
+            <com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar
                 android:id="@+id/exo_progress"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
@@ -77,8 +76,8 @@
                 android:thumbTint="@color/colorPrimary"
                 app:paddingStart="10dp" />
 
+        </com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout>
 
-        </com.github.rubensousa.previewseekbar.PreviewSeekBarLayout>
 
         <TextView
             android:id="@id/exo_duration"

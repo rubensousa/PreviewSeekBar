@@ -17,118 +17,21 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
-public class PreviewSeekBarLayout extends RelativeLayout implements PreviewLayout,
-        SeekBar.OnSeekBarChangeListener {
+public class PreviewSeekBarLayout extends PreviewGeneralLayout {
 
-    private PreviewDelegate delegate;
     private PreviewSeekBar seekBar;
     private FrameLayout previewFrameLayout;
-    private View morphView;
-    private View frameView;
-    private boolean firstLayout = true;
-    private int tintColor;
-    private PreviewLoader loader;
 
     public PreviewSeekBarLayout(Context context) {
         super(context);
-        init(context, null);
     }
 
     public PreviewSeekBarLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
     }
 
     public PreviewSeekBarLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
-    }
-
-    private void init(Context context, AttributeSet attrs) {
-        TypedValue outValue = new TypedValue();
-
-        getContext().getTheme().resolveAttribute(R.attr.colorAccent, outValue, true);
-        tintColor = ContextCompat.getColor(context, outValue.resourceId);
-
-        // Create morph view
-        morphView = new View(getContext());
-        morphView.setBackgroundResource(R.drawable.previewseekbar_morph);
-
-        // Create frame view for the circular reveal
-        frameView = new View(getContext());
-        delegate = new PreviewDelegate(this);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-        if (getWidth() == 0 || getHeight() == 0) {
-            return;
-        } else if (firstLayout) {
-
-            // Check if we have the proper views
-            if (!checkChilds()) {
-                throw new IllegalStateException("You need to add a PreviewSeekBar" +
-                        "and a FrameLayout as direct childs");
-            }
-
-            // Set proper seek bar margins
-            setupSeekbarMargins();
-
-            // Setup colors for the morph view and frame view
-            setupColors();
-
-            delegate.setup();
-
-            if (loader != null) {
-                setup(loader);
-            }
-
-            // Setup morph view
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(0, 0);
-            layoutParams.width = getResources()
-                    .getDimensionPixelSize(R.dimen.previewseekbar_indicator_width);
-            layoutParams.height = layoutParams.width;
-            addView(morphView, layoutParams);
-
-            // Add frame view to the preview layout
-            FrameLayout.LayoutParams frameLayoutParams
-                    = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT);
-            frameLayoutParams.gravity = Gravity.CENTER;
-            previewFrameLayout.addView(frameView, frameLayoutParams);
-            firstLayout = false;
-        }
-    }
-
-    public void setup(PreviewLoader loader) {
-        this.loader = loader;
-        if (this.loader != null && seekBar != null) {
-            seekBar.addOnSeekBarChangeListener(this);
-        }
-    }
-
-    public boolean isShowingPreview() {
-        return delegate.isShowing();
-    }
-
-    public void showPreview() {
-        delegate.show();
-    }
-
-    public void hidePreview() {
-        delegate.hide();
-    }
-
-    @Override
-    public FrameLayout getPreviewFrameLayout() {
-        return previewFrameLayout;
-    }
-
-
-    @Override
-    public View getFrameView() {
-        return frameView;
     }
 
     @Override
@@ -137,56 +40,15 @@ public class PreviewSeekBarLayout extends RelativeLayout implements PreviewLayou
     }
 
     @Override
-    public View getMorphView() {
-        return morphView;
-    }
-
-    public void setTintColor(@ColorInt int color) {
-        tintColor = color;
-        Drawable drawable = DrawableCompat.wrap(morphView.getBackground());
-        DrawableCompat.setTint(drawable, color);
-        morphView.setBackground(drawable);
-        frameView.setBackgroundColor(color);
-    }
-
-    public void setTintColorResource(@ColorRes int color) {
-        setTintColor(ContextCompat.getColor(getContext(), color));
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (fromUser) {
-            if (loader != null) {
-                loader.loadPreview(progress, seekBar.getMax());
-            }
-            showPreview();
-        }
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        hidePreview();
-    }
-
-    private void setupColors() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ColorStateList list = seekBar.getThumbTintList();
-            if (list != null) {
-                tintColor = list.getDefaultColor();
-            }
-        }
-        setTintColor(tintColor);
+    public View getPreviewFrameLayout() {
+        return previewFrameLayout;
     }
 
     /**
      * Align seekbar thumb with the frame layout center
      */
-    private void setupSeekbarMargins() {
+    @Override
+    public void setupMargins() {
         LayoutParams layoutParams = (LayoutParams) seekBar.getLayoutParams();
 
         layoutParams.rightMargin = (int) (previewFrameLayout.getWidth() / 2
@@ -203,7 +65,8 @@ public class PreviewSeekBarLayout extends RelativeLayout implements PreviewLayou
         invalidate();
     }
 
-    private boolean checkChilds() {
+    @Override
+    public boolean checkChilds() {
         int childs = getChildCount();
 
         if (childs < 2) {
@@ -236,5 +99,4 @@ public class PreviewSeekBarLayout extends RelativeLayout implements PreviewLayou
 
         return hasSeekbar && hasFrameLayout;
     }
-
 }

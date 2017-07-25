@@ -28,6 +28,7 @@ dependencies {
     })
     compile "com.android.support:appcompat-v7:$supportLibVersion"
     compile 'com.google.android.exoplayer:exoplayer-ui:r2.4.4'
+    compile project(':previewseekbar')
     testCompile 'junit:junit:4.12'
 }
 

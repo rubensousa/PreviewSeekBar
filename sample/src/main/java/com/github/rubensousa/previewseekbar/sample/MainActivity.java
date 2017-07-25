@@ -25,22 +25,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.SeekBar;
 
-import com.github.rubensousa.previewseekbar.PreviewSeekBar;
-import com.github.rubensousa.previewseekbar.PreviewSeekBarLayout;
+import com.github.rubensousa.previewseekbar.PreviewView;
+import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
+import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 
-public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener,
-        Toolbar.OnMenuItemClickListener {
+public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener, PreviewView.OnPreviewChangeListener {
 
     private static final int PICK_FILE_REQUEST_CODE = 2;
 
     private ExoPlayerManager exoPlayerManager;
-    private PreviewSeekBarLayout seekBarLayout;
-    private PreviewSeekBar seekBar;
+    private PreviewTimeBarLayout previewTimeBarLayout;
+    private PreviewTimeBar previewTimeBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,16 +49,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         SimpleExoPlayerView playerView = findViewById(R.id.player_view);
         SimpleExoPlayerView previewPlayerView
                 = findViewById(R.id.previewPlayerView);
-        seekBar = playerView.findViewById(R.id.exo_progress);
-        seekBarLayout = findViewById(R.id.previewSeekBarLayout);
+        previewTimeBar = playerView.findViewById(R.id.exo_progress);
+        previewTimeBarLayout = findViewById(R.id.previewSeekBarLayout);
 
 
-        seekBarLayout.setTintColorResource(R.color.colorPrimary);
+        previewTimeBarLayout.setTintColorResource(R.color.colorPrimary);
 
-        seekBar.addOnSeekBarChangeListener(this);
-        exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView, seekBarLayout);
+        previewTimeBar.addOnPreviewChangeListener(this);
+        exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView, previewTimeBarLayout);
         exoPlayerManager.play(Uri.parse(getString(R.string.url_hls)));
-        seekBarLayout.setup(exoPlayerManager);
+        previewTimeBarLayout.setup(exoPlayerManager);
 
         View view = previewPlayerView.getVideoSurfaceView();
 
@@ -106,33 +105,19 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     }
 
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        exoPlayerManager.stopPreview();
-    }
-
-    @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (item.getItemId() == R.id.action_local) {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("video/*.mp4");
             startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
         } else if (item.getItemId() == R.id.action_toggle) {
-            if (seekBarLayout.isShowingPreview()) {
-                seekBarLayout.hidePreview();
+            if (previewTimeBarLayout.isShowingPreview()) {
+                previewTimeBarLayout.hidePreview();
                 exoPlayerManager.stopPreview();
             } else {
-                seekBarLayout.showPreview();
-                exoPlayerManager.loadPreview(seekBar.getProgress(), seekBar.getMax());
+                previewTimeBarLayout.showPreview();
+                exoPlayerManager.loadPreview(previewTimeBar.getProgress(),
+                        previewTimeBar.getDuration());
             }
         }
         return true;
@@ -147,9 +132,24 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_FULLSCREEN);
         } else {
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            Toolbar toolbar = findViewById(R.id.toolbar);
             toolbar.inflateMenu(R.menu.main);
             toolbar.setOnMenuItemClickListener(this);
         }
+    }
+
+    @Override
+    public void onStartPreview(PreviewView previewView) {
+
+    }
+
+    @Override
+    public void onStopPreview(PreviewView previewView) {
+        exoPlayerManager.stopPreview();
+    }
+
+    @Override
+    public void onPreview(PreviewView previewView, int progress, boolean fromUser) {
+
     }
 }

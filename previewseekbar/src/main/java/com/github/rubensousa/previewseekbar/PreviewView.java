@@ -1,8 +1,6 @@
 package com.github.rubensousa.previewseekbar;
 
 
-import android.widget.SeekBar;
-
 public interface PreviewView {
 
     int getProgress();
@@ -11,7 +9,17 @@ public interface PreviewView {
 
     int getThumbOffset();
 
-    void addOnSeekBarChangeListener(SeekBar.OnSeekBarChangeListener listener);
+    int getDefaultColor();
 
-    void removeOnSeekBarChangeListener(SeekBar.OnSeekBarChangeListener listener);
+    void addOnPreviewChangeListener(OnPreviewChangeListener listener);
+
+    void removeOnPreviewChangeListener(OnPreviewChangeListener listener);
+
+    interface OnPreviewChangeListener {
+        void onStartPreview(PreviewView previewView);
+
+        void onStopPreview(PreviewView previewView);
+
+        void onPreview(PreviewView previewView, int progress, boolean fromUser);
+    }
 }

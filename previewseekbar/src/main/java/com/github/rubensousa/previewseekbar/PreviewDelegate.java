@@ -5,7 +5,7 @@ import android.os.Build;
 import android.view.View;
 import android.widget.SeekBar;
 
-class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
+class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
 
     private PreviewLayout previewLayout;
     private PreviewAnimator animator;
@@ -21,7 +21,7 @@ class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
         previewLayout.getPreviewFrameLayout().setVisibility(View.INVISIBLE);
         previewLayout.getMorphView().setVisibility(View.INVISIBLE);
         previewLayout.getFrameView().setVisibility(View.INVISIBLE);
-        previewLayout.getPreviewView().addOnSeekBarChangeListener(this);
+        previewLayout.getPreviewView().addOnPreviewChangeListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             this.animator = new PreviewAnimatorLollipopImpl(previewLayout);
         } else {
@@ -49,7 +49,21 @@ class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
     }
 
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    public void onStartPreview(PreviewView previewView) {
+        startTouch = true;
+    }
+
+    @Override
+    public void onStopPreview(PreviewView previewView) {
+        if (showing) {
+            animator.hide();
+        }
+        showing = false;
+        startTouch = false;
+    }
+
+    @Override
+    public void onPreview(PreviewView previewView, int progress, boolean fromUser) {
         if (setup) {
             animator.move();
             if (!showing && !startTouch && fromUser) {
@@ -59,19 +73,4 @@ class PreviewDelegate implements SeekBar.OnSeekBarChangeListener {
         }
         startTouch = false;
     }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        startTouch = true;
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        if (showing) {
-            animator.hide();
-        }
-        showing = false;
-        startTouch = false;
-    }
-
 }

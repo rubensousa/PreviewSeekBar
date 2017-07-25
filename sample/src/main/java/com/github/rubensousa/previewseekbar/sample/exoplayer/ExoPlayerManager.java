@@ -22,7 +22,9 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import com.github.rubensousa.previewseekbar.PreviewLoader;
-import com.github.rubensousa.previewseekbar.PreviewSeekBarLayout;
+import com.github.rubensousa.previewseekbar.exoplayer.PreviewLoadControl;
+import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout;
+import com.github.rubensousa.previewseekbar.exoplayer.WorstVideoTrackSelection;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -42,8 +44,6 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 
-import io.github.rubensousa.previewseekbar.exoplayer.PreviewLoadControl;
-import io.github.rubensousa.previewseekbar.exoplayer.WorstVideoTrackSelection;
 
 public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader {
 
@@ -55,13 +55,13 @@ public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader 
     private SimpleExoPlayerView previewPlayerView;
     private SimpleExoPlayer player;
     private SimpleExoPlayer previewPlayer;
-    private PreviewSeekBarLayout seekBarLayout;
+    private PreviewTimeBarLayout previewTimeBarLayout;
 
     public ExoPlayerManager(SimpleExoPlayerView playerView, SimpleExoPlayerView previewPlayerView,
-                            PreviewSeekBarLayout seekBarLayout) {
+                            PreviewTimeBarLayout previewTimeBarLayout) {
         this.playerView = playerView;
         this.previewPlayerView = previewPlayerView;
-        this.seekBarLayout = seekBarLayout;
+        this.previewTimeBarLayout = previewTimeBarLayout;
         this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext());
     }
 
@@ -174,7 +174,7 @@ public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == ExoPlayer.STATE_READY && playWhenReady) {
-            seekBarLayout.hidePreview();
+            previewTimeBarLayout.hidePreview();
         }
     }
 
