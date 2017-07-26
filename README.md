@@ -14,21 +14,6 @@ A SeekBar suited for showing a preview of something. As seen in Google Play Movi
 
 ## Build
 
-Until the library gets uploaded to jcenter, add this to the main project build.gradle:
-
-```groovy
-allprojects {
-    repositories {
-        jcenter()
-        maven {
-            url "https://maven.google.com"
-        }
-        maven {
-            url "https://dl.bintray.com/rubensousa/maven"
-        }
-    }
-}
-```
 Add the following to your app's build.gradle:
 
 ```groovy
