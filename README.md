@@ -21,7 +21,7 @@ dependencies {
     compile 'com.github.rubensousa:previewseekbar:1.0'
     
     // If you want to use this with ExoPlayer, use this one:
-    compile 'com.github.rubensousa:previewseekbar-exoplayer:1.0'
+    compile 'com.github.rubensousa:previewseekbar-exoplayer:2.5.1'
 }
 ```
 
