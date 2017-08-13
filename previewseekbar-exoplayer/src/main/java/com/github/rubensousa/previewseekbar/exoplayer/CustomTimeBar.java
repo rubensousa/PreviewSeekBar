@@ -84,6 +84,7 @@ public class CustomTimeBar extends View implements TimeBar {
     private final Paint bufferedPaint;
     private final Paint unplayedPaint;
     private final Paint adMarkerPaint;
+    private final Paint playedAdMarkerPaint;
     private final int barHeight;
     private final int touchTargetHeight;
     private final int adMarkerWidth;
@@ -108,8 +109,9 @@ public class CustomTimeBar extends View implements TimeBar {
     private long duration;
     private long position;
     private long bufferedPosition;
-    private int adBreakCount;
-    private long[] adBreakTimesMs;
+    private int adGroupCount;
+    private long[] adGroupTimesMs;
+    private boolean[] playedAdGroups;
 
     /**
      * Creates a new time bar.
@@ -121,10 +123,12 @@ public class CustomTimeBar extends View implements TimeBar {
         bufferedBar = new Rect();
         scrubberBar = new Rect();
         playedPaint = new Paint();
-        scrubberPaint = new Paint();
         bufferedPaint = new Paint();
         unplayedPaint = new Paint();
         adMarkerPaint = new Paint();
+        playedAdMarkerPaint = new Paint();
+        scrubberPaint = new Paint();
+        scrubberPaint.setAntiAlias(true);
         listeners = new ArrayList<>();
 
         // Calculate the dimensions and paints for drawn elements.
@@ -162,11 +166,14 @@ public class CustomTimeBar extends View implements TimeBar {
                         getDefaultUnplayedColor(playedColor));
                 int adMarkerColor = a.getInt(com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_ad_marker_color,
                         DEFAULT_AD_MARKER_COLOR);
+                int playedAdMarkerColor = a.getInt(R.styleable.DefaultTimeBar_played_ad_marker_color,
+                        getDefaultPlayedAdMarkerColor(adMarkerColor));
                 playedPaint.setColor(playedColor);
                 scrubberPaint.setColor(scrubberColor);
                 bufferedPaint.setColor(bufferedColor);
                 unplayedPaint.setColor(unplayedColor);
                 adMarkerPaint.setColor(adMarkerColor);
+                playedAdMarkerPaint.setColor(playedAdMarkerColor);
             } finally {
                 a.recycle();
             }
@@ -252,11 +259,15 @@ public class CustomTimeBar extends View implements TimeBar {
         update();
     }
 
+
     @Override
-    public void setAdBreakTimesMs(@Nullable long[] adBreakTimesMs, int adBreakCount) {
-        Assertions.checkArgument(adBreakCount == 0 || adBreakTimesMs != null);
-        this.adBreakCount = adBreakCount;
-        this.adBreakTimesMs = adBreakTimesMs;
+    public void setAdGroupTimesMs(@Nullable long[] adGroupTimesMs,
+                                  @Nullable boolean[] playedAdGroups, int adGroupCount) {
+        Assertions.checkArgument(adGroupCount == 0
+                || (adGroupTimesMs != null && playedAdGroups != null));
+        this.adGroupCount = adGroupCount;
+        this.adGroupTimesMs = adGroupTimesMs;
+        this.playedAdGroups = playedAdGroups;
         update();
     }
 
@@ -554,13 +565,14 @@ public class CustomTimeBar extends View implements TimeBar {
             canvas.drawRect(scrubberBar.left, barTop, scrubberBar.right, barBottom, playedPaint);
         }
         int adMarkerOffset = adMarkerWidth / 2;
-        for (int i = 0; i < adBreakCount; i++) {
-            long adBreakTimeMs = Util.constrainValue(adBreakTimesMs[i], 0, duration);
+        for (int i = 0; i < adGroupCount; i++) {
+            long adGroupTimeMs = Util.constrainValue(adGroupTimesMs[i], 0, duration);
             int markerPositionOffset =
-                    (int) (progressBar.width() * adBreakTimeMs / duration) - adMarkerOffset;
+                    (int) (progressBar.width() * adGroupTimeMs / duration) - adMarkerOffset;
             int markerLeft = progressBar.left + Math.min(progressBar.width() - adMarkerWidth,
                     Math.max(0, markerPositionOffset));
-            canvas.drawRect(markerLeft, barTop, markerLeft + adMarkerWidth, barBottom, adMarkerPaint);
+            Paint paint = playedAdGroups[i] ? playedAdMarkerPaint : adMarkerPaint;
+            canvas.drawRect(markerLeft, barTop, markerLeft + adMarkerWidth, barBottom, paint);
         }
     }
 
@@ -627,4 +639,7 @@ public class CustomTimeBar extends View implements TimeBar {
         return 0xCC000000 | (playedColor & 0x00FFFFFF);
     }
 
+    private static int getDefaultPlayedAdMarkerColor(int adMarkerColor) {
+        return 0x33000000 | (adMarkerColor & 0x00FFFFFF);
+    }
 }
