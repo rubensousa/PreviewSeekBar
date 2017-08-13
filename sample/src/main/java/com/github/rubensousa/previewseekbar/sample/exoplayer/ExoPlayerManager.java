@@ -28,10 +28,10 @@ import com.github.rubensousa.previewseekbar.exoplayer.WorstVideoTrackSelection;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -45,7 +45,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 
 
-public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader {
+public class ExoPlayerManager implements Player.EventListener, PreviewLoader {
 
     // 1 minute
     private static final int ROUND_DECIMALS_THRESHOLD = 1 * 60 * 1000;
@@ -173,9 +173,14 @@ public class ExoPlayerManager implements ExoPlayer.EventListener, PreviewLoader 
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == ExoPlayer.STATE_READY && playWhenReady) {
+        if (playbackState == Player.STATE_READY && playWhenReady) {
             previewTimeBarLayout.hidePreview();
         }
+    }
+
+    @Override
+    public void onRepeatModeChanged(int repeatMode) {
+
     }
 
     @Override
