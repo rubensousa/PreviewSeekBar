@@ -14,15 +14,20 @@ A SeekBar suited for showing a preview of something. As seen in Google Play Movi
 
 ## Build
 
+Add the following to your app's build.gradle:
+
 ```groovy
 dependencies {
     compile 'com.github.rubensousa:previewseekbar:1.0'
+    
+    // If you want to use this with ExoPlayer, use this one:
+    compile 'com.github.rubensousa:previewseekbar-exoplayer:1.0'
 }
 ```
 
 ## How to use
 
-####Add the following XML:
+#### Add the following XML:
 
 ```xml
 <com.github.rubensousa.previewseekbar.PreviewSeekBarLayout
@@ -55,23 +60,21 @@ dependencies {
           
 </com.github.rubensousa.previewseekbar.PreviewSeekBarLayout>
 ```
-#####You need to add at least one PreviewSeekBar and a FrameLayout inside PreviewSeekBarLayout, else an exception will be thrown.
+#### You need to add at least one PreviewSeekBar and a FrameLayout inside PreviewSeekBarLayout, else an exception will be thrown.
 PreviewSeekBarLayout extends from RelativeLayout so you can add other views or layouts there. 
 
-#### Pass a standard OnSeekBarChangeListener to the seekBar:
+#### Create a PreviewLoader and pass it to PreviewSeekBarLayout:
+
+
 
 ```java
-// setOnSeekBarChangeListener was overridden to do the same as below
-seekBar.addOnSeekBarChangeListener(this);
-```
-
-#### Implement your own preview logic in:
-
-```java
-@Override
-public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-    // I can't help anymore
+// Create a class that implements this interface and implement your own preview logic there
+public interface PreviewLoader {
+    void loadPreview(long currentPosition, long max);
 }
+
+PreviewLoader loader = new ExoPlayerLoader();
+previewSeekBarLayout.setup(loader);
 ```
 
 ## How to use with ExoPlayer
@@ -91,12 +94,11 @@ Here's the sample's exoplayer_controls: https://github.com/rubensousa/PreviewSee
 The PreviewSeekBarLayout inside exoplayer_controls should be similar to this:
 
 ```xml
-<com.github.rubensousa.previewseekbar.PreviewSeekBarLayout
-    android:id="@+id/previewSeekBarLayout"
+<com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout
+    android:id="@+id/previewTimeBarLayout"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_weight="1"
-    android:orientation="vertical">
+    android:layout_weight="1">
 
     <FrameLayout
         android:id="@+id/previewFrameLayout"
@@ -116,7 +118,7 @@ The PreviewSeekBarLayout inside exoplayer_controls should be similar to this:
 
     </FrameLayout>
 
-    <com.github.rubensousa.previewseekbar.PreviewSeekBar
+    <com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar
         android:id="@+id/exo_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
@@ -141,32 +143,33 @@ The PreviewSeekBarLayout inside exoplayer_controls should be similar to this:
     app:use_controller="false" />
 ```    
     
-We need to specify another controller layout because the default one includes a SeekBar with the same id as ours.
+We specify another controller layout because the default one includes a SeekBar with the same id as ours.
 
 #### Create a player with a custom TrackSelection and LoadControl
 
 ```java
-TrackSelection.Factory videoTrackSelectionFactory = new WorstVideoTrackSelection.Factory();
-TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-LoadControl loadControl = new PreviewLoadControl();
-SimpleExoPlayer previewPlayer = ExoPlayerFactory.newSimpleInstance(previewPlayerView.getContext(),
-        trackSelector, loadControl);
-previewPlayer.setPlayWhenReady(false);        
+ private SimpleExoPlayer createPreviewPlayer() {
+    TrackSelection.Factory videoTrackSelectionFactory = new WorstVideoTrackSelection.Factory();
+    TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+    LoadControl loadControl = new PreviewLoadControl();
+    SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(
+            new DefaultRenderersFactory(context), trackSelector, loadControl);
+    player.setPlayWhenReady(false);
+    player.setVolume(0f);
+    player.prepare(mediaSourceBuilder.getMediaSource(true));
+    return player;
+} 
 ```
+PreviewLoadControl and WorstVideoTrackSelection are already included in previewseekbar-exoplayer.
+Check the next section for some improvements notes.
 
-[PreviewLoadControl](https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/java/com/github/rubensousa/previewseekbar/sample/exoplayer/PreviewLoadControl.java) and [WorstVideoTrackSelection](https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/java/com/github/rubensousa/previewseekbar/sample/exoplayer/WorstVideoTrackSelection.java) are used in the sample. Check the next section for some improvements notes.
-
-#### Seek the player in onProgressChanged
+#### Create your own ExoPlayerLoader that seeks the video to the current position
 
 ```java
 @Override
-public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-    if(fromUser){
-        int offset = (float) progress / seekBar.getMax()
-        // Round the offset before seeking. The sample uses 1% or 10% of the video per each thumbnail
-        previewPlayer.seekTo((long) (offset * previewPlayer.getDuration()));
-        previewPlayer.setPlayWhenReady(false);
-    }
+public void loadPreview(long currentPosition, long max) {
+    previewPlayer.seekTo(currentPosition);
+    previewPlayer.setPlayWhenReady(false);
 }
 ```
 
