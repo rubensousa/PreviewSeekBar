@@ -18,6 +18,7 @@
 package com.github.rubensousa.previewseekbar.sample.exoplayer;
 
 import android.net.Uri;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 
@@ -185,7 +186,7 @@ public class ExoPlayerManager implements Player.EventListener, PreviewLoader {
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-
+        Log.e("PlaybackError", error.toString());
     }
 
     @Override

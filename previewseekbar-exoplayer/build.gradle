@@ -22,20 +22,18 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile "com.android.support:appcompat-v7:$supportLibVersion"
-    compile 'com.google.android.exoplayer:exoplayer-ui:r2.5.1'
-    compile project(':previewseekbar')
-    testCompile 'junit:junit:4.12'
+    api "com.android.support:appcompat-v7:$supportLibVersion"
+    api 'com.google.android.exoplayer:exoplayer-ui:r2.5.1'
+    api project(':previewseekbar')
 }
 
 ext {
-    VERSION_NAME="2.5.1"
-    POM_ARTIFACT_ID="previewseekbar-exoplayer"
-    POM_DESCRIPTION="ExoPlayer components for PreviewSeekBar"
+    VERSION_NAME = "2.5.1"
+    POM_ARTIFACT_ID = "previewseekbar-exoplayer"
+    POM_DESCRIPTION = "ExoPlayer components for PreviewSeekBar"
 }
 
 apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
