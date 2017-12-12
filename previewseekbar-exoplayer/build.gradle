@@ -9,7 +9,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -26,7 +25,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     api "com.android.support:appcompat-v7:$supportLibVersion"
-    api 'com.google.android.exoplayer:exoplayer-ui:r2.5.1'
+    api 'com.google.android.exoplayer:exoplayer-ui:2.6.0'
     api project(':previewseekbar')
 }
 

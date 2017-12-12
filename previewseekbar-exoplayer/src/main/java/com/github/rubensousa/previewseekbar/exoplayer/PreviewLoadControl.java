@@ -60,7 +60,7 @@ public class PreviewLoadControl implements LoadControl {
 
     @Override
     public boolean shouldContinueLoading(long bufferedDurationUs) {
-        return true;
+        return bufferedDurationUs <= 1000L * 120;
     }
 
     @Override

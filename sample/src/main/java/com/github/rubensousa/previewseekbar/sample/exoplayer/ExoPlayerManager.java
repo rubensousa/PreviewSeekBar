@@ -18,7 +18,6 @@
 package com.github.rubensousa.previewseekbar.sample.exoplayer;
 
 import android.net.Uri;
-import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 
@@ -28,25 +27,21 @@ import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout;
 import com.github.rubensousa.previewseekbar.exoplayer.WorstVideoTrackSelection;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 
 
-public class ExoPlayerManager implements Player.EventListener, PreviewLoader {
+public class ExoPlayerManager implements PreviewLoader {
 
     // 1 minute
     private static final int ROUND_DECIMALS_THRESHOLD = 1 * 60 * 1000;
@@ -57,6 +52,14 @@ public class ExoPlayerManager implements Player.EventListener, PreviewLoader {
     private SimpleExoPlayer player;
     private SimpleExoPlayer previewPlayer;
     private PreviewTimeBarLayout previewTimeBarLayout;
+    private Player.EventListener eventListener = new Player.DefaultEventListener() {
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            if (playbackState == Player.STATE_READY && playWhenReady) {
+                previewTimeBarLayout.hidePreview();
+            }
+        }
+    };
 
     public ExoPlayerManager(SimpleExoPlayerView playerView, SimpleExoPlayerView previewPlayerView,
                             PreviewTimeBarLayout previewTimeBarLayout) {
@@ -140,63 +143,20 @@ public class ExoPlayerManager implements Player.EventListener, PreviewLoader {
                 trackSelector, loadControl);
         player.setPlayWhenReady(true);
         player.prepare(mediaSourceBuilder.getMediaSource(false));
-        player.addListener(this);
+        player.addListener(eventListener);
         return player;
     }
 
     private SimpleExoPlayer createPreviewPlayer() {
-        TrackSelection.Factory videoTrackSelectionFactory = new WorstVideoTrackSelection.Factory();
-        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+        DefaultTrackSelector trackSelector
+                = new DefaultTrackSelector(new WorstVideoTrackSelection.Factory());
         LoadControl loadControl = new PreviewLoadControl();
         SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(
-                new DefaultRenderersFactory(playerView.getContext()),
-                trackSelector, loadControl);
+                new DefaultRenderersFactory(playerView.getContext()), trackSelector, loadControl);
         player.setPlayWhenReady(false);
         player.setVolume(0f);
         player.prepare(mediaSourceBuilder.getMediaSource(true));
         return player;
-    }
-
-    @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest) {
-
-    }
-
-    @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
-    }
-
-    @Override
-    public void onLoadingChanged(boolean isLoading) {
-
-    }
-
-    @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == Player.STATE_READY && playWhenReady) {
-            previewTimeBarLayout.hidePreview();
-        }
-    }
-
-    @Override
-    public void onRepeatModeChanged(int repeatMode) {
-
-    }
-
-    @Override
-    public void onPlayerError(ExoPlaybackException error) {
-        Log.e("PlaybackError", error.toString());
-    }
-
-    @Override
-    public void onPositionDiscontinuity() {
-
-    }
-
-    @Override
-    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-
     }
 
     @Override

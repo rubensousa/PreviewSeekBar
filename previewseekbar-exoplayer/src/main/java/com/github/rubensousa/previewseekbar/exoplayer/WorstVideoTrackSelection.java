@@ -18,6 +18,7 @@
 package com.github.rubensousa.previewseekbar.exoplayer;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.trackselection.BaseTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -44,8 +45,16 @@ public class WorstVideoTrackSelection extends BaseTrackSelection {
 
     @Override
     public int getSelectedIndex() {
-        // last index has the stream with the lowest bitrate
-        return getTrackGroup().length - 1;
+        TrackGroup group = getTrackGroup();
+        Format worstFormat = group.getFormat(0);
+        int worstIndex = 0;
+        for (int i = 1; i < group.length; i++) {
+            Format format = group.getFormat(i);
+            if (format.bitrate < worstFormat.bitrate) {
+                worstIndex = i;
+            }
+        }
+        return worstIndex;
     }
 
     @Override
@@ -59,7 +68,9 @@ public class WorstVideoTrackSelection extends BaseTrackSelection {
     }
 
     @Override
-    public void updateSelectedTrack(long bufferedDurationUs) {
-        // No-op
+    public void updateSelectedTrack(long playbackPositionUs, long bufferedDurationUs,
+                                    long availableDurationUs) {
+
     }
+
 }

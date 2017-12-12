@@ -210,7 +210,6 @@ public class CustomTimeBar extends View implements TimeBar {
         }
     }
 
-    @Override
     public void setListener(OnScrubListener listener) {
         addListener(listener);
     }
