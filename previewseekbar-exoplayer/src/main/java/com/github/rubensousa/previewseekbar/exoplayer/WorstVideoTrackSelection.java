@@ -39,22 +39,27 @@ public class WorstVideoTrackSelection extends BaseTrackSelection {
 
     }
 
+    private int index = -1;
+
     public WorstVideoTrackSelection(TrackGroup group, int... tracks) {
         super(group, tracks);
     }
 
     @Override
     public int getSelectedIndex() {
+        if (index != -1) {
+            return index;
+        }
         TrackGroup group = getTrackGroup();
         Format worstFormat = group.getFormat(0);
-        int worstIndex = 0;
+        index = 0;
         for (int i = 1; i < group.length; i++) {
             Format format = group.getFormat(i);
             if (format.bitrate < worstFormat.bitrate) {
-                worstIndex = i;
+                index = i;
             }
         }
-        return worstIndex;
+        return index;
     }
 
     @Override
