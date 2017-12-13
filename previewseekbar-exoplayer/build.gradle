@@ -30,7 +30,7 @@ dependencies {
 }
 
 ext {
-    VERSION_NAME = "2.5.1"
+    VERSION_NAME = "2.6.0"
     POM_ARTIFACT_ID = "previewseekbar-exoplayer"
     POM_DESCRIPTION = "ExoPlayer components for PreviewSeekBar"
 }

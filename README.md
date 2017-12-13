@@ -18,10 +18,10 @@ Add the following to your app's build.gradle:
 
 ```groovy
 dependencies {
-    compile 'com.github.rubensousa:previewseekbar:1.0'
+    compile 'com.github.rubensousa:previewseekbar:1.1'
     
     // If you want to use this with ExoPlayer, use this one:
-    compile 'com.github.rubensousa:previewseekbar-exoplayer:2.5.1'
+    compile 'com.github.rubensousa:previewseekbar-exoplayer:2.6.0'
 }
 ```
 
