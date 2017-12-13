@@ -41,11 +41,10 @@ dependencies {
           android:layout_width="@dimen/video_preview_width"
           android:layout_height="@dimen/video_preview_height">
 
-          <View
-              android:id="@+id/videoView"
+          <ImageView
+              android:id="@+id/imageView"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_gravity="start"
               android:background="@color/colorPrimary" />
 
       </FrameLayout>
@@ -107,14 +106,10 @@ The PreviewSeekBarLayout inside exoplayer_controls should be similar to this:
         android:background="@drawable/video_frame"
         android:padding="@dimen/video_frame_width">
 
-        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-            android:id="@+id/previewPlayerView"
+        <ImageView
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:controller_layout_id="@layout/exo_simple_player_view"
-            app:surface_type="texture_view"
-            app:use_artwork="false"
-            app:use_controller="false" />
+            android:layout_height="match_parent"/>
 
     </FrameLayout>
 
@@ -130,64 +125,24 @@ The PreviewSeekBarLayout inside exoplayer_controls should be similar to this:
 </com.github.rubensousa.previewseekbar.PreviewSeekBarLayout>
 ```
 
-#### Use the following SimpleExoPlayerView for the preview:
-
-```xml
-<com.google.android.exoplayer2.ui.SimpleExoPlayerView
-    android:id="@+id/previewPlayerView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:controller_layout_id="@layout/exo_simple_player_view"
-    app:surface_type="texture_view"
-    app:use_artwork="false"
-    app:use_controller="false" />
-```    
-    
-We specify another controller layout because the default one includes a SeekBar with the same id as ours.
-
-#### Create a player with a custom TrackSelection and LoadControl
-
-```java
- private SimpleExoPlayer createPreviewPlayer() {
-    TrackSelection.Factory videoTrackSelectionFactory = new WorstVideoTrackSelection.Factory();
-    TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-    LoadControl loadControl = new PreviewLoadControl();
-    SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(
-            new DefaultRenderersFactory(context), trackSelector, loadControl);
-    player.setPlayWhenReady(false);
-    player.setVolume(0f);
-    player.prepare(mediaSourceBuilder.getMediaSource(true));
-    return player;
-} 
-```
-PreviewLoadControl and WorstVideoTrackSelection are already included in previewseekbar-exoplayer.
-Check the next section for some improvements notes.
-
 #### Create your own ExoPlayerLoader that seeks the video to the current position
+
+In this sample, Glide is used with a custom transformation to crop the thumbnails from a thumbnail sprite.
+
+[GlideThumbnailTransformation](https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/java/com/github/rubensousa/previewseekbar/sample/glide/GlideThumbnailTransformation.java)
 
 ```java
 @Override
 public void loadPreview(long currentPosition, long max) {
-    previewPlayer.seekTo(currentPosition);
-    previewPlayer.setPlayWhenReady(false);
+    player.setPlayWhenReady(false);
+    GlideApp.with(imageView)
+            .load(thumbnailsUrl)
+            .override(GlideThumbnailTransformation.IMAGE_WIDTH,
+                    GlideThumbnailTransformation.IMAGE_HEIGHT)
+            .transform(new GlideThumbnailTransformation(currentPosition))
+            .into(imageView);
 }
 ```
-
-## Improvements
-
-The sample uses some code adapted from the ExoPlayer official demo: https://github.com/google/ExoPlayer
-
-A few improvements would be:
-
-- Adding a stream with lower bitrate to load and display the images faster.
-
-- Using some kind of special stream just for the thumbnails. Maybe this is how the Google Play team did it, I don't know. They load the thumbnails a lot faster than this sample.
-
-- Caching thumbnails in disk for offline use.
-
-Any ideas for improving this would be welcomed!
-
-
 
 ## License
 
