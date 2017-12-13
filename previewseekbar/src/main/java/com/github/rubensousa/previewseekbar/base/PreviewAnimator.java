@@ -6,10 +6,10 @@ import android.view.View;
 
 abstract class PreviewAnimator {
 
-    static final int MORPH_REVEAL_DURATION = 250;
-    static final int MORPH_MOVE_DURATION = 200;
-    static final int UNMORPH_MOVE_DURATION = 200;
-    static final int UNMORPH_UNREVEAL_DURATION = 250;
+    static final int MORPH_REVEAL_DURATION = 200;
+    static final int MORPH_MOVE_DURATION = 150;
+    static final int UNMORPH_MOVE_DURATION = 150;
+    static final int UNMORPH_UNREVEAL_DURATION = 200;
 
     PreviewView previewView;
     PreviewLayout previewLayout;
