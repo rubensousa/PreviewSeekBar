@@ -17,7 +17,7 @@ public class PreviewTimeBar extends CustomTimeBar implements PreviewView, TimeBa
     public PreviewTimeBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         listeners = new ArrayList<>();
-        setListener(this);
+        addListener(this);
     }
 
     @Override
