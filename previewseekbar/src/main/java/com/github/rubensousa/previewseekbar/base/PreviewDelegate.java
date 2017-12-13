@@ -11,12 +11,14 @@ class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
     private boolean showing;
     private boolean startTouch;
     private boolean setup;
+    private boolean isEnabled;
+    private PreviewLoader loader;
 
-    public PreviewDelegate(PreviewLayout previewLayout) {
+    PreviewDelegate(PreviewLayout previewLayout) {
         this.previewLayout = previewLayout;
     }
 
-    public void setup() {
+    void setup() {
         previewLayout.getPreviewFrameLayout().setVisibility(View.INVISIBLE);
         previewLayout.getMorphView().setVisibility(View.INVISIBLE);
         previewLayout.getFrameView().setVisibility(View.INVISIBLE);
@@ -29,18 +31,26 @@ class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         setup = true;
     }
 
-    public boolean isShowing() {
+    void setPreviewLoader(PreviewLoader loader) {
+        this.loader = loader;
+    }
+
+    boolean isShowing() {
         return showing;
     }
 
-    public void show() {
+    void show() {
         if (!showing && setup) {
             animator.show();
             showing = true;
         }
     }
 
-    public void hide() {
+    void setEnabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
+
+    void hide() {
         if (showing) {
             animator.hide();
             showing = false;
@@ -63,11 +73,13 @@ class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
 
     @Override
     public void onPreview(PreviewView previewView, int progress, boolean fromUser) {
-        if (setup) {
+        if (setup && isEnabled) {
             animator.move();
             if (!showing && !startTouch && fromUser) {
-                animator.show();
-                showing = true;
+                show();
+            }
+            if (loader != null) {
+                loader.loadPreview(progress, previewView.getMax());
             }
         }
         startTouch = false;

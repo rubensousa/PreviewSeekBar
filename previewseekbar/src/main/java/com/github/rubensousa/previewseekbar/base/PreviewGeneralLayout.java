@@ -13,17 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+
 import com.github.rubensousa.previewseekbar.R;
 
-public abstract class PreviewGeneralLayout extends RelativeLayout implements PreviewLayout,
-        PreviewView.OnPreviewChangeListener {
+public abstract class PreviewGeneralLayout extends RelativeLayout implements PreviewLayout {
 
     private PreviewDelegate delegate;
     private View morphView;
     private View frameView;
     private boolean firstLayout = true;
     private int tintColor;
-    private PreviewLoader loader;
 
     public PreviewGeneralLayout(Context context) {
         super(context);
@@ -59,6 +58,7 @@ public abstract class PreviewGeneralLayout extends RelativeLayout implements Pre
         // Create frame view for the circular reveal
         frameView = new View(getContext());
         delegate = new PreviewDelegate(this);
+        delegate.setEnabled(isEnabled());
     }
 
     @Override
@@ -86,7 +86,6 @@ public abstract class PreviewGeneralLayout extends RelativeLayout implements Pre
             }
 
             delegate.setup();
-            getPreviewView().addOnPreviewChangeListener(this);
 
             // Setup morph view
             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(0, 0);
@@ -105,8 +104,8 @@ public abstract class PreviewGeneralLayout extends RelativeLayout implements Pre
         }
     }
 
-    public void setup(PreviewLoader loader) {
-        this.loader = loader;
+    public void setPreviewLoader(PreviewLoader loader) {
+        delegate.setPreviewLoader(loader);
     }
 
     public boolean isShowingPreview() {
@@ -114,11 +113,21 @@ public abstract class PreviewGeneralLayout extends RelativeLayout implements Pre
     }
 
     public void showPreview() {
-        delegate.show();
+        if (isEnabled()) {
+            delegate.show();
+        }
     }
 
     public void hidePreview() {
-        delegate.hide();
+        if (isEnabled()) {
+            delegate.hide();
+        }
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        delegate.setEnabled(enabled);
     }
 
     @Override
@@ -140,26 +149,5 @@ public abstract class PreviewGeneralLayout extends RelativeLayout implements Pre
 
     public void setTintColorResource(@ColorRes int color) {
         setTintColor(ContextCompat.getColor(getContext(), color));
-    }
-
-
-    @Override
-    public void onStartPreview(PreviewView previewView) {
-
-    }
-
-    @Override
-    public void onStopPreview(PreviewView previewView) {
-        hidePreview();
-    }
-
-    @Override
-    public void onPreview(PreviewView previewView, int progress, boolean fromUser) {
-        if (fromUser) {
-            if (loader != null) {
-                loader.loadPreview(progress, previewView.getMax());
-            }
-            showPreview();
-        }
     }
 }

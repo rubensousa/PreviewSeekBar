@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -51,12 +50,11 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         previewTimeBar = playerView.findViewById(R.id.exo_progress);
         previewTimeBarLayout = findViewById(R.id.previewSeekBarLayout);
         previewTimeBarLayout.setTintColorResource(R.color.colorPrimary);
-
         previewTimeBar.addOnPreviewChangeListener(this);
         exoPlayerManager = new ExoPlayerManager(playerView, previewTimeBarLayout,
                 (ImageView) findViewById(R.id.imageView), getString(R.string.url_thumbnails));
         exoPlayerManager.play(Uri.parse(getString(R.string.url_dash)));
-        previewTimeBarLayout.setup(exoPlayerManager);
+        previewTimeBarLayout.setPreviewLoader(exoPlayerManager);
         requestFullScreenIfLandscape();
     }
 
