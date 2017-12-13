@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
         previewTimeBar.addOnPreviewChangeListener(this);
         exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView, previewTimeBarLayout);
-        exoPlayerManager.play(Uri.parse(getString(R.string.url_hls)));
+        exoPlayerManager.play(Uri.parse(getString(R.string.url_dash)));
         previewTimeBarLayout.setup(exoPlayerManager);
 
         View view = previewPlayerView.getVideoSurfaceView();
