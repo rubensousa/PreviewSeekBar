@@ -45,11 +45,11 @@ public class GlideThumbnailTransformation extends BitmapTransformation {
         x = square - y * MAX_COLUMNS;
     }
 
-    int getX() {
+    private int getX() {
         return x;
     }
 
-    int getY() {
+    private int getY() {
         return y;
     }
 
@@ -64,8 +64,7 @@ public class GlideThumbnailTransformation extends BitmapTransformation {
 
     @Override
     public void updateDiskCacheKey(MessageDigest messageDigest) {
-        byte[] data = ByteBuffer.allocate(8).putInt(x)
-                .putInt(y).array();
+        byte[] data = ByteBuffer.allocate(8).putInt(x).putInt(y).array();
         messageDigest.update(data);
     }
 
@@ -79,7 +78,6 @@ public class GlideThumbnailTransformation extends BitmapTransformation {
         if (!(obj instanceof GlideThumbnailTransformation)) {
             return false;
         }
-
         GlideThumbnailTransformation transformation = (GlideThumbnailTransformation) obj;
         return transformation.getX() == x && transformation.getY() == y;
     }
