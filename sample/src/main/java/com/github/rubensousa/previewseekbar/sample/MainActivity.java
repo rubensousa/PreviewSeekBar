@@ -25,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.github.rubensousa.previewseekbar.base.PreviewView;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
@@ -47,28 +48,15 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         setContentView(R.layout.activity_main);
 
         SimpleExoPlayerView playerView = findViewById(R.id.player_view);
-        SimpleExoPlayerView previewPlayerView
-                = findViewById(R.id.previewPlayerView);
         previewTimeBar = playerView.findViewById(R.id.exo_progress);
         previewTimeBarLayout = findViewById(R.id.previewSeekBarLayout);
-
-
         previewTimeBarLayout.setTintColorResource(R.color.colorPrimary);
 
         previewTimeBar.addOnPreviewChangeListener(this);
-        exoPlayerManager = new ExoPlayerManager(playerView, previewPlayerView, previewTimeBarLayout);
+        exoPlayerManager = new ExoPlayerManager(playerView, previewTimeBarLayout,
+                (ImageView) findViewById(R.id.imageView), getString(R.string.url_thumbnails));
         exoPlayerManager.play(Uri.parse(getString(R.string.url_dash)));
         previewTimeBarLayout.setup(exoPlayerManager);
-
-        View view = previewPlayerView.getVideoSurfaceView();
-
-        if (view instanceof SurfaceView) {
-            SurfaceView surfaceView = (SurfaceView) view;
-            surfaceView.setZOrderMediaOverlay(true);
-            surfaceView.setZOrderOnTop(true);
-            surfaceView.setVisibility(View.INVISIBLE);
-        }
-
         requestFullScreenIfLandscape();
     }
 

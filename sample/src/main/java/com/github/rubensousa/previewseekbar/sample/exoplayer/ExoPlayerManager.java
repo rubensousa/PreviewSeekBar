@@ -18,13 +18,13 @@
 package com.github.rubensousa.previewseekbar.sample.exoplayer;
 
 import android.net.Uri;
-import android.view.SurfaceView;
-import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.github.rubensousa.previewseekbar.base.PreviewLoader;
-import com.github.rubensousa.previewseekbar.exoplayer.PreviewLoadControl;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout;
-import com.github.rubensousa.previewseekbar.exoplayer.WorstVideoTrackSelection;
+import com.github.rubensousa.previewseekbar.sample.glide.GlideApp;
+import com.github.rubensousa.previewseekbar.sample.glide.GlideThumbnailTransformation;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -33,7 +33,6 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
@@ -43,15 +42,12 @@ import com.google.android.exoplayer2.util.Util;
 
 public class ExoPlayerManager implements PreviewLoader {
 
-    // 1 minute
-    private static final int ROUND_DECIMALS_THRESHOLD = 1 * 60 * 1000;
-
     private ExoPlayerMediaSourceBuilder mediaSourceBuilder;
     private SimpleExoPlayerView playerView;
-    private SimpleExoPlayerView previewPlayerView;
     private SimpleExoPlayer player;
-    private SimpleExoPlayer previewPlayer;
     private PreviewTimeBarLayout previewTimeBarLayout;
+    private String thumbnailsUrl;
+    private ImageView imageView;
     private Player.EventListener eventListener = new Player.DefaultEventListener() {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -61,12 +57,14 @@ public class ExoPlayerManager implements PreviewLoader {
         }
     };
 
-    public ExoPlayerManager(SimpleExoPlayerView playerView, SimpleExoPlayerView previewPlayerView,
-                            PreviewTimeBarLayout previewTimeBarLayout) {
+    public ExoPlayerManager(SimpleExoPlayerView playerView,
+                            PreviewTimeBarLayout previewTimeBarLayout, ImageView imageView,
+                            String thumbnailsUrl) {
         this.playerView = playerView;
-        this.previewPlayerView = previewPlayerView;
+        this.imageView = imageView;
         this.previewTimeBarLayout = previewTimeBarLayout;
         this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext());
+        this.thumbnailsUrl = thumbnailsUrl;
     }
 
     public void play(Uri uri) {
@@ -99,14 +97,6 @@ public class ExoPlayerManager implements PreviewLoader {
 
     public void stopPreview() {
         player.setPlayWhenReady(true);
-        View view = previewPlayerView.getVideoSurfaceView();
-        if (view instanceof SurfaceView) {
-            view.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private float roundOffset(float offset, int scale) {
-        return (float) (Math.round(offset * Math.pow(10, scale)) / Math.pow(10, scale));
     }
 
     private void releasePlayers() {
@@ -114,23 +104,14 @@ public class ExoPlayerManager implements PreviewLoader {
             player.release();
             player = null;
         }
-        if (previewPlayer != null) {
-            previewPlayer.release();
-            previewPlayer = null;
-        }
     }
 
     private void createPlayers() {
         if (player != null) {
             player.release();
         }
-        if (previewPlayer != null) {
-            previewPlayer.release();
-        }
         player = createFullPlayer();
         playerView.setPlayer(player);
-        previewPlayer = createPreviewPlayer();
-        previewPlayerView.setPlayer(previewPlayer);
     }
 
     private SimpleExoPlayer createFullPlayer() {
@@ -147,29 +128,14 @@ public class ExoPlayerManager implements PreviewLoader {
         return player;
     }
 
-    private SimpleExoPlayer createPreviewPlayer() {
-        DefaultTrackSelector trackSelector
-                = new DefaultTrackSelector(new WorstVideoTrackSelection.Factory());
-        LoadControl loadControl = new PreviewLoadControl();
-        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(
-                new DefaultRenderersFactory(playerView.getContext()), trackSelector, loadControl);
-        player.setPlayWhenReady(false);
-        player.setVolume(0f);
-        player.prepare(mediaSourceBuilder.getMediaSource(true));
-        return player;
-    }
-
     @Override
     public void loadPreview(long currentPosition, long max) {
-        float offset = (float) currentPosition / max;
-        int scale = player.getDuration() >= ROUND_DECIMALS_THRESHOLD ? 2 : 1;
-        float offsetRounded = roundOffset(offset, scale);
         player.setPlayWhenReady(false);
-        previewPlayer.seekTo((long) (offsetRounded * previewPlayer.getDuration()));
-        previewPlayer.setPlayWhenReady(false);
-        View view = previewPlayerView.getVideoSurfaceView();
-        if (view instanceof SurfaceView) {
-            view.setVisibility(View.VISIBLE);
-        }
+        GlideApp.with(imageView)
+                .load(thumbnailsUrl)
+                .override(GlideThumbnailTransformation.IMAGE_WIDTH,
+                        GlideThumbnailTransformation.IMAGE_HEIGHT)
+                .transform(new GlideThumbnailTransformation(currentPosition))
+                .into(imageView);
     }
 }
