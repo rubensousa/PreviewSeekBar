@@ -30,19 +30,15 @@ public class GlideThumbnailTransformation extends BitmapTransformation {
 
     public static final int MAX_LINES = 7;
     public static final int MAX_COLUMNS = 7;
-    public static final int THUMBNAIL_WIDTH = 120;
-    public static final int THUMBNAIL_HEIGHT = 67;
-    public static final int IMAGE_WIDTH = 840;
-    public static final int IMAGE_HEIGHT = 469;
     public static final int THUMBNAILS_EACH = 5000; // millisseconds
 
     private int x;
     private int y;
 
     public GlideThumbnailTransformation(long position) {
-        int square = (int) (Math.floor(position / THUMBNAILS_EACH));
+        int square = (int) position / THUMBNAILS_EACH;
         y = square / MAX_LINES;
-        x = square - y * MAX_COLUMNS;
+        x = square % MAX_COLUMNS;
     }
 
     private int getX() {
@@ -56,10 +52,10 @@ public class GlideThumbnailTransformation extends BitmapTransformation {
     @Override
     protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform,
                                int outWidth, int outHeight) {
-        int startX = x * toTransform.getWidth() / MAX_COLUMNS;
-        int startY = y * toTransform.getHeight() / MAX_LINES;
-        return Bitmap.createBitmap(toTransform, startX, startY,
-                toTransform.getWidth() / MAX_COLUMNS, toTransform.getHeight() / MAX_LINES);
+        int width = toTransform.getWidth() / MAX_COLUMNS;
+        int height = toTransform.getHeight() / MAX_LINES;
+        return Bitmap.createBitmap(toTransform, x * width, y * height,
+                width, height);
     }
 
     @Override
