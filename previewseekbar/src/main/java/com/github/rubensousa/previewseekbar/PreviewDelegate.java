@@ -19,7 +19,6 @@ package com.github.rubensousa.previewseekbar;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.View;
@@ -45,19 +44,10 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
     private boolean setup;
     private boolean enabled;
 
-    public PreviewDelegate(PreviewView previewView, ViewGroup parent, int scrubberColor) {
-        this(previewView, parent, scrubberColor, null);
-    }
-
-    public PreviewDelegate(PreviewView previewView, ViewGroup parent, int scrubberColor,
-                           @Nullable FrameLayout previewFrameLayout) {
+    public PreviewDelegate(PreviewView previewView, int scrubberColor) {
         this.previewView = previewView;
         this.previewView.addOnPreviewChangeListener(this);
-        this.previewParent = parent;
         this.scrubberColor = scrubberColor;
-        if (previewFrameLayout != null) {
-            attachPreviewFrameLayout(previewFrameLayout);
-        }
     }
 
     public void setPreviewLoader(PreviewLoader previewLoader) {
@@ -68,6 +58,7 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         if (setup) {
             return;
         }
+        this.previewParent = (ViewGroup) frameLayout.getParent();
         this.previewFrameLayout = frameLayout;
         inflateViews(frameLayout);
         morphView.setVisibility(View.INVISIBLE);
@@ -139,11 +130,15 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         startTouch = false;
     }
 
+    public boolean isSetup() {
+        return setup;
+    }
+
     @SuppressWarnings("SuspiciousNameCombination")
     private void inflateViews(FrameLayout frameLayout) {
 
         // Create morph view
-        View morphView = new View(frameLayout.getContext());
+        morphView = new View(frameLayout.getContext());
         morphView.setBackgroundResource(R.drawable.previewseekbar_morph);
 
         // Setup morph view
@@ -154,11 +149,11 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         frameLayout.addView(morphView, layoutParams);
 
         // Create frame view for the circular reveal
-        View frameView = new View(frameLayout.getContext());
+        previewFrameView = new View(frameLayout.getContext());
         FrameLayout.LayoutParams frameLayoutParams
                 = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        frameLayout.addView(frameView, frameLayoutParams);
+        frameLayout.addView(previewFrameView, frameLayoutParams);
 
         // Apply same color for the morph and frame views
         setPreviewColorTint(scrubberColor);

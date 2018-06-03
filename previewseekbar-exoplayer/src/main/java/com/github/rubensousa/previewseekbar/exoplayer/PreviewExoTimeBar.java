@@ -18,7 +18,9 @@ package com.github.rubensousa.previewseekbar.exoplayer;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -31,19 +33,20 @@ import com.google.android.exoplayer2.ui.TimeBar;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class PreviewExoTimeBar extends DefaultTimeBar implements PreviewView, TimeBar.OnScrubListener {
+public class PreviewExoTimeBar extends DefaultTimeBar implements PreviewView,
+        TimeBar.OnScrubListener {
 
     private List<OnPreviewChangeListener> listeners;
     private PreviewDelegate delegate;
     private int scrubProgress;
     private int duration;
     private int scrubberColor;
+    private int frameLayoutId;
 
     public PreviewExoTimeBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         listeners = new ArrayList<>();
-        final TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar, 0, 0);
         final int playedColor = a.getInt(
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_played_color,
@@ -52,9 +55,24 @@ public class PreviewExoTimeBar extends DefaultTimeBar implements PreviewView, Ti
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_color,
                 getDefaultScrubberColor(playedColor));
         a.recycle();
-        delegate = new PreviewDelegate(this, (ViewGroup) getParent(), scrubberColor);
+
+        a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.PreviewExoTimeBar, 0, 0);
+        frameLayoutId = a.getResourceId(R.styleable.PreviewExoTimeBar_previewFrameLayout, View.NO_ID);
+
+        delegate = new PreviewDelegate(this, scrubberColor);
         delegate.setEnabled(isEnabled());
         addListener(this);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (!delegate.isSetup() && getWidth() != 0 && getHeight() != 0) {
+            FrameLayout frameLayout = findFrameLayout((ViewGroup) getParent(), frameLayoutId);
+            if (frameLayout != null) {
+                delegate.attachPreviewFrameLayout(frameLayout);
+            }
+        }
     }
 
     @Override
@@ -168,4 +186,17 @@ public class PreviewExoTimeBar extends DefaultTimeBar implements PreviewView, Ti
         }
     }
 
+    @Nullable
+    private FrameLayout findFrameLayout(ViewGroup parent, int id) {
+        if (id == View.NO_ID || parent == null) {
+            return null;
+        }
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child.getId() == id && child instanceof FrameLayout) {
+                return (FrameLayout) child;
+            }
+        }
+        return null;
+    }
 }

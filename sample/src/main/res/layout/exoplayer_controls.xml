@@ -77,7 +77,8 @@
         app:layout_constraintEnd_toStartOf="@id/exo_duration"
         app:layout_constraintStart_toEndOf="@+id/exo_position"
         app:layout_constraintTop_toTopOf="@+id/exo_position"
-        app:paddingStart="10dp" />
+        app:paddingStart="10dp"
+        app:previewFrameLayout="@id/previewFrameLayout" />
 
     <TextView
         android:id="@id/exo_duration"
@@ -103,10 +104,12 @@
         android:layout_marginStart="8dp"
         android:background="@drawable/video_frame"
         android:padding="@dimen/video_frame_width"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/exo_progress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/imageView"
