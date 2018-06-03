@@ -21,16 +21,14 @@ android {
 }
 
 dependencies {
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    api "com.android.support:appcompat-v7:$supportLibVersion"
-    api 'com.google.android.exoplayer:exoplayer-ui:2.6.0'
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:support-media-compat:$supportLibVersion"
+    implementation "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
     api project(':previewseekbar')
 }
 
 ext {
-    VERSION_NAME = "2.6.0"
+    VERSION_NAME = "2.8.1.0"
     POM_ARTIFACT_ID = "previewseekbar-exoplayer"
     POM_DESCRIPTION = "ExoPlayer components for PreviewSeekBar"
 }
