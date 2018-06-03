@@ -78,9 +78,7 @@ abstract class PreviewAnimator {
         float startX = getPreviewViewX() + previewView.getThumbOffset();
         float endX = getPreviewViewX() + getPreviewViewWidth() - previewView.getThumbOffset();
 
-        float center = isLTR(previewFrameView) ? (endX - startX) * offset :
-                (endX - startX) * (1 - offset);
-        center += startX;
+        float center =  (endX - startX) * offset + startX;
 
         float nextX = center - previewFrameLayout.getWidth() / 2f;
         // Don't move if we still haven't reached half of the width
@@ -111,10 +109,6 @@ abstract class PreviewAnimator {
 
     private float getWidthOffset(int progress) {
         return (float) progress / previewView.getMax();
-    }
-
-    private boolean isLTR(View view) {
-        return view.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR;
     }
 
 }
