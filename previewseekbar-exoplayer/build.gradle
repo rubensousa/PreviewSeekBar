@@ -21,9 +21,9 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation "com.android.support:support-media-compat:$supportLibVersion"
-    implementation "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
+    api "com.android.support:appcompat-v7:$supportLibVersion"
+    api "com.android.support:support-media-compat:$supportLibVersion"
+    api "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
     api project(':previewseekbar')
 }
 

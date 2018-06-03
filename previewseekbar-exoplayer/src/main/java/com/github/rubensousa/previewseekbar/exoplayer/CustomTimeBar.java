@@ -174,9 +174,7 @@ public class CustomTimeBar extends View implements TimeBar {
             try {
                 scrubberDrawable = a.getDrawable(com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_drawable);
                 if (scrubberDrawable != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        setDrawableLayoutDirection(scrubberDrawable, getLayoutDirection());
-                    }
+                    setDrawableLayoutDirection(scrubberDrawable, getLayoutDirection());
                     defaultTouchTargetHeight =
                             Math.max(scrubberDrawable.getMinimumHeight(), defaultTouchTargetHeight);
                 }
