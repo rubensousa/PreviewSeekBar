@@ -17,33 +17,59 @@
 package com.github.rubensousa.previewseekbar.exoplayer;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
 import com.github.rubensousa.previewseekbar.base.PreviewView;
+import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.TimeBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class PreviewTimeBar extends CustomTimeBar implements PreviewView, TimeBar.OnScrubListener {
+public class PreviewTimeBar extends DefaultTimeBar implements PreviewView, TimeBar.OnScrubListener {
 
     private List<OnPreviewChangeListener> listeners;
+    private int scrubProgress;
+    private int duration;
+    private int scrubberColor;
 
     public PreviewTimeBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         listeners = new ArrayList<>();
         addListener(this);
+        final TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
+                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar, 0, 0);
+        final int playedColor = a.getInt(
+                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_played_color,
+                DEFAULT_PLAYED_COLOR);
+        scrubberColor = a.getInt(
+                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_color,
+                getDefaultScrubberColor(playedColor));
+        a.recycle();
+    }
+
+    @Override
+    public void setDuration(long duration) {
+        super.setDuration(duration);
+        this.duration = (int) duration;
+    }
+
+    @Override
+    public void setPosition(long position) {
+        super.setPosition(position);
+        this.scrubProgress = (int) position;
     }
 
     @Override
     public int getProgress() {
-        return (int) getScrubPosition();
+        return scrubProgress;
     }
 
     @Override
     public int getMax() {
-        return (int) getDuration();
+        return duration;
     }
 
     @Override
@@ -53,7 +79,7 @@ public class PreviewTimeBar extends CustomTimeBar implements PreviewView, TimeBa
 
     @Override
     public int getDefaultColor() {
-        return getScrubberColor();
+        return scrubberColor;
     }
 
     @Override
@@ -69,6 +95,7 @@ public class PreviewTimeBar extends CustomTimeBar implements PreviewView, TimeBa
     @Override
     public void onScrubStart(TimeBar timeBar, long position) {
         for (OnPreviewChangeListener listener : listeners) {
+            scrubProgress = (int) position;
             listener.onStartPreview(this);
         }
     }
@@ -76,6 +103,7 @@ public class PreviewTimeBar extends CustomTimeBar implements PreviewView, TimeBa
     @Override
     public void onScrubMove(TimeBar timeBar, long position) {
         for (OnPreviewChangeListener listener : listeners) {
+            scrubProgress = (int) position;
             listener.onPreview(this, (int) position, true);
         }
     }
@@ -83,6 +111,7 @@ public class PreviewTimeBar extends CustomTimeBar implements PreviewView, TimeBa
     @Override
     public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
         for (OnPreviewChangeListener listener : listeners) {
+            setPosition(position);
             listener.onStopPreview(this);
         }
     }

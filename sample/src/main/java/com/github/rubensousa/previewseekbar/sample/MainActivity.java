@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             } else {
                 previewTimeBarLayout.showPreview();
                 exoPlayerManager.loadPreview(previewTimeBar.getProgress(),
-                        previewTimeBar.getDuration());
+                        previewTimeBar.getMax());
             }
         } else {
             startActivity(new Intent(this, LocalActivity.class));
