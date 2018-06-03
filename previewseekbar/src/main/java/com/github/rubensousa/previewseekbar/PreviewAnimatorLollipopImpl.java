@@ -28,8 +28,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
-import com.github.rubensousa.previewseekbar.base.PreviewView;
-
 class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
     private Animator.AnimatorListener showListener = new AnimatorListenerAdapter() {
@@ -133,8 +131,8 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
                 morphView.setVisibility(View.VISIBLE);
                 morphView.animate()
                         .y(getHideY())
-                        .scaleY(0.1f)
-                        .scaleX(0.1f)
+                        .scaleY(0f)
+                        .scaleX(0f)
                         .setDuration(UNMORPH_MOVE_DURATION)
                         .setInterpolator(new AccelerateInterpolator())
                         .setListener(hideListener);

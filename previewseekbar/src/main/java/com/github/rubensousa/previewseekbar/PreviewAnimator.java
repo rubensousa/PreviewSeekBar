@@ -20,8 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.github.rubensousa.previewseekbar.base.PreviewView;
-
 abstract class PreviewAnimator {
 
     static final int MORPH_REVEAL_DURATION = 200;

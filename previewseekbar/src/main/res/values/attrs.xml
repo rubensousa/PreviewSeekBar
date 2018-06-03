@@ -15,7 +15,7 @@
   -->
 
 <resources>
-    <declare-styleable name="PreviewExoTimeBar">
+    <declare-styleable name="PreviewSeekBar">
         <attr name="previewFrameLayout" format="reference" />
     </declare-styleable>
 </resources>

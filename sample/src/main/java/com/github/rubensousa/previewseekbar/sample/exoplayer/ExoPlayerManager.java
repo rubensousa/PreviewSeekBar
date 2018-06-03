@@ -21,8 +21,8 @@ import android.net.Uri;
 import android.widget.ImageView;
 
 import com.bumptech.glide.request.target.Target;
-import com.github.rubensousa.previewseekbar.base.PreviewLoader;
-import com.github.rubensousa.previewseekbar.exoplayer.PreviewExoTimeBar;
+import com.github.rubensousa.previewseekbar.PreviewLoader;
+import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideApp;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideThumbnailTransformation;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -45,7 +45,7 @@ public class ExoPlayerManager implements PreviewLoader {
     private ExoPlayerMediaSourceBuilder mediaSourceBuilder;
     private SimpleExoPlayerView playerView;
     private SimpleExoPlayer player;
-    private PreviewExoTimeBar previewTimeBar;
+    private PreviewTimeBar previewTimeBar;
     private String thumbnailsUrl;
     private ImageView imageView;
     private Player.EventListener eventListener = new Player.DefaultEventListener() {
@@ -58,7 +58,7 @@ public class ExoPlayerManager implements PreviewLoader {
     };
 
     public ExoPlayerManager(SimpleExoPlayerView playerView,
-                            PreviewExoTimeBar previewTimeBar, ImageView imageView,
+                            PreviewTimeBar previewTimeBar, ImageView imageView,
                             String thumbnailsUrl) {
         this.playerView = playerView;
         this.imageView = imageView;

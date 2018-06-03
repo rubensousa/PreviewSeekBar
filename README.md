@@ -18,51 +18,45 @@ Add the following to your app's build.gradle:
 
 ```groovy
 dependencies {
+    // Base implementation with a standard SeekBar
     implementation 'com.github.rubensousa:previewseekbar:1.2'
+
+    // ExoPlayer extension that contains a TimeBar. Includes the previous dependency
     implementation 'com.github.rubensousa:previewseekbar-exoplayer:2.6.0'
 }
 ```
 
+If you're going to use this with ExoPlayer, just add the second dependency.
+
 ## How to use
+
+
 
 #### Add the following XML:
 
 ```xml
-<com.github.rubensousa.previewseekbar.PreviewSeekBarLayout
-      android:id="@+id/previewSeekBarLayout"
+<FrameLayout
+  android:id="@+id/previewFrameLayout"
+  android:layout_width="@dimen/video_preview_width"
+  android:layout_height="@dimen/video_preview_height">
+
+  <ImageView
+      android:id="@+id/imageView"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical">
+      android:layout_height="match_parent"
+      android:background="@color/colorPrimary" />
 
-      <FrameLayout
-          android:id="@+id/previewFrameLayout"
-          android:layout_width="@dimen/video_preview_width"
-          android:layout_height="@dimen/video_preview_height">
+</FrameLayout>
 
-          <ImageView
-              android:id="@+id/imageView"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/colorPrimary" />
-
-      </FrameLayout>
-
-      <com.github.rubensousa.previewseekbar.PreviewSeekBar
-          android:id="@+id/previewSeekBar"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_below="@id/previewFrameLayout"
-          android:layout_marginTop="25dp"
-          android:max="800" />
-          
-</com.github.rubensousa.previewseekbar.PreviewSeekBarLayout>
+<com.github.rubensousa.previewseekbar.PreviewSeekBar
+  android:id="@+id/previewSeekBar"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginTop="25dp"
+  android:max="800" />
 ```
-#### You need to add at least one PreviewSeekBar and a FrameLayout inside PreviewSeekBarLayout, else an exception will be thrown.
-PreviewSeekBarLayout extends from RelativeLayout so you can add other views or layouts there. 
 
 #### Create a PreviewLoader and pass it to PreviewSeekBarLayout:
-
-
 
 ```java
 // Create a class that implements this interface and implement your own preview logic there
@@ -91,36 +85,26 @@ Here's the sample's exoplayer_controls: https://github.com/rubensousa/PreviewSee
 The PreviewSeekBarLayout inside exoplayer_controls should be similar to this:
 
 ```xml
-<com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout
-    android:id="@+id/previewTimeBarLayout"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_weight="1">
+<FrameLayout
+    android:id="@+id/previewFrameLayout"
+    android:layout_width="@dimen/video_preview_width"
+    android:layout_height="@dimen/video_preview_height"
+    android:background="@drawable/video_frame"
+    android:padding="@dimen/video_frame_width">
 
-    <FrameLayout
-        android:id="@+id/previewFrameLayout"
-        android:layout_width="@dimen/video_preview_width"
-        android:layout_height="@dimen/video_preview_height"
-        android:background="@drawable/video_frame"
-        android:padding="@dimen/video_frame_width">
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </FrameLayout>
-
-    <com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar
-        android:id="@+id/exo_progress"
-        style="?android:attr/progressBarStyleHorizontal"
+    <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/previewFrameLayout"
-        android:layout_marginTop="10dp"
-        android:max="800" />
+        android:layout_height="match_parent"/>
 
-</com.github.rubensousa.previewseekbar.PreviewSeekBarLayout>
+</FrameLayout>
+
+<com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar
+    android:id="@+id/exo_progress"
+    style="?android:attr/progressBarStyleHorizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:previewFrameLayout="@id/previewFrameLayout"/>
 ```
 
 #### Create your own ExoPlayerLoader that seeks the video to the current position

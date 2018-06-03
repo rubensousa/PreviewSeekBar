@@ -17,26 +17,25 @@
 package com.github.rubensousa.previewseekbar;
 
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.github.rubensousa.previewseekbar.base.PreviewLoader;
-import com.github.rubensousa.previewseekbar.base.PreviewView;
-
 public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
 
     private FrameLayout previewFrameLayout;
     private View morphView;
     private View previewFrameView;
+    private ViewGroup previewParent;
     private PreviewAnimator animator;
     private PreviewView previewView;
     private PreviewLoader previewLoader;
-    private ViewGroup previewParent;
 
     private int scrubberColor;
     private boolean showing;
@@ -54,6 +53,16 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         this.previewLoader = previewLoader;
     }
 
+    public void onLayout(ViewGroup previewParent, int frameLayoutId) {
+        if (!setup) {
+            this.previewParent = previewParent;
+            FrameLayout frameLayout = findFrameLayout(previewParent, frameLayoutId);
+            if (frameLayout != null) {
+                attachPreviewFrameLayout(frameLayout);
+            }
+        }
+    }
+
     public void attachPreviewFrameLayout(FrameLayout frameLayout) {
         if (setup) {
             return;
@@ -64,8 +73,13 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         morphView.setVisibility(View.INVISIBLE);
         previewFrameLayout.setVisibility(View.INVISIBLE);
         previewFrameView.setVisibility(View.INVISIBLE);
-        animator = new PreviewAnimatorLollipopImpl(previewParent, previewView, morphView,
-                previewFrameLayout, previewFrameView);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            animator = new PreviewAnimatorLollipopImpl(previewParent, previewView, morphView,
+                    previewFrameLayout, previewFrameView);
+        } else {
+            animator = new PreviewAnimatorImpl(previewParent, previewView, morphView,
+                    previewFrameLayout, previewFrameView);
+        }
         setup = true;
     }
 
@@ -158,5 +172,19 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         // Apply same color for the morph and frame views
         setPreviewColorTint(scrubberColor);
         frameLayout.requestLayout();
+    }
+
+    @Nullable
+    private FrameLayout findFrameLayout(ViewGroup parent, int id) {
+        if (id == View.NO_ID || parent == null) {
+            return null;
+        }
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child.getId() == id && child instanceof FrameLayout) {
+                return (FrameLayout) child;
+            }
+        }
+        return null;
     }
 }

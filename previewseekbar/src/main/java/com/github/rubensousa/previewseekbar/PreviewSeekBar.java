@@ -2,45 +2,61 @@ package com.github.rubensousa.previewseekbar;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
-
-import com.github.rubensousa.previewseekbar.base.PreviewLoader;
-import com.github.rubensousa.previewseekbar.base.PreviewView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A SeekBar that should be used inside PreviewSeekBarLayout
+ * A SeekBar that morphs its indicator into a preview frame while scrubbing.
  */
 public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
         SeekBar.OnSeekBarChangeListener {
 
     private List<PreviewView.OnPreviewChangeListener> listeners;
+    private PreviewDelegate delegate;
+    private int frameLayoutId = View.NO_ID;
 
     public PreviewSeekBar(Context context) {
-        super(context);
-        init();
+        this(context, null, 0);
     }
 
     public PreviewSeekBar(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, android.support.v7.appcompat.R.attr.seekBarStyle);
     }
 
     public PreviewSeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context, attrs);
     }
 
-    private void init() {
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (!delegate.isSetup() && getWidth() != 0 && getHeight() != 0 && !isInEditMode()) {
+            delegate.onLayout((ViewGroup) getParent(), frameLayoutId);
+        }
+    }
+
+    private void init(Context context, AttributeSet attrs) {
+        if (attrs != null) {
+            TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
+                    R.styleable.PreviewSeekBar, 0, 0);
+            frameLayoutId = a.getResourceId(R.styleable.PreviewSeekBar_previewFrameLayout,
+                    View.NO_ID);
+        }
         listeners = new ArrayList<>();
+        delegate = new PreviewDelegate(this, getDefaultColor());
+        delegate.setEnabled(isEnabled());
         super.setOnSeekBarChangeListener(this);
     }
 
@@ -51,11 +67,18 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
 
     @Override
     public void attachPreviewFrameLayout(FrameLayout frameLayout) {
+        delegate.attachPreviewFrameLayout(frameLayout);
+    }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        delegate.setEnabled(enabled);
     }
 
     @Override
     public void setPreviewColorTint(int color) {
+        delegate.setPreviewColorTint(color);
         Drawable drawable = DrawableCompat.wrap(getThumb());
         DrawableCompat.setTint(drawable, color);
         setThumb(drawable);
@@ -85,22 +108,26 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
 
     @Override
     public boolean isShowingPreview() {
-        return false;
+        return delegate.isShowing();
     }
 
     @Override
     public void showPreview() {
-
+        if (isEnabled()) {
+            delegate.show();
+        }
     }
 
     @Override
     public void hidePreview() {
-
+        if (isEnabled()) {
+            delegate.hide();
+        }
     }
 
     @Override
     public void setPreviewLoader(PreviewLoader previewLoader) {
-
+        delegate.setPreviewLoader(previewLoader);
     }
 
     @Override
@@ -135,6 +162,5 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
             listener.onStopPreview(this, seekBar.getProgress());
         }
     }
-
 
 }

@@ -26,8 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.github.rubensousa.previewseekbar.base.PreviewView;
-import com.github.rubensousa.previewseekbar.exoplayer.PreviewExoTimeBar;
+import com.github.rubensousa.previewseekbar.PreviewView;
+import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private static final int PICK_FILE_REQUEST_CODE = 2;
 
     private ExoPlayerManager exoPlayerManager;
-    private PreviewExoTimeBar previewTimeBar;
+    private PreviewTimeBar previewTimeBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
