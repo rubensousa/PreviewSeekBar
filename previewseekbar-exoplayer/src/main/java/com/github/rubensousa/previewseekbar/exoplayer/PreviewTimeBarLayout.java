@@ -81,7 +81,7 @@ public class PreviewTimeBarLayout extends PreviewGeneralLayout {
 
     @Override
     public void setupMargins() {
-        LayoutParams layoutParams = (LayoutParams) previewTimeBar.getLayoutParams();
+       /* LayoutParams layoutParams = (LayoutParams) previewTimeBar.getLayoutParams();
 
         layoutParams.rightMargin = (int) (previewFrameLayout.getWidth() / 2
                 - previewTimeBar.getThumbOffset() * 0.9f);
@@ -94,7 +94,7 @@ public class PreviewTimeBarLayout extends PreviewGeneralLayout {
 
         previewTimeBar.setLayoutParams(layoutParams);
         requestLayout();
-        invalidate();
+        invalidate();*/
     }
 
     @Override

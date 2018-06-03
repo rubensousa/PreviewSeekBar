@@ -9,8 +9,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
+import android.widget.FrameLayout;
 import android.widget.SeekBar;
 
+import com.github.rubensousa.previewseekbar.base.PreviewLoader;
 import com.github.rubensousa.previewseekbar.base.PreviewView;
 
 import java.util.ArrayList;
@@ -49,11 +51,13 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
         // No-op
     }
 
-    public void setTintColorResource(@ColorRes int colorResource) {
-        setTintColor(ContextCompat.getColor(getContext(), colorResource));
+    @Override
+    public void attachPreviewFrameLayout(FrameLayout frameLayout) {
+
     }
 
-    public void setTintColor(@ColorInt int color) {
+    @Override
+    public void setPreviewColorTint(int color) {
         Drawable drawable = DrawableCompat.wrap(getThumb());
         DrawableCompat.setTint(drawable, color);
         setThumb(drawable);
@@ -61,6 +65,11 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
         drawable = DrawableCompat.wrap(getProgressDrawable());
         DrawableCompat.setTint(drawable, color);
         setProgressDrawable(drawable);
+    }
+
+    @Override
+    public void setPreviewColorResourceTint(int color) {
+        setPreviewColorTint(ContextCompat.getColor(getContext(), color));
     }
 
     @Override
@@ -74,6 +83,26 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public boolean isShowingPreview() {
+        return false;
+    }
+
+    @Override
+    public void showPreview() {
+
+    }
+
+    @Override
+    public void hidePreview() {
+
+    }
+
+    @Override
+    public void setPreviewLoader(PreviewLoader previewLoader) {
+
     }
 
     @Override

@@ -22,6 +22,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.request.target.Target;
 import com.github.rubensousa.previewseekbar.base.PreviewLoader;
+import com.github.rubensousa.previewseekbar.exoplayer.PreviewExoTimeBar;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideApp;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideThumbnailTransformation;
@@ -45,24 +46,24 @@ public class ExoPlayerManager implements PreviewLoader {
     private ExoPlayerMediaSourceBuilder mediaSourceBuilder;
     private SimpleExoPlayerView playerView;
     private SimpleExoPlayer player;
-    private PreviewTimeBarLayout previewTimeBarLayout;
+    private PreviewExoTimeBar previewTimeBar;
     private String thumbnailsUrl;
     private ImageView imageView;
     private Player.EventListener eventListener = new Player.DefaultEventListener() {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             if (playbackState == Player.STATE_READY && playWhenReady) {
-                previewTimeBarLayout.hidePreview();
+                previewTimeBar.hidePreview();
             }
         }
     };
 
     public ExoPlayerManager(SimpleExoPlayerView playerView,
-                            PreviewTimeBarLayout previewTimeBarLayout, ImageView imageView,
+                            PreviewExoTimeBar previewTimeBar, ImageView imageView,
                             String thumbnailsUrl) {
         this.playerView = playerView;
         this.imageView = imageView;
-        this.previewTimeBarLayout = previewTimeBarLayout;
+        this.previewTimeBar = previewTimeBar;
         this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext());
         this.thumbnailsUrl = thumbnailsUrl;
     }

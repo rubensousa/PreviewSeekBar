@@ -9,93 +9,22 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:elevation="4dp"
-    android:layoutDirection="ltr"
     android:orientation="vertical">
 
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@id/exo_position"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:includeFontPadding="false"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:textColor="#FFBEBEBE"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout
-            android:id="@+id/previewSeekBarLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:id="@+id/previewFrameLayout"
-                android:layout_width="@dimen/video_preview_width"
-                android:layout_height="@dimen/video_preview_height"
-                android:background="@drawable/video_frame"
-                android:padding="@dimen/video_frame_width">
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitXY" />
-
-            </FrameLayout>
-
-            <com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar
-                android:id="@+id/exo_progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/previewFrameLayout"
-                android:layout_marginTop="10dp"
-                android:max="800"
-                android:progressTint="@color/colorPrimary"
-                android:thumbTint="@color/colorPrimary"
-                app:paddingStart="10dp" />
-
-        </com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout>
-
-
-        <TextView
-            android:id="@id/exo_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:includeFontPadding="false"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:textColor="#FFBEBEBE"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <LinearLayout
+        android:id="@+id/controlsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#CC000000"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingTop="4dp">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageButton
             android:id="@id/exo_prev"
@@ -123,4 +52,68 @@
 
     </LinearLayout>
 
-</LinearLayout>
+    <TextView
+        android:id="@id/exo_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:includeFontPadding="false"
+        android:textColor="#FFBEBEBE"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/controlsLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="18:20" />
+
+    <com.github.rubensousa.previewseekbar.exoplayer.PreviewExoTimeBar
+        android:id="@+id/exo_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="800"
+        android:progressTint="@color/colorPrimary"
+        android:thumbTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@id/exo_position"
+        app:layout_constraintEnd_toStartOf="@id/exo_duration"
+        app:layout_constraintStart_toEndOf="@+id/exo_position"
+        app:layout_constraintTop_toTopOf="@+id/exo_position"
+        app:paddingStart="10dp" />
+
+    <TextView
+        android:id="@id/exo_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="8dp"
+        android:includeFontPadding="false"
+        android:textColor="#FFBEBEBE"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="25:23" />
+
+
+    <FrameLayout
+        android:id="@+id/previewFrameLayout"
+        android:layout_width="@dimen/video_preview_width"
+        android:layout_height="@dimen/video_preview_height"
+        android:layout_marginBottom="4dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/video_frame"
+        android:padding="@dimen/video_frame_width"
+        app:layout_constraintBottom_toTopOf="@+id/exo_progress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY" />
+
+    </FrameLayout>
+
+</android.support.constraint.ConstraintLayout>

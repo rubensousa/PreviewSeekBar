@@ -1,6 +1,10 @@
 package com.github.rubensousa.previewseekbar.base;
 
 
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.widget.FrameLayout;
+
 public interface PreviewView {
 
     int getProgress();
@@ -10,6 +14,20 @@ public interface PreviewView {
     int getThumbOffset();
 
     int getDefaultColor();
+
+    boolean isShowingPreview();
+
+    void showPreview();
+
+    void hidePreview();
+
+    void setPreviewLoader(PreviewLoader previewLoader);
+
+    void setPreviewColorTint(@ColorInt int color);
+
+    void setPreviewColorResourceTint(@ColorRes int color);
+
+    void attachPreviewFrameLayout(FrameLayout frameLayout);
 
     void addOnPreviewChangeListener(OnPreviewChangeListener listener);
 

@@ -27,7 +27,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.github.rubensousa.previewseekbar.base.PreviewView;
-import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
+import com.github.rubensousa.previewseekbar.exoplayer.PreviewExoTimeBar;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
@@ -38,8 +38,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private static final int PICK_FILE_REQUEST_CODE = 2;
 
     private ExoPlayerManager exoPlayerManager;
-    private PreviewTimeBarLayout previewTimeBarLayout;
-    private PreviewTimeBar previewTimeBar;
+    private PreviewExoTimeBar previewTimeBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,13 +47,11 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
         SimpleExoPlayerView playerView = findViewById(R.id.player_view);
         previewTimeBar = playerView.findViewById(R.id.exo_progress);
-        previewTimeBarLayout = findViewById(R.id.previewSeekBarLayout);
-        previewTimeBarLayout.setTintColorResource(R.color.colorPrimary);
         previewTimeBar.addOnPreviewChangeListener(this);
-        exoPlayerManager = new ExoPlayerManager(playerView, previewTimeBarLayout,
+        exoPlayerManager = new ExoPlayerManager(playerView, previewTimeBar,
                 (ImageView) findViewById(R.id.imageView), getString(R.string.url_thumbnails));
         exoPlayerManager.play(Uri.parse(getString(R.string.url_dash)));
-        previewTimeBarLayout.setPreviewLoader(exoPlayerManager);
+        previewTimeBar.setPreviewLoader(exoPlayerManager);
         requestFullScreenIfLandscape();
     }
 
@@ -97,11 +94,11 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             intent.setType("video/*.mp4");
             startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
         } else if (item.getItemId() == R.id.action_toggle) {
-            if (previewTimeBarLayout.isShowingPreview()) {
-                previewTimeBarLayout.hidePreview();
+            if (previewTimeBar.isShowingPreview()) {
+                previewTimeBar.hidePreview();
                 exoPlayerManager.stopPreview();
             } else {
-                previewTimeBarLayout.showPreview();
+                previewTimeBar.showPreview();
                 exoPlayerManager.loadPreview(previewTimeBar.getProgress(),
                         previewTimeBar.getMax());
             }
