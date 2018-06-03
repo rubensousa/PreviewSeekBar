@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.request.target.Target;
 import com.github.rubensousa.previewseekbar.base.PreviewLoader;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewExoTimeBar;
-import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideApp;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideThumbnailTransformation;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -96,7 +95,8 @@ public class ExoPlayerManager implements PreviewLoader {
         }
     }
 
-    public void stopPreview() {
+    public void stopPreview(long position) {
+        player.seekTo(position);
         player.setPlayWhenReady(true);
     }
 

@@ -58,12 +58,12 @@ class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
     }
 
     @Override
-    public void onStartPreview(PreviewView previewView) {
+    public void onStartPreview(PreviewView previewView, int progress) {
         startTouch = true;
     }
 
     @Override
-    public void onStopPreview(PreviewView previewView) {
+    public void onStopPreview(PreviewView previewView, int progress) {
         if (showing) {
             animator.hide();
         }

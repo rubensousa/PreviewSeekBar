@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -42,6 +43,7 @@ public class PreviewExoTimeBar extends DefaultTimeBar implements PreviewView,
     private int duration;
     private int scrubberColor;
     private int frameLayoutId;
+    private int scrubberDiameter;
 
     public PreviewExoTimeBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -54,6 +56,14 @@ public class PreviewExoTimeBar extends DefaultTimeBar implements PreviewView,
         scrubberColor = a.getInt(
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_color,
                 getDefaultScrubberColor(playedColor));
+
+        int defaultScrubberDraggedSize = dpToPx(context.getResources().getDisplayMetrics(),
+                DEFAULT_SCRUBBER_DRAGGED_SIZE_DP);
+
+        scrubberDiameter = a.getDimensionPixelSize(
+                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_dragged_size,
+                defaultScrubberDraggedSize);
+
         a.recycle();
 
         a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.PreviewExoTimeBar, 0, 0);
@@ -67,7 +77,7 @@ public class PreviewExoTimeBar extends DefaultTimeBar implements PreviewView,
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (!delegate.isSetup() && getWidth() != 0 && getHeight() != 0) {
+        if (!delegate.isSetup() && getWidth() != 0 && getHeight() != 0 && !isInEditMode()) {
             FrameLayout frameLayout = findFrameLayout((ViewGroup) getParent(), frameLayoutId);
             if (frameLayout != null) {
                 delegate.attachPreviewFrameLayout(frameLayout);
@@ -144,7 +154,7 @@ public class PreviewExoTimeBar extends DefaultTimeBar implements PreviewView,
 
     @Override
     public int getThumbOffset() {
-        return getResources().getDimensionPixelOffset(R.dimen.previewseekbar_thumb_offset);
+        return scrubberDiameter / 2;
     }
 
     @Override
@@ -166,7 +176,7 @@ public class PreviewExoTimeBar extends DefaultTimeBar implements PreviewView,
     public void onScrubStart(TimeBar timeBar, long position) {
         for (OnPreviewChangeListener listener : listeners) {
             scrubProgress = (int) position;
-            listener.onStartPreview(this);
+            listener.onStartPreview(this, (int) position);
         }
     }
 
@@ -181,8 +191,7 @@ public class PreviewExoTimeBar extends DefaultTimeBar implements PreviewView,
     @Override
     public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
         for (OnPreviewChangeListener listener : listeners) {
-            setPosition(position);
-            listener.onStopPreview(this);
+            listener.onStopPreview(this, (int) position);
         }
     }
 
@@ -198,5 +207,9 @@ public class PreviewExoTimeBar extends DefaultTimeBar implements PreviewView,
             }
         }
         return null;
+    }
+
+    private int dpToPx(DisplayMetrics displayMetrics, int dps) {
+        return (int) (dps * displayMetrics.density + 0.5f);
     }
 }

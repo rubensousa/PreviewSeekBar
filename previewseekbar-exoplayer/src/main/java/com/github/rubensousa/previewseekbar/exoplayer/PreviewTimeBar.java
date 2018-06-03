@@ -133,7 +133,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView, TimeB
     public void onScrubStart(TimeBar timeBar, long position) {
         for (OnPreviewChangeListener listener : listeners) {
             scrubProgress = (int) position;
-            listener.onStartPreview(this);
+            listener.onStartPreview(this, (int) position);
         }
     }
 
@@ -149,7 +149,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView, TimeB
     public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
         for (OnPreviewChangeListener listener : listeners) {
             setPosition(position);
-            listener.onStopPreview(this);
+            listener.onStopPreview(this, (int) position);
         }
     }
 }

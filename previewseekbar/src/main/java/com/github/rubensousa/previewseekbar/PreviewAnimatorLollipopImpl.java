@@ -57,9 +57,9 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
     @Override
     public void show() {
+        move();
         previewFrameLayout.setVisibility(View.INVISIBLE);
         previewFrameView.setVisibility(View.INVISIBLE);
-        morphView.setX(getMorphX());
         morphView.setY(((View) previewView).getY());
         morphView.setVisibility(View.VISIBLE);
         morphView.animate()
@@ -133,8 +133,8 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
                 morphView.setVisibility(View.VISIBLE);
                 morphView.animate()
                         .y(getHideY())
-                        .scaleY(0.5f)
-                        .scaleX(0.5f)
+                        .scaleY(0.1f)
+                        .scaleX(0.1f)
                         .setDuration(UNMORPH_MOVE_DURATION)
                         .setInterpolator(new AccelerateInterpolator())
                         .setListener(hideListener);

@@ -25,8 +25,8 @@ import com.github.rubensousa.previewseekbar.base.PreviewView;
 abstract class PreviewAnimator {
 
     static final int MORPH_REVEAL_DURATION = 200;
-    static final int MORPH_MOVE_DURATION = 150;
-    static final int UNMORPH_MOVE_DURATION = 150;
+    static final int MORPH_MOVE_DURATION = 200;
+    static final int UNMORPH_MOVE_DURATION = 200;
     static final int UNMORPH_UNREVEAL_DURATION = 200;
 
     View morphView;
@@ -54,18 +54,16 @@ abstract class PreviewAnimator {
     public abstract void hide();
 
     /**
-     * Get x position for the morph view that'll animate and transform into the preview frame
+     * Get the x position for the view that'll morph into the preview FrameLayout
      */
     float getMorphX() {
-        float offset = getWidthOffset(previewView.getProgress());
-        float startX = ((View) previewView).getX();
-        float endX = ((View) previewView).getWidth() + startX;
+        float startX = getPreviewViewX() + previewView.getThumbOffset();
+        float endX = getPreviewViewX() + getPreviewViewWidth() - previewView.getThumbOffset();
 
-        float ltr = (endX - startX) * offset - morphView.getWidth() / 2f;
-        float rtl = (endX - startX) * (1 - offset) - morphView.getWidth() / 2f;
+        float nextX = (endX - startX) * getWidthOffset(previewView.getProgress())
+                + startX - previewView.getThumbOffset();
 
-        return ((View) previewView).getLayoutDirection() == View.LAYOUT_DIRECTION_LTR ?
-                ltr : rtl;
+        return nextX;
     }
 
     /**
@@ -73,18 +71,40 @@ abstract class PreviewAnimator {
      * that'll make the frame not move until the scrub position exceeds half of the frame's width.
      */
     float getFrameX() {
+        ViewGroup.MarginLayoutParams params
+                = (ViewGroup.MarginLayoutParams) previewFrameLayout.getLayoutParams();
         float offset = getWidthOffset(previewView.getProgress());
-        float startX = parent.getResources()
-                .getDimensionPixelOffset(R.dimen.previewseekbar_indicator_width);
-        float endX = parent.getWidth() - startX;
-        float ltr = startX;// (endX - startX) * offset;
-        float rtl = (endX - startX) * (1 - offset);
+        float low = previewFrameLayout.getLeft();
+        float high = parent.getWidth() - params.rightMargin - previewFrameLayout.getWidth();
 
-        return ((View) previewView).getLayoutDirection() == View.LAYOUT_DIRECTION_LTR ? ltr : rtl;
+        float startX = getPreviewViewX() + previewView.getThumbOffset();
+        float endX = getPreviewViewX() + getPreviewViewWidth() - previewView.getThumbOffset();
+
+        float center = isLTR(previewFrameView) ? (endX - startX) * offset :
+                (endX - startX) * (1 - offset);
+        center += startX;
+
+        float nextX = center - previewFrameLayout.getWidth() / 2f;
+        // Don't move if we still haven't reached half of the width
+        if (nextX < low) {
+            return low;
+        } else if (nextX > high) {
+            return high;
+        } else {
+            return nextX;
+        }
+    }
+
+    float getPreviewViewX() {
+        return ((View) previewView).getX();
+    }
+
+    float getPreviewViewWidth() {
+        return ((View) previewView).getWidth();
     }
 
     float getHideY() {
-        return ((View) previewView).getY() + previewView.getThumbOffset();
+        return ((View) previewView).getY() + previewView.getThumbOffset() / 2f;
     }
 
     float getShowY() {
@@ -93,6 +113,10 @@ abstract class PreviewAnimator {
 
     private float getWidthOffset(int progress) {
         return (float) progress / previewView.getMax();
+    }
+
+    private boolean isLTR(View view) {
+        return view.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR;
     }
 
 }

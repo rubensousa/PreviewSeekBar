@@ -3,8 +3,6 @@ package com.github.rubensousa.previewseekbar;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatSeekBar;
@@ -127,14 +125,14 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         for (OnPreviewChangeListener listener : listeners) {
-            listener.onStartPreview(this);
+            listener.onStartPreview(this, seekBar.getProgress());
         }
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         for (OnPreviewChangeListener listener : listeners) {
-            listener.onStopPreview(this);
+            listener.onStopPreview(this, seekBar.getProgress());
         }
     }
 

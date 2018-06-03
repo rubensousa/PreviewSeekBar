@@ -28,7 +28,6 @@ import android.widget.ImageView;
 
 import com.github.rubensousa.previewseekbar.base.PreviewView;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewExoTimeBar;
-import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBarLayout;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
@@ -96,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         } else if (item.getItemId() == R.id.action_toggle) {
             if (previewTimeBar.isShowingPreview()) {
                 previewTimeBar.hidePreview();
-                exoPlayerManager.stopPreview();
+                exoPlayerManager.stopPreview(previewTimeBar.getProgress());
             } else {
                 previewTimeBar.showPreview();
                 exoPlayerManager.loadPreview(previewTimeBar.getProgress(),
@@ -125,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
 
     @Override
-    public void onStartPreview(PreviewView previewView) {
+    public void onStartPreview(PreviewView previewView, int progress) {
         if (getResources().getBoolean(R.bool.landscape)) {
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -137,8 +136,8 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     @Override
-    public void onStopPreview(PreviewView previewView) {
-        exoPlayerManager.stopPreview();
+    public void onStopPreview(PreviewView previewView, int progress) {
+        exoPlayerManager.stopPreview(progress);
     }
 
     @Override

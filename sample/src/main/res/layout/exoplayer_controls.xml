@@ -94,13 +94,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="25:23" />
 
-
     <FrameLayout
         android:id="@+id/previewFrameLayout"
         android:layout_width="@dimen/video_preview_width"
         android:layout_height="@dimen/video_preview_height"
-        android:layout_marginBottom="4dp"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:background="@drawable/video_frame"
         android:padding="@dimen/video_frame_width"
@@ -116,6 +115,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/colorPrimary" />
 
     </FrameLayout>
 

@@ -103,12 +103,12 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
     }
 
     @Override
-    public void onStartPreview(PreviewView previewView) {
+    public void onStartPreview(PreviewView previewView, int progress) {
         startTouch = true;
     }
 
     @Override
-    public void onStopPreview(PreviewView previewView) {
+    public void onStopPreview(PreviewView previewView, int progress) {
         if (showing) {
             animator.hide();
         }
@@ -146,7 +146,7 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         layoutParams.width = frameLayout.getResources()
                 .getDimensionPixelSize(R.dimen.previewseekbar_indicator_width);
         layoutParams.height = layoutParams.width;
-        frameLayout.addView(morphView, layoutParams);
+        previewParent.addView(morphView, layoutParams);
 
         // Create frame view for the circular reveal
         previewFrameView = new View(frameLayout.getContext());
@@ -157,5 +157,6 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
 
         // Apply same color for the morph and frame views
         setPreviewColorTint(scrubberColor);
+        frameLayout.requestLayout();
     }
 }
