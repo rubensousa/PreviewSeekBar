@@ -36,6 +36,7 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
             super.onAnimationEnd(animation);
             morphView.animate().setListener(null);
             startReveal();
+            mShowing = false;
         }
     };
 
@@ -53,14 +54,17 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
         super(parent, previewView, morphView, previewFrameLayout, previewFrameView);
     }
 
+    private boolean mShowing;
+
     @Override
     public void move() {
         previewFrameLayout.setX(getFrameX());
-        morphView.animate().cancel();
+        morphView.animate().x(mShowing ? getMorphEndX() : getMorphStartX());
     }
 
     @Override
     public void show() {
+        mShowing = true;
         move();
         previewFrameLayout.setVisibility(View.INVISIBLE);
         previewFrameView.setVisibility(View.INVISIBLE);
@@ -81,6 +85,7 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
     @Override
     public void hide() {
+        mShowing = false;
         previewFrameView.setVisibility(View.VISIBLE);
         previewFrameLayout.setVisibility(View.VISIBLE);
         morphView.setX(getMorphEndX());
@@ -142,6 +147,7 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
                 previewFrameView.setVisibility(View.INVISIBLE);
                 previewFrameLayout.setVisibility(View.INVISIBLE);
                 morphView.setVisibility(View.VISIBLE);
+                morphView.setX(getMorphEndX());
                 morphView.animate()
                         .x(getMorphStartX())
                         .y(getMorphStartY())

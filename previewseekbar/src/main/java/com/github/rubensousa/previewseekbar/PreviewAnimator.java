@@ -22,10 +22,10 @@ import android.widget.FrameLayout;
 
 abstract class PreviewAnimator {
 
-    static final int MORPH_REVEAL_DURATION = 200;
+    static final int MORPH_REVEAL_DURATION = 150;
     static final int MORPH_MOVE_DURATION = 200;
     static final int UNMORPH_MOVE_DURATION = 200;
-    static final int UNMORPH_UNREVEAL_DURATION = 200;
+    static final int UNMORPH_UNREVEAL_DURATION = 150;
 
     View morphView;
     View previewFrameView;
@@ -66,7 +66,7 @@ abstract class PreviewAnimator {
     }
 
     float getMorphStartY() {
-        return ((View) previewView).getY() + previewView.getThumbOffset() / 2f;
+        return ((View) previewView).getY() + previewView.getThumbOffset();
     }
 
     float getMorphEndY() {
