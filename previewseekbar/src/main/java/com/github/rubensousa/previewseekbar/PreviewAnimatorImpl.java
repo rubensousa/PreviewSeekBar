@@ -21,27 +21,15 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
 class PreviewAnimatorImpl extends PreviewAnimator {
 
-    private Animator.AnimatorListener showListener = new AnimatorListenerAdapter() {
+    private AnimatorListenerAdapter hideListener = new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
             super.onAnimationEnd(animation);
-            morphView.animate().setListener(null);
-            startReveal();
-        }
-    };
-
-    private Animator.AnimatorListener hideListener = new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationEnd(Animator animation) {
-            super.onAnimationEnd(animation);
-            morphView.setVisibility(View.INVISIBLE);
-            morphView.animate().setListener(null);
+            previewFrameLayout.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -51,94 +39,30 @@ class PreviewAnimatorImpl extends PreviewAnimator {
     }
 
     @Override
+    public void move() {
+        previewFrameLayout.setX(getFrameX());
+    }
+
+    @Override
     public void show() {
         move();
-        previewFrameLayout.setScaleX(getScaleXStart());
-        previewFrameLayout.setScaleY(getScaleYStart());
-        morphView.setX(getMorphX());
-        morphView.setY(((View) previewView).getY());
-        morphView.setVisibility(View.VISIBLE);
-        morphView.animate()
-                .y(getShowY())
-                .scaleY(4.0f)
-                .scaleX(4.0f)
-                .setDuration(MORPH_MOVE_DURATION)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setListener(showListener);
+        previewFrameLayout.setVisibility(View.VISIBLE);
+        previewFrameLayout.setAlpha(0f);
+        previewFrameLayout.animate().cancel();
+        previewFrameLayout.animate()
+                .setDuration(MORPH_REVEAL_DURATION)
+                .alpha(1f)
+                .setListener(null);
     }
 
     @Override
     public void hide() {
-        previewFrameView.setVisibility(View.VISIBLE);
-        previewFrameLayout.setVisibility(View.VISIBLE);
-        morphView.setY(getShowY());
-        morphView.setScaleX(4.0f);
-        morphView.setScaleY(4.0f);
-        morphView.setVisibility(View.INVISIBLE);
-        startUnreveal();
-    }
-
-    private void startReveal() {
-        previewFrameLayout.animate()
-                .setInterpolator(new AccelerateInterpolator())
-                .setDuration(MORPH_REVEAL_DURATION)
-                .scaleX(1)
-                .scaleY(1)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        super.onAnimationStart(animation);
-                        previewFrameView.setAlpha(1f);
-                        previewFrameLayout.setVisibility(View.VISIBLE);
-                        previewFrameView.setVisibility(View.VISIBLE);
-                        morphView.setVisibility(View.INVISIBLE);
-                        previewFrameView.animate().alpha(0f).setDuration(MORPH_REVEAL_DURATION);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        previewFrameLayout.animate().setListener(null);
-                        previewFrameLayout.animate().setListener(null);
-                        previewFrameView.setVisibility(View.INVISIBLE);
-                    }
-                });
-    }
-
-    private void startUnreveal() {
-        previewFrameView.animate().alpha(1f).setDuration(UNMORPH_UNREVEAL_DURATION)
-                .setInterpolator(new AccelerateInterpolator());
-
+        previewFrameLayout.setAlpha(1f);
+        previewFrameLayout.animate().cancel();
         previewFrameLayout.animate()
                 .setDuration(UNMORPH_UNREVEAL_DURATION)
-                .setInterpolator(new AccelerateInterpolator())
-                .scaleX(getScaleXStart())
-                .scaleY(getScaleYStart())
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        previewFrameLayout.animate().setListener(null);
-                        previewFrameView.setVisibility(View.INVISIBLE);
-                        previewFrameLayout.setVisibility(View.INVISIBLE);
-                        morphView.setVisibility(View.VISIBLE);
-                        morphView.animate()
-                                .y(getHideY())
-                                .scaleY(0f)
-                                .scaleX(0f)
-                                .setDuration(UNMORPH_MOVE_DURATION)
-                                .setInterpolator(new AccelerateInterpolator())
-                                .setListener(hideListener);
-                    }
-                });
-    }
-
-    private float getScaleXStart() {
-        return morphView.getWidth() / previewFrameLayout.getWidth();
-    }
-
-    private float getScaleYStart() {
-        return (morphView.getWidth() * 2) / previewFrameLayout.getWidth();
+                .alpha(0f)
+                .setListener(hideListener);
     }
 
 }

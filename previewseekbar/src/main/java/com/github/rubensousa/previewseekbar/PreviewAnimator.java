@@ -42,10 +42,7 @@ abstract class PreviewAnimator {
         this.previewFrameView = previewFrameView;
     }
 
-    void move() {
-        previewFrameLayout.setX(getFrameX());
-        morphView.setX(getMorphX());
-    }
+    public abstract void move();
 
     public abstract void show();
 
@@ -54,7 +51,7 @@ abstract class PreviewAnimator {
     /**
      * Get the x position for the view that'll morph into the preview FrameLayout
      */
-    float getMorphX() {
+    float getMorphStartX() {
         float startX = getPreviewViewX() + previewView.getThumbOffset();
         float endX = getPreviewViewX() + getPreviewViewWidth() - previewView.getThumbOffset();
 
@@ -62,6 +59,18 @@ abstract class PreviewAnimator {
                 + startX - previewView.getThumbOffset();
 
         return nextX;
+    }
+
+    float getMorphEndX() {
+        return getFrameX() + previewFrameLayout.getWidth() / 2f - previewView.getThumbOffset();
+    }
+
+    float getMorphStartY() {
+        return ((View) previewView).getY() + previewView.getThumbOffset() / 2f;
+    }
+
+    float getMorphEndY() {
+        return (int) (previewFrameLayout.getY() + previewFrameLayout.getHeight() / 2f);
     }
 
     /**
@@ -78,7 +87,7 @@ abstract class PreviewAnimator {
         float startX = getPreviewViewX() + previewView.getThumbOffset();
         float endX = getPreviewViewX() + getPreviewViewWidth() - previewView.getThumbOffset();
 
-        float center =  (endX - startX) * offset + startX;
+        float center = (endX - startX) * offset + startX;
 
         float nextX = center - previewFrameLayout.getWidth() / 2f;
         // Don't move if we still haven't reached half of the width
@@ -97,14 +106,6 @@ abstract class PreviewAnimator {
 
     float getPreviewViewWidth() {
         return ((View) previewView).getWidth();
-    }
-
-    float getHideY() {
-        return ((View) previewView).getY() + previewView.getThumbOffset() / 2f;
-    }
-
-    float getShowY() {
-        return (int) (previewFrameLayout.getY() + previewFrameLayout.getHeight() / 2f);
     }
 
     private float getWidthOffset(int progress) {

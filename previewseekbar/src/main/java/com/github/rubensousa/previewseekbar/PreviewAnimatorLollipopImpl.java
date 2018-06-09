@@ -54,14 +54,24 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
     }
 
     @Override
+    public void move() {
+        previewFrameLayout.setX(getFrameX());
+        morphView.animate().cancel();
+    }
+
+    @Override
     public void show() {
         move();
         previewFrameLayout.setVisibility(View.INVISIBLE);
         previewFrameView.setVisibility(View.INVISIBLE);
         morphView.setY(((View) previewView).getY());
+        morphView.setX(getMorphStartX());
+        morphView.setScaleX(0f);
+        morphView.setScaleY(0f);
         morphView.setVisibility(View.VISIBLE);
         morphView.animate()
-                .y(getShowY())
+                .x(getMorphEndX())
+                .y(getMorphEndY())
                 .scaleY(4.0f)
                 .scaleX(4.0f)
                 .setDuration(MORPH_MOVE_DURATION)
@@ -73,7 +83,8 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
     public void hide() {
         previewFrameView.setVisibility(View.VISIBLE);
         previewFrameLayout.setVisibility(View.VISIBLE);
-        morphView.setY(getShowY());
+        morphView.setX(getMorphEndX());
+        morphView.setY(getMorphEndY());
         morphView.setScaleX(4.0f);
         morphView.setScaleY(4.0f);
         morphView.setVisibility(View.INVISIBLE);
@@ -99,7 +110,9 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
                 previewFrameLayout.setVisibility(View.VISIBLE);
                 previewFrameView.setVisibility(View.VISIBLE);
                 morphView.setVisibility(View.INVISIBLE);
-                previewFrameView.animate().alpha(0f).setDuration(MORPH_REVEAL_DURATION);
+                previewFrameView.animate()
+                        .alpha(0f)
+                        .setDuration(MORPH_REVEAL_DURATION);
             }
 
             @Override
@@ -130,7 +143,8 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
                 previewFrameLayout.setVisibility(View.INVISIBLE);
                 morphView.setVisibility(View.VISIBLE);
                 morphView.animate()
-                        .y(getHideY())
+                        .x(getMorphStartX())
+                        .y(getMorphStartY())
                         .scaleY(0f)
                         .scaleX(0f)
                         .setDuration(UNMORPH_MOVE_DURATION)
