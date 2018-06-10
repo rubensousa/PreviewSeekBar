@@ -122,7 +122,9 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
 
     @Override
     public void onStartPreview(PreviewView previewView, int progress) {
-        startTouch = true;
+        if (enabled) {
+            startTouch = true;
+        }
     }
 
     @Override
@@ -136,12 +138,13 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
 
     @Override
     public void onPreview(PreviewView previewView, int progress, boolean fromUser) {
-        if (setup && enabled) {
-            animator.move();
-            if (!showing && !startTouch && fromUser) {
+        if (setup) {
+            if (!showing && !startTouch && fromUser && enabled) {
                 show();
+            } else if (showing) {
+                animator.move();
             }
-            if (previewLoader != null) {
+            if (previewLoader != null && showing) {
                 previewLoader.loadPreview(progress, previewView.getMax());
             }
         }

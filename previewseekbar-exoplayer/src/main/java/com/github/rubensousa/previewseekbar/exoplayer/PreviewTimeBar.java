@@ -125,16 +125,12 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
 
     @Override
     public void showPreview() {
-        if (isEnabled()) {
-            delegate.show();
-        }
+        delegate.show();
     }
 
     @Override
     public void hidePreview() {
-        if (isEnabled()) {
-            delegate.hide();
-        }
+        delegate.hide();
     }
 
     @Override

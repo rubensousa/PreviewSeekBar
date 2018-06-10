@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 (ImageView) findViewById(R.id.imageView), getString(R.string.url_thumbnails));
         exoPlayerManager.play(Uri.parse(getString(R.string.url_dash)));
         previewTimeBar.setPreviewLoader(exoPlayerManager);
-        previewTimeBar.setPreviewEnabled(false);
         requestFullScreenIfLandscape();
     }
 
