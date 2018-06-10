@@ -25,6 +25,8 @@ import android.widget.FrameLayout;
 
 class PreviewAnimatorImpl extends PreviewAnimator {
 
+    public static final int ALPHA_DURATION = 200;
+
     private AnimatorListenerAdapter hideListener = new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
@@ -50,7 +52,7 @@ class PreviewAnimatorImpl extends PreviewAnimator {
         previewFrameLayout.setAlpha(0f);
         previewFrameLayout.animate().cancel();
         previewFrameLayout.animate()
-                .setDuration(MORPH_REVEAL_DURATION)
+                .setDuration(ALPHA_DURATION)
                 .alpha(1f)
                 .setListener(null);
     }
@@ -60,7 +62,7 @@ class PreviewAnimatorImpl extends PreviewAnimator {
         previewFrameLayout.setAlpha(1f);
         previewFrameLayout.animate().cancel();
         previewFrameLayout.animate()
-                .setDuration(UNMORPH_UNREVEAL_DURATION)
+                .setDuration(ALPHA_DURATION)
                 .alpha(0f)
                 .setListener(hideListener);
     }

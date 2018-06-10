@@ -22,11 +22,6 @@ import android.widget.FrameLayout;
 
 abstract class PreviewAnimator {
 
-    static final int MORPH_REVEAL_DURATION = 150;
-    static final int MORPH_MOVE_DURATION = 200;
-    static final int UNMORPH_MOVE_DURATION = 200;
-    static final int UNMORPH_UNREVEAL_DURATION = 150;
-
     View morphView;
     View previewFrameView;
     FrameLayout previewFrameLayout;
@@ -49,31 +44,6 @@ abstract class PreviewAnimator {
     public abstract void hide();
 
     /**
-     * Get the x position for the view that'll morph into the preview FrameLayout
-     */
-    float getMorphStartX() {
-        float startX = getPreviewViewX() + previewView.getThumbOffset();
-        float endX = getPreviewViewX() + getPreviewViewWidth() - previewView.getThumbOffset();
-
-        float nextX = (endX - startX) * getWidthOffset(previewView.getProgress())
-                + startX - previewView.getThumbOffset();
-
-        return nextX;
-    }
-
-    float getMorphEndX() {
-        return getFrameX() + previewFrameLayout.getWidth() / 2f - previewView.getThumbOffset();
-    }
-
-    float getMorphStartY() {
-        return ((View) previewView).getY() + previewView.getThumbOffset();
-    }
-
-    float getMorphEndY() {
-        return (int) (previewFrameLayout.getY() + previewFrameLayout.getHeight() / 2f);
-    }
-
-    /**
      * Get x position for the preview frame. This method takes into account a margin
      * that'll make the frame not move until the scrub position exceeds half of the frame's width.
      */
@@ -84,12 +54,11 @@ abstract class PreviewAnimator {
         float low = previewFrameLayout.getLeft();
         float high = parent.getWidth() - params.rightMargin - previewFrameLayout.getWidth();
 
-        float startX = getPreviewViewX() + previewView.getThumbOffset();
-        float endX = getPreviewViewX() + getPreviewViewWidth() - previewView.getThumbOffset();
-
+        float startX = getPreviewViewStartX() + previewView.getThumbOffset();
+        float endX = getPreviewViewEndX() - previewView.getThumbOffset();
         float center = (endX - startX) * offset + startX;
-
         float nextX = center - previewFrameLayout.getWidth() / 2f;
+
         // Don't move if we still haven't reached half of the width
         if (nextX < low) {
             return low;
@@ -100,15 +69,15 @@ abstract class PreviewAnimator {
         }
     }
 
-    float getPreviewViewX() {
+    float getPreviewViewStartX() {
         return ((View) previewView).getX();
     }
 
-    float getPreviewViewWidth() {
-        return ((View) previewView).getWidth();
+    float getPreviewViewEndX() {
+        return getPreviewViewStartX() + ((View) previewView).getWidth();
     }
 
-    private float getWidthOffset(int progress) {
+    float getWidthOffset(int progress) {
         return (float) progress / previewView.getMax();
     }
 

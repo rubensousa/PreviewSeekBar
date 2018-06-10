@@ -30,6 +30,11 @@ import android.widget.FrameLayout;
 
 class PreviewAnimatorLollipopImpl extends PreviewAnimator {
 
+    static final int MORPH_REVEAL_DURATION = 150;
+    static final int MORPH_MOVE_DURATION = 200;
+    static final int UNMORPH_MOVE_DURATION = 200;
+    static final int UNMORPH_UNREVEAL_DURATION = 150;
+
     private Animator.AnimatorListener showListener = new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
@@ -178,4 +183,28 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
     private int getCenterY(View view) {
         return view.getHeight() / 2;
     }
+
+    /**
+     * Get the x position for the view that'll morph into the preview FrameLayout
+     */
+    private float getMorphStartX() {
+        float startX = getPreviewViewStartX() + previewView.getThumbOffset();
+        float endX = getPreviewViewEndX() - previewView.getThumbOffset();
+        float nextX = (endX - startX) * getWidthOffset(previewView.getProgress())
+                + startX - previewView.getThumbOffset();
+        return nextX;
+    }
+
+    private float getMorphEndX() {
+        return getFrameX() + previewFrameLayout.getWidth() / 2f - previewView.getThumbOffset();
+    }
+
+    private float getMorphStartY() {
+        return ((View) previewView).getY() + previewView.getThumbOffset();
+    }
+
+    private float getMorphEndY() {
+        return (int) (previewFrameLayout.getY() + previewFrameLayout.getHeight() / 2f);
+    }
+
 }
