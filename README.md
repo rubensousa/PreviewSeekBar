@@ -28,8 +28,7 @@ dependencies {
 
 If you're going to use this with ExoPlayer, you need both dependencies.
 
-## How to use
-
+## How to use with standard SeekBar
 
 
 #### Add the following XML:
@@ -53,10 +52,11 @@ If you're going to use this with ExoPlayer, you need both dependencies.
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:layout_marginTop="25dp"
-  android:max="800" />
+  android:max="800"
+  app:previewFrameLayout="@id/previewFrameLayout"/>
 ```
 
-#### Create a PreviewLoader and pass it to PreviewSeekBarLayout:
+#### Create a PreviewLoader and pass it to PreviewSeekBar:
 
 ```java
 // Create a class that implements this interface and implement your own preview logic there
@@ -64,9 +64,10 @@ public interface PreviewLoader {
     void loadPreview(long currentPosition, long max);
 }
 
-PreviewLoader loader = new ExoPlayerLoader();
-previewSeekBarLayout.setup(loader);
+PreviewLoader loader = new SimplePreviewLoader();
+previewSeekBar.setup(loader);
 ```
+
 
 ## How to use with ExoPlayer
 
@@ -82,7 +83,7 @@ previewSeekBarLayout.setup(loader);
 
 Here's the sample's exoplayer_controls: https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/res/layout/exoplayer_controls.xml
 
-The PreviewSeekBarLayout inside exoplayer_controls should be similar to this:
+The PreviewSeekBar inside exoplayer_controls should be similar to this:
 
 ```xml
 <FrameLayout
@@ -101,7 +102,6 @@ The PreviewSeekBarLayout inside exoplayer_controls should be similar to this:
 
 <com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar
     android:id="@+id/exo_progress"
-    style="?android:attr/progressBarStyleHorizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:previewFrameLayout="@id/previewFrameLayout"/>
