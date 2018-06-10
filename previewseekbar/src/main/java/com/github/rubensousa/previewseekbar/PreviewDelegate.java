@@ -83,6 +83,10 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         setup = true;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public boolean isShowing() {
         return showing;
     }

@@ -33,9 +33,13 @@ public interface PreviewView {
 
     boolean isShowingPreview();
 
+    boolean isPreviewEnabled();
+
     void showPreview();
 
     void hidePreview();
+
+    void setPreviewEnabled(boolean previewEnabled);
 
     void setPreviewLoader(PreviewLoader previewLoader);
 

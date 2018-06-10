@@ -102,12 +102,6 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        delegate.setEnabled(enabled);
-    }
-
-    @Override
     public void setDuration(long duration) {
         super.setDuration(duration);
         this.duration = (int) duration;
@@ -125,6 +119,11 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
     }
 
     @Override
+    public boolean isPreviewEnabled() {
+        return delegate.isEnabled();
+    }
+
+    @Override
     public void showPreview() {
         if (isEnabled()) {
             delegate.show();
@@ -136,6 +135,11 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
         if (isEnabled()) {
             delegate.hide();
         }
+    }
+
+    @Override
+    public void setPreviewEnabled(boolean previewEnabled) {
+        delegate.setEnabled(previewEnabled);
     }
 
     @Override

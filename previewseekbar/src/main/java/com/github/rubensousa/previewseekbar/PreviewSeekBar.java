@@ -71,12 +71,6 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        delegate.setEnabled(enabled);
-    }
-
-    @Override
     public void setPreviewColorTint(int color) {
         delegate.setPreviewColorTint(color);
         Drawable drawable = DrawableCompat.wrap(getThumb());
@@ -109,6 +103,16 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
     @Override
     public boolean isShowingPreview() {
         return delegate.isShowing();
+    }
+
+    @Override
+    public void setPreviewEnabled(boolean previewEnabled) {
+        delegate.setEnabled(previewEnabled);
+    }
+
+    @Override
+    public boolean isPreviewEnabled() {
+        return delegate.isEnabled();
     }
 
     @Override
