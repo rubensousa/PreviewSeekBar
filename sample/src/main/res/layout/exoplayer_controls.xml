@@ -68,17 +68,14 @@
 
     <com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar
         android:id="@+id/exo_progress"
-        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:max="800"
-        android:progressTint="@color/colorPrimary"
-        android:thumbTint="@color/colorPrimary"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="@id/exo_position"
         app:layout_constraintEnd_toStartOf="@id/exo_duration"
         app:layout_constraintStart_toEndOf="@+id/exo_position"
         app:layout_constraintTop_toTopOf="@+id/exo_position"
-        app:paddingStart="10dp"
         app:previewFrameLayout="@id/previewFrameLayout" />
 
     <TextView
@@ -97,8 +94,8 @@
 
     <FrameLayout
         android:id="@+id/previewFrameLayout"
-        android:layout_width="@dimen/video_preview_width"
-        android:layout_height="@dimen/video_preview_height"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -106,9 +103,12 @@
         android:padding="@dimen/video_frame_width"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/exo_progress"
+        app:layout_constraintDimensionRatio="16:9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.25"
         tools:visibility="visible">
 
         <ImageView

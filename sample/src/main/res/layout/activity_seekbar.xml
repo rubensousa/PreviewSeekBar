@@ -12,8 +12,8 @@
 
     <FrameLayout
         android:id="@+id/previewFrameLayout"
-        android:layout_width="@dimen/video_preview_width"
-        android:layout_height="@dimen/video_preview_height">
+        android:layout_width="160dp"
+        android:layout_height="90dp">
 
         <View
             android:id="@+id/videoView"
