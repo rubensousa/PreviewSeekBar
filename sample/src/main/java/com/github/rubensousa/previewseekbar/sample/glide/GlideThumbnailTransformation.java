@@ -54,8 +54,7 @@ public class GlideThumbnailTransformation extends BitmapTransformation {
                                int outWidth, int outHeight) {
         int width = toTransform.getWidth() / MAX_COLUMNS;
         int height = toTransform.getHeight() / MAX_LINES;
-        return Bitmap.createBitmap(toTransform, x * width, y * height,
-                width, height);
+        return Bitmap.createBitmap(toTransform, x * width, y * height, width, height);
     }
 
     @Override

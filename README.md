@@ -19,14 +19,14 @@ Add the following to your app's build.gradle:
 ```groovy
 dependencies {
     // Base implementation with a standard SeekBar
-    implementation 'com.github.rubensousa:previewseekbar:1.2'
+    implementation 'com.github.rubensousa:previewseekbar:2.0.0'
 
-    // ExoPlayer extension that contains a TimeBar. Includes the previous dependency
-    implementation 'com.github.rubensousa:previewseekbar-exoplayer:2.6.0'
+    // ExoPlayer extension that contains a TimeBar.
+    implementation 'com.github.rubensousa:previewseekbar-exoplayer:2.8.1'
 }
 ```
 
-If you're going to use this with ExoPlayer, just add the second dependency.
+If you're going to use this with ExoPlayer, you need both dependencies.
 
 ## How to use
 

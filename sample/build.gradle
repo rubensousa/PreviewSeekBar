@@ -26,5 +26,6 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:1.1.0"
     implementation 'com.github.bumptech.glide:glide:4.7.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+    implementation project(':previewseekbar')
     implementation project(':previewseekbar-exoplayer')
 }

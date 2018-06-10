@@ -32,7 +32,8 @@ import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 
-public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener, PreviewView.OnPreviewChangeListener {
+public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
+        PreviewView.OnPreviewChangeListener {
 
     private static final int PICK_FILE_REQUEST_CODE = 2;
 
