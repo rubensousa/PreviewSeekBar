@@ -49,8 +49,8 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
         }
     };
 
-    public PreviewAnimatorLollipopImpl(ViewGroup parent, PreviewView previewView, View morphView,
-                                       FrameLayout previewFrameLayout, View previewFrameView) {
+    PreviewAnimatorLollipopImpl(ViewGroup parent, PreviewView previewView, View morphView,
+                                FrameLayout previewFrameLayout, View previewFrameView) {
         super(parent, previewView, morphView, previewFrameLayout, previewFrameView);
     }
 
@@ -93,6 +93,8 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
         morphView.setScaleX(4.0f);
         morphView.setScaleY(4.0f);
         morphView.setVisibility(View.INVISIBLE);
+        morphView.animate().cancel();
+        previewFrameLayout.animate().cancel();
         startUnreveal();
     }
 
