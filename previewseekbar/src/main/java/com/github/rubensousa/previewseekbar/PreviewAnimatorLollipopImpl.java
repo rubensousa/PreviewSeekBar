@@ -173,7 +173,7 @@ class PreviewAnimatorLollipopImpl extends PreviewAnimator {
     }
 
     private int getRadius(View view) {
-        return (int) Math.hypot(view.getWidth() / 2, view.getHeight() / 2);
+        return (int) Math.hypot(view.getWidth() / 2f, view.getHeight() / 2f);
     }
 
     private int getCenterX(View view) {

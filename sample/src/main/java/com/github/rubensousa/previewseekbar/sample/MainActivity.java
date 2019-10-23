@@ -20,17 +20,16 @@ package com.github.rubensousa.previewseekbar.sample;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.github.rubensousa.previewseekbar.PreviewView;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-
+import com.google.android.exoplayer2.ui.PlayerView;
 
 public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
         PreviewView.OnPreviewChangeListener {
@@ -45,11 +44,11 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SimpleExoPlayerView playerView = findViewById(R.id.player_view);
+        PlayerView playerView = findViewById(R.id.player_view);
         previewTimeBar = playerView.findViewById(R.id.exo_progress);
         previewTimeBar.addOnPreviewChangeListener(this);
         exoPlayerManager = new ExoPlayerManager(playerView, previewTimeBar,
-                (ImageView) findViewById(R.id.imageView), getString(R.string.url_thumbnails));
+                findViewById(R.id.imageView), getString(R.string.url_thumbnails));
         exoPlayerManager.play(Uri.parse(getString(R.string.url_dash)));
         previewTimeBar.setPreviewLoader(exoPlayerManager);
         requestFullScreenIfLandscape();
