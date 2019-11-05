@@ -49,12 +49,9 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
         listeners = new ArrayList<>();
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar, 0, 0);
-        final int playedColor = a.getInt(
-                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_played_color,
-                DEFAULT_PLAYED_COLOR);
         scrubberColor = a.getInt(
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_color,
-                getDefaultScrubberColor(playedColor));
+                DEFAULT_SCRUBBER_COLOR);
 
         int defaultScrubberDraggedSize = dpToPx(context.getResources().getDisplayMetrics(),
                 DEFAULT_SCRUBBER_DRAGGED_SIZE_DP);

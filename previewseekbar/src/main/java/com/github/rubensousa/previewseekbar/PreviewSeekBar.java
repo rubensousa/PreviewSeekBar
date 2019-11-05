@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
+
+import androidx.appcompat.widget.AppCompatSeekBar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
     }
 
     public PreviewSeekBar(Context context, AttributeSet attrs) {
-        this(context, attrs, android.support.v7.appcompat.R.attr.seekBarStyle);
+        this(context, attrs, R.attr.seekBarStyle);
     }
 
     public PreviewSeekBar(Context context, AttributeSet attrs, int defStyleAttr) {

@@ -17,9 +17,10 @@
 package com.github.rubensousa.previewseekbar;
 
 
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
 import android.widget.FrameLayout;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 
 public interface PreviewView {
 
