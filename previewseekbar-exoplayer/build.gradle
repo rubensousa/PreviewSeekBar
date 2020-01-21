@@ -10,7 +10,6 @@ android {
 
 dependencies {
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
-    implementation "androidx.media:media:$mediaVersion"
     implementation project(':previewseekbar')
     api "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
 }

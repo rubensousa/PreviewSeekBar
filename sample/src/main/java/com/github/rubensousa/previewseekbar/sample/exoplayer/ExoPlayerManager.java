@@ -25,7 +25,6 @@ import com.github.rubensousa.previewseekbar.PreviewLoader;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideApp;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideThumbnailTransformation;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -108,7 +107,7 @@ public class ExoPlayerManager implements PreviewLoader {
     }
 
     private SimpleExoPlayer createFullPlayer() {
-        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(playerView.getContext());
+        SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
         player.setPlayWhenReady(true);
         player.prepare(mediaSourceBuilder.getMediaSource(false));
         player.addListener(eventListener);
