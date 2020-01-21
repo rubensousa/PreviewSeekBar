@@ -49,14 +49,17 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
     }
 
     private void init(Context context, AttributeSet attrs) {
-        if (attrs != null) {
-            TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
-                    R.styleable.PreviewSeekBar, 0, 0);
-            frameLayoutId = a.getResourceId(R.styleable.PreviewSeekBar_previewFrameLayout,
-                    View.NO_ID);
-        }
         listeners = new ArrayList<>();
         delegate = new PreviewDelegate(this, getDefaultColor());
+        if (attrs != null) {
+            TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
+                    R.styleable.PreviewSeekBar, 0, 0);
+            frameLayoutId = typedArray.getResourceId(R.styleable.PreviewSeekBar_previewFrameLayout,
+                    View.NO_ID);
+            delegate.setAnimationEnabled(typedArray.getBoolean(
+                    R.styleable.PreviewSeekBar_previewAnimationEnabled, true));
+            typedArray.recycle();
+        }
         delegate.setEnabled(isEnabled());
         super.setOnSeekBarChangeListener(this);
     }
@@ -166,6 +169,10 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
         for (OnPreviewChangeListener listener : listeners) {
             listener.onStopPreview(this, seekBar.getProgress());
         }
+    }
+
+    public void setPreviewAnimationEnabled(boolean enable) {
+        delegate.setAnimationEnabled(enable);
     }
 
 }

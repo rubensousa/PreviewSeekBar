@@ -47,26 +47,30 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
     public PreviewTimeBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         listeners = new ArrayList<>();
-        TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar, 0, 0);
-        scrubberColor = a.getInt(
+        scrubberColor = typedArray.getInt(
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_color,
                 DEFAULT_SCRUBBER_COLOR);
 
         int defaultScrubberDraggedSize = dpToPx(context.getResources().getDisplayMetrics(),
                 DEFAULT_SCRUBBER_DRAGGED_SIZE_DP);
 
-        scrubberDiameter = a.getDimensionPixelSize(
+        scrubberDiameter = typedArray.getDimensionPixelSize(
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_dragged_size,
                 defaultScrubberDraggedSize);
 
-        a.recycle();
+        typedArray.recycle();
 
-        a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.PreviewSeekBar, 0, 0);
-        frameLayoutId = a.getResourceId(R.styleable.PreviewSeekBar_previewFrameLayout, View.NO_ID);
+        typedArray = context.getTheme().obtainStyledAttributes(
+                attrs, R.styleable.PreviewSeekBar, 0, 0);
+        frameLayoutId = typedArray.getResourceId(
+                R.styleable.PreviewSeekBar_previewFrameLayout, View.NO_ID);
 
         delegate = new PreviewDelegate(this, scrubberColor);
         delegate.setEnabled(isEnabled());
+        delegate.setAnimationEnabled(typedArray.getBoolean(
+                R.styleable.PreviewSeekBar_previewAnimationEnabled, true));
         addListener(this);
     }
 
@@ -186,6 +190,10 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
         for (OnPreviewChangeListener listener : listeners) {
             listener.onStopPreview(this, (int) position);
         }
+    }
+
+    public void setPreviewAnimationEnabled(boolean enable) {
+        delegate.setAnimationEnabled(enable);
     }
 
     private int dpToPx(DisplayMetrics displayMetrics, int dps) {

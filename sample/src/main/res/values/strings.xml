@@ -4,4 +4,5 @@
     <string name="url_thumbnails">https://bitdash-a.akamaihd.net/content/MI201109210084_1/thumbnails/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.jpg</string>
     <string name="url_smooth">http://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism</string>
     <string name="url_hls">https://mnmedias.api.telequebec.tv/m3u8/29880.m3u8</string>
+    <string name="animation_switch">Animations enabled</string>
 </resources>

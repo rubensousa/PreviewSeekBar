@@ -43,11 +43,13 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
     private boolean startTouch;
     private boolean setup;
     private boolean enabled;
+    private boolean animationEnabled;
 
     public PreviewDelegate(PreviewView previewView, int scrubberColor) {
         this.previewView = previewView;
         this.previewView.addOnPreviewChangeListener(this);
         this.scrubberColor = scrubberColor;
+        this.animationEnabled = true;
     }
 
     public void setPreviewLoader(PreviewLoader previewLoader) {
@@ -94,20 +96,36 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
 
     public void show() {
         if (!showing && setup) {
-            animator.show();
+            if (animationEnabled) {
+                animator.show();
+            } else {
+                morphView.setVisibility(View.INVISIBLE);
+                previewFrameLayout.setVisibility(View.VISIBLE);
+                previewFrameView.setVisibility(View.INVISIBLE);
+            }
             showing = true;
         }
     }
 
     public void hide() {
         if (showing) {
-            animator.hide();
+            if (animationEnabled) {
+                animator.hide();
+            } else {
+                morphView.setVisibility(View.INVISIBLE);
+                previewFrameLayout.setVisibility(View.INVISIBLE);
+                previewFrameView.setVisibility(View.INVISIBLE);
+            }
             showing = false;
         }
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public void setAnimationEnabled(boolean enabled) {
+        this.animationEnabled = enabled;
     }
 
     public void setPreviewColorTint(@ColorInt int color) {
@@ -130,9 +148,7 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
 
     @Override
     public void onStopPreview(PreviewView previewView, int progress) {
-        if (showing) {
-            animator.hide();
-        }
+        hide();
         showing = false;
         startTouch = false;
     }
@@ -195,4 +211,5 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         }
         return null;
     }
+
 }

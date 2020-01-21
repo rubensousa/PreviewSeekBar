@@ -20,6 +20,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+/**
+ * Morphs the draggable view of the SeekBar into a frame that contains the preview
+ * <p>
+ * Implementations: {@link PreviewAnimatorImpl} and {@link PreviewAnimatorLollipopImpl}
+ */
 abstract class PreviewAnimator {
 
     View morphView;

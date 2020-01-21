@@ -61,4 +61,5 @@ public interface PreviewView {
 
         void onPreview(PreviewView previewView, int progress, boolean fromUser);
     }
+
 }

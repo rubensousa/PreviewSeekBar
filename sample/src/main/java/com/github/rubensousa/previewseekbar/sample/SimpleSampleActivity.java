@@ -18,15 +18,26 @@
 package com.github.rubensousa.previewseekbar.sample;
 
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
-public class LocalActivity extends AppCompatActivity {
+import com.github.rubensousa.previewseekbar.PreviewSeekBar;
+
+public class SimpleSampleActivity extends AppCompatActivity {
+
+    private PreviewSeekBar previewSeekBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seekbar);
+        previewSeekBar = findViewById(R.id.previewSeekBar);
+
+        SwitchCompat switchCompat = findViewById(R.id.animationSwitch);
+        switchCompat.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> previewSeekBar.setPreviewAnimationEnabled(isChecked));
     }
 
 

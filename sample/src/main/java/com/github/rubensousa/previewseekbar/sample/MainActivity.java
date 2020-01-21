@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
 import com.github.rubensousa.previewseekbar.PreviewView;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         setContentView(R.layout.activity_main);
 
         PlayerView playerView = findViewById(R.id.player_view);
+
         previewTimeBar = playerView.findViewById(R.id.exo_progress);
         previewTimeBar.addOnPreviewChangeListener(this);
         exoPlayerManager = new ExoPlayerManager(playerView, previewTimeBar,
@@ -52,6 +54,13 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         exoPlayerManager.play(Uri.parse(getString(R.string.url_dash)));
         previewTimeBar.setPreviewLoader(exoPlayerManager);
         requestFullScreenIfLandscape();
+
+        // Enable/disable animation of the preview TimeBar
+        SwitchCompat animationSwitch = findViewById(R.id.animationSwitch);
+        animationSwitch.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> previewTimeBar.setPreviewAnimationEnabled(isChecked)
+        );
+
     }
 
     @Override
@@ -102,26 +111,10 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         previewTimeBar.getMax());
             }
         } else {
-            startActivity(new Intent(this, LocalActivity.class));
+            startActivity(new Intent(this, SimpleSampleActivity.class));
         }
         return true;
     }
-
-    private void requestFullScreenIfLandscape() {
-        if (getResources().getBoolean(R.bool.landscape)) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
-        } else {
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            toolbar.inflateMenu(R.menu.main);
-            toolbar.setOnMenuItemClickListener(this);
-        }
-    }
-
 
     @Override
     public void onStartPreview(PreviewView previewView, int progress) {
@@ -144,4 +137,20 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public void onPreview(PreviewView previewView, int progress, boolean fromUser) {
 
     }
+
+    private void requestFullScreenIfLandscape() {
+        if (getResources().getBoolean(R.bool.landscape)) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        } else {
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            toolbar.inflateMenu(R.menu.main);
+            toolbar.setOnMenuItemClickListener(this);
+        }
+    }
+
 }

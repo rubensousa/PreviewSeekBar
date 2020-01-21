@@ -14,4 +14,14 @@
         app:controller_layout_id="@layout/exoplayer_controls"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/animationSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/animation_switch"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/player_view" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
