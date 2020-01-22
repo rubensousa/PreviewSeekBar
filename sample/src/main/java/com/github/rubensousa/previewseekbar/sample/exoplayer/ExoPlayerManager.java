@@ -102,11 +102,12 @@ public class ExoPlayerManager implements PreviewLoader {
         if (player != null) {
             player.release();
         }
-        player = createFullPlayer();
+        player = createPlayer();
         playerView.setPlayer(player);
+        playerView.setControllerShowTimeoutMs(15000);
     }
 
-    private SimpleExoPlayer createFullPlayer() {
+    private SimpleExoPlayer createPlayer() {
         SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
         player.setPlayWhenReady(true);
         player.prepare(mediaSourceBuilder.getMediaSource(false));

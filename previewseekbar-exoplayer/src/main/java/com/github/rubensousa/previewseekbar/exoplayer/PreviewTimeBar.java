@@ -18,12 +18,17 @@ package com.github.rubensousa.previewseekbar.exoplayer;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
+import com.github.rubensousa.previewseekbar.PreviewAnimator;
 import com.github.rubensousa.previewseekbar.PreviewDelegate;
 import com.github.rubensousa.previewseekbar.PreviewLoader;
 import com.github.rubensousa.previewseekbar.PreviewView;
@@ -42,7 +47,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
     private int duration;
     private int scrubberColor;
     private int frameLayoutId;
-    private int scrubberDiameter;
+    private int scrubberPadding;
 
     public PreviewTimeBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,43 +58,67 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_color,
                 DEFAULT_SCRUBBER_COLOR);
 
-        int defaultScrubberDraggedSize = dpToPx(context.getResources().getDisplayMetrics(),
-                DEFAULT_SCRUBBER_DRAGGED_SIZE_DP);
+        final Drawable scrubberDrawable = typedArray.getDrawable(
+                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_drawable);
 
-        scrubberDiameter = typedArray.getDimensionPixelSize(
+        final int scrubberEnabledSize = typedArray.getDimensionPixelSize(
+                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_enabled_size,
+                dpToPx(context.getResources().getDisplayMetrics(),
+                        DEFAULT_SCRUBBER_ENABLED_SIZE_DP));
+
+        final int scrubberDisabledSize = typedArray.getDimensionPixelSize(
+                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_disabled_size,
+                dpToPx(context.getResources().getDisplayMetrics(),
+                        DEFAULT_SCRUBBER_DISABLED_SIZE_DP));
+
+        final int scrubberDraggedSize = typedArray.getDimensionPixelSize(
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_dragged_size,
-                defaultScrubberDraggedSize);
+                dpToPx(context.getResources().getDisplayMetrics(),
+                        DEFAULT_SCRUBBER_DRAGGED_SIZE_DP));
+
+        // Calculate the scrubber padding based on the maximum size the scrubber can have
+        if (scrubberDrawable != null) {
+            scrubberPadding = (scrubberDrawable.getMinimumWidth() + 1) / 2;
+        } else {
+            scrubberPadding =
+                    (Math.max(scrubberDisabledSize,
+                            Math.max(scrubberEnabledSize, scrubberDraggedSize)) + 1) / 2;
+        }
 
         typedArray.recycle();
 
         typedArray = context.getTheme().obtainStyledAttributes(
                 attrs, R.styleable.PreviewSeekBar, 0, 0);
+
         frameLayoutId = typedArray.getResourceId(
                 R.styleable.PreviewSeekBar_previewFrameLayout, View.NO_ID);
 
-        delegate = new PreviewDelegate(this, scrubberColor);
+        delegate = new PreviewDelegate(this);
         delegate.setEnabled(isEnabled());
         delegate.setAnimationEnabled(typedArray.getBoolean(
                 R.styleable.PreviewSeekBar_previewAnimationEnabled, true));
+
+        typedArray.recycle();
+
         addListener(this);
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (!delegate.isSetup() && getWidth() != 0 && getHeight() != 0 && !isInEditMode()) {
+        if (!delegate.hasPreviewFrameLayout() && getWidth() != 0 && getHeight() != 0 && !isInEditMode()) {
             delegate.onLayout((ViewGroup) getParent(), frameLayoutId);
         }
     }
 
     @Override
     public void setPreviewColorTint(int color) {
-        delegate.setPreviewColorTint(color);
+        scrubberColor = color;
     }
 
     @Override
-    public void setPreviewColorResourceTint(int color) {
-        delegate.setPreviewColorResourceTint(color);
+    public void setPreviewColorResourceTint(int colorResource) {
+        setPreviewColorTint(ContextCompat.getColor(getContext(), colorResource));
     }
 
     @Override
@@ -98,20 +127,33 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
     }
 
     @Override
-    public void attachPreviewFrameLayout(FrameLayout frameLayout) {
+    public void attachPreviewFrameLayout(@NonNull FrameLayout frameLayout) {
         delegate.attachPreviewFrameLayout(frameLayout);
     }
 
     @Override
     public void setDuration(long duration) {
         super.setDuration(duration);
-        this.duration = (int) duration;
+        final int newDuration = (int) duration;
+        if (newDuration != this.duration) {
+            this.duration = newDuration;
+            delegate.updateProgress(getProgress(), newDuration);
+        }
     }
 
     @Override
     public void setPosition(long position) {
         super.setPosition(position);
-        this.scrubProgress = (int) position;
+        final int newPosition = (int) position;
+        if (newPosition != scrubProgress) {
+            this.scrubProgress = newPosition;
+            delegate.updateProgress(newPosition, duration);
+            if (delegate.isShowing()) {
+                for (OnPreviewChangeListener listener : listeners) {
+                    listener.onPreview(this, scrubProgress, false);
+                }
+            }
+        }
     }
 
     @Override
@@ -151,11 +193,11 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
 
     @Override
     public int getThumbOffset() {
-        return scrubberDiameter / 2;
+        return scrubberPadding;
     }
 
     @Override
-    public int getDefaultColor() {
+    public int getScrubberColor() {
         return scrubberColor;
     }
 
@@ -190,6 +232,11 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
         for (OnPreviewChangeListener listener : listeners) {
             listener.onStopPreview(this, (int) position);
         }
+    }
+
+    @Override
+    public void setPreviewAnimator(@NonNull PreviewAnimator animator) {
+        delegate.setAnimator(animator);
     }
 
     public void setPreviewAnimationEnabled(boolean enable) {

@@ -21,16 +21,30 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public interface PreviewView {
 
+    /**
+     * @return the current progress
+     */
     int getProgress();
 
+    /**
+     * @return the maximum value that the progress can have
+     */
     int getMax();
 
+    /**
+     * @return the diameter of the draggable thumb of the SeekBar
+     */
     int getThumbOffset();
 
-    int getDefaultColor();
+    /**
+     * @return the color of the scrubber
+     */
+    int getScrubberColor();
 
     boolean isShowingPreview();
 
@@ -40,15 +54,17 @@ public interface PreviewView {
 
     void hidePreview();
 
+    void setPreviewAnimator(@NonNull PreviewAnimator animator);
+
     void setPreviewEnabled(boolean previewEnabled);
 
-    void setPreviewLoader(PreviewLoader previewLoader);
+    void setPreviewLoader(@Nullable PreviewLoader previewLoader);
 
     void setPreviewColorTint(@ColorInt int color);
 
-    void setPreviewColorResourceTint(@ColorRes int color);
+    void setPreviewColorResourceTint(@ColorRes int colorResource);
 
-    void attachPreviewFrameLayout(FrameLayout frameLayout);
+    void attachPreviewFrameLayout(@NonNull FrameLayout frameLayout);
 
     void addOnPreviewChangeListener(OnPreviewChangeListener listener);
 

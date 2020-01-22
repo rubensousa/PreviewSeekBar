@@ -5,6 +5,16 @@
     android:layout_height="match_parent"
     android:padding="@dimen/activity_horizontal_margin">
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/animationSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:checked="true"
+        android:text="@string/animation_switch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/previewSeekBar" />
 
     <com.github.rubensousa.previewseekbar.PreviewSeekBar
         android:id="@+id/previewSeekBar"
@@ -32,16 +42,5 @@
             android:layout_height="match_parent" />
 
     </FrameLayout>
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/animationSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:checked="true"
-        android:text="@string/animation_switch"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/previewSeekBar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

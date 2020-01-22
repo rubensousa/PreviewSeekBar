@@ -19,6 +19,7 @@ package com.github.rubensousa.previewseekbar.sample;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,6 +54,10 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 findViewById(R.id.imageView), getString(R.string.url_thumbnails));
         exoPlayerManager.play(Uri.parse(getString(R.string.url_dash)));
         previewTimeBar.setPreviewLoader(exoPlayerManager);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.main);
+        toolbar.setOnMenuItemClickListener(this);
+
         requestFullScreenIfLandscape();
 
         // Enable/disable animation of the preview TimeBar
@@ -104,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         } else if (item.getItemId() == R.id.action_toggle) {
             if (previewTimeBar.isShowingPreview()) {
                 previewTimeBar.hidePreview();
-                exoPlayerManager.stopPreview(previewTimeBar.getProgress());
             } else {
                 previewTimeBar.showPreview();
                 exoPlayerManager.loadPreview(previewTimeBar.getProgress(),
@@ -139,17 +143,16 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     private void requestFullScreenIfLandscape() {
-        if (getResources().getBoolean(R.bool.landscape)) {
+        if (getResources().getBoolean(R.bool.landscape)
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    View.SYSTEM_UI_FLAG_IMMERSIVE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            // Hide the nav bar and status bar
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_FULLSCREEN);
-        } else {
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            toolbar.inflateMenu(R.menu.main);
-            toolbar.setOnMenuItemClickListener(this);
         }
     }
 

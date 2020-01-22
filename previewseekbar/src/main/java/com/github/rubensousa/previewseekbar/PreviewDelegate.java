@@ -16,49 +16,120 @@
 
 package com.github.rubensousa.previewseekbar;
 
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
+/**
+ * Handles the logic to display and animate a PreviewView
+ */
 public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
 
     private FrameLayout previewFrameLayout;
-    private View morphView;
-    private View previewFrameView;
-    private ViewGroup previewParent;
+    private PreviewLoader previewLoader;
     private PreviewAnimator animator;
     private PreviewView previewView;
-    private PreviewLoader previewLoader;
 
-    private int scrubberColor;
     private boolean showing;
-    private boolean startTouch;
-    private boolean setup;
+    private boolean hasPreviewFrameLayout;
     private boolean enabled;
     private boolean animationEnabled;
+    /**
+     * True when the user has started scrubbing.
+     * Will be true until {@link PreviewDelegate#onStopPreview(PreviewView, int)} gets called
+     */
+    private boolean startedScrubbing;
 
-    public PreviewDelegate(PreviewView previewView, int scrubberColor) {
+    /**
+     * True if the user is currently scrubbing
+     * Will only be true after a first pass
+     * on {@link PreviewDelegate#onPreview(PreviewView, int, boolean)}
+     */
+    private boolean isUserScrubbing;
+
+    public PreviewDelegate(PreviewView previewView) {
         this.previewView = previewView;
+        // We need to register ourselves to handle the animations
         this.previewView.addOnPreviewChangeListener(this);
-        this.scrubberColor = scrubberColor;
         this.animationEnabled = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            animator = new PreviewMorphAnimator();
+        } else {
+            animator = new PreviewFadeAnimator();
+        }
     }
 
-    public void setPreviewLoader(PreviewLoader previewLoader) {
+    @Override
+    public void onStartPreview(PreviewView previewView, int progress) {
+        startedScrubbing = true;
+    }
+
+    @Override
+    public void onStopPreview(PreviewView previewView, int progress) {
+        hide();
+        showing = false;
+        isUserScrubbing = false;
+        startedScrubbing = false;
+    }
+
+    @Override
+    public void onPreview(PreviewView previewView, int progress, boolean fromUser) {
+        if (!hasPreviewFrameLayout) {
+            return;
+        }
+
+        if (!showing && !isUserScrubbing && fromUser && enabled) {
+            final int targetX = updateFrameX(progress, previewView.getMax());
+            previewFrameLayout.setX(targetX);
+            show();
+            isUserScrubbing = true;
+        } else if (showing && fromUser) {
+            final int targetX = updateFrameX(progress, previewView.getMax());
+            previewFrameLayout.setX(targetX);
+            animator.move(previewFrameLayout, previewView);
+        }
+        if (previewLoader != null && showing) {
+            previewLoader.loadPreview(progress, previewView.getMax());
+        }
+    }
+
+    public void show() {
+        if (!showing && hasPreviewFrameLayout) {
+            if (animationEnabled) {
+                animator.show(previewFrameLayout, previewView);
+                // animator.show();
+            } else {
+                previewFrameLayout.setVisibility(View.VISIBLE);
+            }
+            showing = true;
+        }
+    }
+
+    public void hide() {
+        if (showing && hasPreviewFrameLayout) {
+            if (animationEnabled) {
+                animator.hide(previewFrameLayout, previewView);
+            } else {
+                previewFrameLayout.setVisibility(View.INVISIBLE);
+            }
+            showing = false;
+        }
+    }
+
+    public void setPreviewLoader(@Nullable PreviewLoader previewLoader) {
         this.previewLoader = previewLoader;
     }
 
+    public void setAnimator(@NonNull PreviewAnimator animator) {
+        this.animator = animator;
+    }
+
     public void onLayout(ViewGroup previewParent, int frameLayoutId) {
-        if (!setup) {
-            this.previewParent = previewParent;
+        if (!hasPreviewFrameLayout) {
             FrameLayout frameLayout = findFrameLayout(previewParent, frameLayoutId);
             if (frameLayout != null) {
                 attachPreviewFrameLayout(frameLayout);
@@ -66,24 +137,10 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         }
     }
 
-    public void attachPreviewFrameLayout(FrameLayout frameLayout) {
-        if (setup) {
-            return;
-        }
-        this.previewParent = (ViewGroup) frameLayout.getParent();
-        this.previewFrameLayout = frameLayout;
-        inflateViews(frameLayout);
-        morphView.setVisibility(View.INVISIBLE);
+    public void attachPreviewFrameLayout(@NonNull FrameLayout frameLayout) {
+        previewFrameLayout = frameLayout;
         previewFrameLayout.setVisibility(View.INVISIBLE);
-        previewFrameView.setVisibility(View.INVISIBLE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            animator = new PreviewAnimatorLollipopImpl(previewParent, previewView, morphView,
-                    previewFrameLayout, previewFrameView);
-        } else {
-            animator = new PreviewAnimatorImpl(previewParent, previewView, morphView,
-                    previewFrameLayout, previewFrameView);
-        }
-        setup = true;
+        hasPreviewFrameLayout = true;
     }
 
     public boolean isEnabled() {
@@ -94,32 +151,6 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         return showing;
     }
 
-    public void show() {
-        if (!showing && setup) {
-            if (animationEnabled) {
-                animator.show();
-            } else {
-                morphView.setVisibility(View.INVISIBLE);
-                previewFrameLayout.setVisibility(View.VISIBLE);
-                previewFrameView.setVisibility(View.INVISIBLE);
-            }
-            showing = true;
-        }
-    }
-
-    public void hide() {
-        if (showing) {
-            if (animationEnabled) {
-                animator.hide();
-            } else {
-                morphView.setVisibility(View.INVISIBLE);
-                previewFrameLayout.setVisibility(View.INVISIBLE);
-                previewFrameView.setVisibility(View.INVISIBLE);
-            }
-            showing = false;
-        }
-    }
-
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -128,74 +159,60 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         this.animationEnabled = enabled;
     }
 
-    public void setPreviewColorTint(@ColorInt int color) {
-        Drawable drawable = DrawableCompat.wrap(morphView.getBackground());
-        DrawableCompat.setTint(drawable, color);
-        morphView.setBackground(drawable);
-        previewFrameView.setBackgroundColor(color);
-    }
-
-    public void setPreviewColorResourceTint(@ColorRes int color) {
-        setPreviewColorTint(ContextCompat.getColor(previewParent.getContext(), color));
-    }
-
-    @Override
-    public void onStartPreview(PreviewView previewView, int progress) {
-        if (enabled) {
-            startTouch = true;
-        }
-    }
-
-    @Override
-    public void onStopPreview(PreviewView previewView, int progress) {
-        hide();
-        showing = false;
-        startTouch = false;
-    }
-
-    @Override
-    public void onPreview(PreviewView previewView, int progress, boolean fromUser) {
-        if (setup) {
-            if (!showing && !startTouch && fromUser && enabled) {
-                show();
-            } else if (showing) {
-                animator.move();
-            }
-            if (previewLoader != null && showing) {
-                previewLoader.loadPreview(progress, previewView.getMax());
+    public void updateProgress(int progress, int max) {
+        if (hasPreviewFrameLayout()) {
+            if (!isUserScrubbing && !startedScrubbing) {
+                previewFrameLayout.setX(updateFrameX(progress, max));
+                animator.move(previewFrameLayout, previewView);
             }
         }
-        startTouch = false;
     }
 
-    public boolean isSetup() {
-        return setup;
+    public boolean hasPreviewFrameLayout() {
+        return hasPreviewFrameLayout;
     }
 
-    @SuppressWarnings("SuspiciousNameCombination")
-    private void inflateViews(FrameLayout frameLayout) {
+    /**
+     * Get the x position for the preview frame. This method takes into account padding
+     * that'll make the frame not move until the scrub position exceeds
+     * at least half of the frame's width.
+     */
+    private int updateFrameX(int progress, int max) {
+        if (max == 0) {
+            return 0;
+        }
 
-        // Create morph view
-        morphView = new View(frameLayout.getContext());
-        morphView.setBackgroundResource(R.drawable.previewseekbar_morph);
+        final ViewGroup parent = (ViewGroup) previewFrameLayout.getParent();
+        final ViewGroup.MarginLayoutParams layoutParams
+                = (ViewGroup.MarginLayoutParams) previewFrameLayout.getLayoutParams();
 
-        // Setup morph view
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(0, 0);
-        layoutParams.width = frameLayout.getResources()
-                .getDimensionPixelSize(R.dimen.previewseekbar_indicator_width);
-        layoutParams.height = layoutParams.width;
-        previewParent.addView(morphView, layoutParams);
+        float offset = (float) progress / max;
 
-        // Create frame view for the circular reveal
-        previewFrameView = new View(frameLayout.getContext());
-        FrameLayout.LayoutParams frameLayoutParams
-                = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        frameLayout.addView(previewFrameView, frameLayoutParams);
+        int minimumX = previewFrameLayout.getLeft();
+        int maximumX = parent.getWidth()
+                - parent.getPaddingRight()
+                - layoutParams.rightMargin;
 
-        // Apply same color for the morph and frame views
-        setPreviewColorTint(scrubberColor);
-        frameLayout.requestLayout();
+        float previewPadding = previewView.getThumbOffset();
+        float previewLeftX = ((View) previewView).getLeft();
+        float previewRightX = ((View) previewView).getRight();
+        float previewSeekBarStartX = previewLeftX + previewPadding;
+        float previewSeekBarEndX = previewRightX - previewPadding;
+
+        float currentX = previewSeekBarStartX
+                + (previewSeekBarEndX - previewSeekBarStartX) * offset;
+
+        float startX = currentX - previewFrameLayout.getWidth() / 2f;
+        float endX = startX + previewFrameLayout.getWidth();
+
+        // Clamp the moves
+        if (startX >= minimumX && endX <= maximumX) {
+            return (int) startX;
+        } else if (startX < minimumX) {
+            return minimumX;
+        } else {
+            return maximumX - previewFrameLayout.getWidth();
+        }
     }
 
     @Nullable
