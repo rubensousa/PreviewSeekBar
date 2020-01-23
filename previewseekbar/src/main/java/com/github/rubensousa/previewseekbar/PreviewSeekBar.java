@@ -87,7 +87,8 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
                 R.styleable.PreviewSeekBar_previewAnimationEnabled, true));
         delegate.setPreviewEnabled(typedArray.getBoolean(
                 R.styleable.PreviewSeekBar_previewEnabled, true));
-
+        delegate.setAutoHidePreview(typedArray.getBoolean(
+                R.styleable.PreviewSeekBar_previewAutoHide, true));
         typedArray.recycle();
         super.setOnSeekBarChangeListener(seekBarChangeListener);
     }
@@ -195,6 +196,11 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
     @Override
     public void hidePreview() {
         delegate.hide();
+    }
+
+    @Override
+    public void setAutoHidePreview(boolean autoHide) {
+        delegate.setAutoHidePreview(autoHide);
     }
 
     @Override

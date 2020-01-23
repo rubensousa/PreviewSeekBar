@@ -79,6 +79,11 @@ public interface PreviewBar {
     void hidePreview();
 
     /**
+     * @param autoHide true if the preview should be hidden when the user stops touching this bar
+     */
+    void setAutoHidePreview(boolean autoHide);
+
+    /**
      * @param animator a custom animator that'll animate the preview layout above this bar
      */
     void setPreviewAnimator(@NonNull PreviewAnimator animator);

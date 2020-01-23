@@ -14,10 +14,10 @@
 - Added support for custom animators. Default animators available:
 	- PreviewFadeAnimator (API 19+)
 	- PreviewMorphAnimator (API 21+)
-- Added support for disabling preview animations with PreviewBar's setPreviewAnimationEnabled
-- Allow disabling/enabling the preview mode with PreviewBar's setPreviewEnabled
+- Added support for disabling preview animations with setPreviewAnimationEnabled
+- Added support for disabling/enabling auto hiding of previews with setAutoHidePreview. Includes new xml attribute previewAutoHide
+- Allow disabling/enabling the preview mode with setPreviewEnabled. Includes new xml attribute previewEnabled
 - Added new attribute previewThumbTint to PreviewSeekBar to change the scrubber color
-- Added new attribute previewEnabled to PreviewSeekBar to enable or disable previews. Defaults to true
 - Added new setProgressTint and setProgressTintResource to tint the PreviewSeekBar progress color
 - Instead of restarting the morph animation completely,
 PreviewMorphAnimator now resumes from where it was previously animating

@@ -42,6 +42,7 @@ public class PreviewDelegate {
     private boolean previewViewAttached;
     private boolean previewEnabled;
     private boolean animationEnabled;
+    private boolean previewAutoHide;
     /**
      * True when the user has started scrubbing.
      * Will be true until {@link PreviewDelegate#onStopPreview()} gets called
@@ -75,6 +76,7 @@ public class PreviewDelegate {
             }
         });
         this.animationEnabled = true;
+        this.previewAutoHide = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             animator = new PreviewMorphAnimator();
         } else {
@@ -137,6 +139,8 @@ public class PreviewDelegate {
                 previewView.setVisibility(View.INVISIBLE);
             }
             showingPreview = false;
+            isUserScrubbing = false;
+            hasUserStartedScrubbing = false;
         }
     }
 
@@ -154,6 +158,10 @@ public class PreviewDelegate {
 
     public void setAnimationEnabled(boolean enabled) {
         this.animationEnabled = enabled;
+    }
+
+    public void setAutoHidePreview(boolean autoHide) {
+        this.previewAutoHide = autoHide;
     }
 
     public void attachPreviewView(@NonNull FrameLayout previewView) {
@@ -185,10 +193,9 @@ public class PreviewDelegate {
     }
 
     private void onStopPreview() {
-        hide();
-        showingPreview = false;
-        isUserScrubbing = false;
-        hasUserStartedScrubbing = false;
+        if (previewAutoHide) {
+            hide();
+        }
     }
 
 

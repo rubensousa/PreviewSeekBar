@@ -19,5 +19,6 @@
         <attr name="previewAnimationEnabled" format="boolean" />
         <attr name="previewEnabled" format="boolean" />
         <attr name="previewThumbTint" format="color" />
+        <attr name="previewAutoHide" format="boolean" />
     </declare-styleable>
 </resources>
