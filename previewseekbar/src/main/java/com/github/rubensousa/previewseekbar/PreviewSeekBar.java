@@ -18,11 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A SeekBar that morphs its indicator into a preview frame while scrubbing.
+ * A {@link PreviewBar} that extends from {@link AppCompatSeekBar}.
+ * <p>
+ *
  */
-public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView {
+public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
 
-    private List<PreviewView.OnPreviewChangeListener> listeners;
+    private List<PreviewBar.OnPreviewChangeListener> listeners;
     private PreviewDelegate delegate;
     private int frameLayoutId = View.NO_ID;
     private int scrubberColor = 0;
@@ -81,14 +83,14 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView {
                 R.styleable.PreviewSeekBar_previewAnimationEnabled, true));
         typedArray.recycle();
 
-        delegate.setEnabled(isEnabled());
+        delegate.setPreviewEnabled(isEnabled());
         super.setOnSeekBarChangeListener(seekBarChangeListener);
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (!delegate.hasPreviewFrameLayout() && getWidth() != 0 && getHeight() != 0 && !isInEditMode()) {
+        if (!delegate.hasPreviewFrameLayout() && !isInEditMode()) {
             delegate.onLayout((ViewGroup) getParent(), frameLayoutId);
         }
     }
@@ -128,7 +130,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView {
     }
 
     /**
-     * Use {@link PreviewView.OnPreviewChangeListener}
+     * Use {@link PreviewBar.OnPreviewChangeListener}
      * instead with {@link PreviewSeekBar#addOnPreviewChangeListener(OnPreviewChangeListener)}
      */
     @Override
@@ -137,8 +139,8 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView {
     }
 
     @Override
-    public void attachPreviewFrameLayout(@NonNull FrameLayout frameLayout) {
-        delegate.attachPreviewFrameLayout(frameLayout);
+    public void attachPreviewView(@NonNull FrameLayout previewView) {
+        delegate.attachPreviewView(previewView);
     }
 
     @Override
@@ -165,13 +167,13 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView {
     }
 
     @Override
-    public void setPreviewEnabled(boolean previewEnabled) {
-        delegate.setEnabled(previewEnabled);
+    public boolean isPreviewEnabled() {
+        return delegate.isPreviewEnabled();
     }
 
     @Override
-    public boolean isPreviewEnabled() {
-        return delegate.isEnabled();
+    public void setPreviewEnabled(boolean enabled) {
+        delegate.setPreviewEnabled(enabled);
     }
 
     @Override

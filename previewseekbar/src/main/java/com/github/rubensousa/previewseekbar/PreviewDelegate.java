@@ -25,36 +25,51 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
- * Handles the logic to display and animate a PreviewView
+ * Handles the logic to display and animate a preview view when a {@link PreviewBar} is scrubbed
  */
-public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
+public class PreviewDelegate {
 
-    private FrameLayout previewFrameLayout;
+    private FrameLayout previewView;
     private PreviewLoader previewLoader;
     private PreviewAnimator animator;
-    private PreviewView previewView;
+    private PreviewBar previewBar;
 
     private boolean showingPreview;
     private boolean hasPreviewFrameLayout;
-    private boolean enabled;
+    private boolean previewEnabled;
     private boolean animationEnabled;
     /**
      * True when the user has started scrubbing.
-     * Will be true until {@link PreviewDelegate#onStopPreview(PreviewView, int)} gets called
+     * Will be true until {@link PreviewDelegate#onStopPreview()} gets called
      */
-    private boolean startedScrubbing;
+    private boolean hasUserStartedScrubbing;
 
     /**
      * True if the user is currently scrubbing
      * Will only be true after a first pass
-     * on {@link PreviewDelegate#onPreview(PreviewView, int, boolean)}
+     * on {@link PreviewDelegate#onPreview(int, boolean)}
      */
     private boolean isUserScrubbing;
 
-    public PreviewDelegate(PreviewView previewView) {
-        this.previewView = previewView;
+    public PreviewDelegate(PreviewBar previewBar) {
+        this.previewBar = previewBar;
         // We need to register ourselves to handle the animations
-        this.previewView.addOnPreviewChangeListener(this);
+        this.previewBar.addOnPreviewChangeListener(new PreviewBar.OnPreviewChangeListener() {
+            @Override
+            public void onStartPreview(PreviewBar previewBar, int progress) {
+                PreviewDelegate.this.onStartPreview();
+            }
+
+            @Override
+            public void onStopPreview(PreviewBar previewBar, int progress) {
+                PreviewDelegate.this.onStopPreview();
+            }
+
+            @Override
+            public void onPreview(PreviewBar previewBar, int progress, boolean fromUser) {
+                PreviewDelegate.this.onPreview(progress, fromUser);
+            }
+        });
         this.animationEnabled = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             animator = new PreviewMorphAnimator();
@@ -63,65 +78,42 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         }
     }
 
-    @Override
-    public void onStartPreview(PreviewView previewView, int progress) {
-        startedScrubbing = true;
-    }
-
-    @Override
-    public void onStopPreview(PreviewView previewView, int progress) {
-        hide();
-        showingPreview = false;
-        isUserScrubbing = false;
-        startedScrubbing = false;
-    }
-
-    @Override
-    public void onPreview(PreviewView previewView, int progress, boolean fromUser) {
-        if (!hasPreviewFrameLayout) {
-            return;
-        }
-
-        if (fromUser) {
-            final int targetX = updateFrameX(progress, previewView.getMax());
-            previewFrameLayout.setX(targetX);
-            animator.move(previewFrameLayout, previewView);
-        }
-
-        if (!showingPreview && !isUserScrubbing && fromUser && enabled) {
-            show();
-            isUserScrubbing = true;
-        }
-
-        if (previewLoader != null && showingPreview) {
-            previewLoader.loadPreview(progress, previewView.getMax());
-        }
-    }
-
+    /**
+     * Shows the preview view
+     */
     public void show() {
         if (!showingPreview && hasPreviewFrameLayout) {
             if (animationEnabled) {
-                animator.show(previewFrameLayout, previewView);
+                animator.show(previewView, previewBar);
             } else {
-                animator.cancel(previewFrameLayout, previewView);
-                previewFrameLayout.setVisibility(View.VISIBLE);
+                animator.cancel(previewView, previewBar);
+                previewView.setVisibility(View.VISIBLE);
             }
             showingPreview = true;
         }
     }
 
+    /**
+     * Hides the preview view
+     */
     public void hide() {
         if (showingPreview && hasPreviewFrameLayout) {
             if (animationEnabled) {
-                animator.hide(previewFrameLayout, previewView);
+                animator.hide(previewView, previewBar);
             } else {
-                animator.cancel(previewFrameLayout, previewView);
-                previewFrameLayout.setVisibility(View.INVISIBLE);
+                animator.cancel(previewView, previewBar);
+                previewView.setVisibility(View.INVISIBLE);
             }
             showingPreview = false;
         }
     }
 
+    /**
+     * Sets a {@link PreviewLoader} that'll display preview during calls to
+     * {@link PreviewBar.OnPreviewChangeListener#onPreview(PreviewBar, int, boolean)}}
+     *
+     * @param previewLoader a PreviewLoader that'll display previews or null to clear the current one
+     */
     public void setPreviewLoader(@Nullable PreviewLoader previewLoader) {
         this.previewLoader = previewLoader;
     }
@@ -134,27 +126,27 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         if (!hasPreviewFrameLayout) {
             FrameLayout frameLayout = findFrameLayout(previewParent, frameLayoutId);
             if (frameLayout != null) {
-                attachPreviewFrameLayout(frameLayout);
+                attachPreviewView(frameLayout);
             }
         }
     }
 
-    public void attachPreviewFrameLayout(@NonNull FrameLayout frameLayout) {
-        previewFrameLayout = frameLayout;
-        previewFrameLayout.setVisibility(View.INVISIBLE);
+    public void attachPreviewView(@NonNull FrameLayout previewView) {
+        this.previewView = previewView;
+        this.previewView.setVisibility(View.INVISIBLE);
         hasPreviewFrameLayout = true;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isPreviewEnabled() {
+        return previewEnabled;
     }
 
     public boolean isShowingPreview() {
         return showingPreview;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setPreviewEnabled(boolean previewEnabled) {
+        this.previewEnabled = previewEnabled;
     }
 
     public void setAnimationEnabled(boolean enabled) {
@@ -163,9 +155,12 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
 
     public void updateProgress(int progress, int max) {
         if (hasPreviewFrameLayout()) {
-            if (!isUserScrubbing && !startedScrubbing) {
-                previewFrameLayout.setX(updateFrameX(progress, max));
-                animator.move(previewFrameLayout, previewView);
+            // This is a manual update, so check if the user isn't currently scrubbing
+            // to avoid inconsistencies between the current scrubbed position
+            // and the real position of the preview
+            if (!isUserScrubbing && !hasUserStartedScrubbing) {
+                previewView.setX(updatePreviewX(progress, max));
+                animator.move(previewView, previewBar);
             }
         }
     }
@@ -174,38 +169,71 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         return hasPreviewFrameLayout;
     }
 
+    private void onStartPreview() {
+        hasUserStartedScrubbing = true;
+    }
+
+    private void onPreview(int progress, boolean fromUser) {
+        if (!hasPreviewFrameLayout) {
+            return;
+        }
+
+        if (fromUser) {
+            final int targetX = updatePreviewX(progress, previewBar.getMax());
+            previewView.setX(targetX);
+            animator.move(previewView, previewBar);
+        }
+
+        if (!showingPreview && !isUserScrubbing && fromUser && previewEnabled) {
+            show();
+            isUserScrubbing = true;
+        }
+
+        if (previewLoader != null && showingPreview) {
+            previewLoader.loadPreview(progress, previewBar.getMax());
+        }
+    }
+
+    private void onStopPreview() {
+        hide();
+        showingPreview = false;
+        isUserScrubbing = false;
+        hasUserStartedScrubbing = false;
+    }
+
+
     /**
-     * Get the x position for the preview frame. This method takes into account padding
+     * Get the x position for the preview view. This method takes into account padding
      * that'll make the frame not move until the scrub position exceeds
      * at least half of the frame's width.
      */
-    private int updateFrameX(int progress, int max) {
+    private int updatePreviewX(int progress, int max) {
         if (max == 0) {
             return 0;
         }
 
-        final ViewGroup parent = (ViewGroup) previewFrameLayout.getParent();
+        final ViewGroup parent = (ViewGroup) previewView.getParent();
         final ViewGroup.MarginLayoutParams layoutParams
-                = (ViewGroup.MarginLayoutParams) previewFrameLayout.getLayoutParams();
+                = (ViewGroup.MarginLayoutParams) previewView.getLayoutParams();
 
         float offset = (float) progress / max;
 
-        int minimumX = previewFrameLayout.getLeft();
+        int minimumX = previewView.getLeft();
         int maximumX = parent.getWidth()
                 - parent.getPaddingRight()
                 - layoutParams.rightMargin;
 
-        float previewPadding = previewView.getThumbOffset();
-        float previewLeftX = ((View) previewView).getLeft();
-        float previewRightX = ((View) previewView).getRight();
+        float previewPadding = previewBar.getThumbOffset();
+        float previewLeftX = ((View) previewBar).getLeft();
+        float previewRightX = ((View) previewBar).getRight();
         float previewSeekBarStartX = previewLeftX + previewPadding;
         float previewSeekBarEndX = previewRightX - previewPadding;
 
         float currentX = previewSeekBarStartX
                 + (previewSeekBarEndX - previewSeekBarStartX) * offset;
 
-        float startX = currentX - previewFrameLayout.getWidth() / 2f;
-        float endX = startX + previewFrameLayout.getWidth();
+        float startX = currentX - previewView.getWidth() / 2f;
+        float endX = startX + previewView.getWidth();
 
         // Clamp the moves
         if (startX >= minimumX && endX <= maximumX) {
@@ -213,7 +241,7 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         } else if (startX < minimumX) {
             return minimumX;
         } else {
-            return maximumX - previewFrameLayout.getWidth();
+            return maximumX - previewView.getWidth();
         }
     }
 

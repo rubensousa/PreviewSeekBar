@@ -42,50 +42,50 @@ public class PreviewFadeAnimator implements PreviewAnimator {
     }
 
     @Override
-    public void move(FrameLayout previewFrameLayout, PreviewView previewView) {
+    public void move(FrameLayout previewView, PreviewBar previewBar) {
 
     }
 
     @Override
-    public void show(FrameLayout previewFrameLayout, PreviewView previewView) {
-        previewFrameLayout.animate().setListener(null);
-        previewFrameLayout.animate().cancel();
-        previewFrameLayout.setAlpha(0f);
-        previewFrameLayout.setVisibility(View.VISIBLE);
-        previewFrameLayout.animate()
+    public void show(FrameLayout previewView, PreviewBar previewBar) {
+        previewView.animate().setListener(null);
+        previewView.animate().cancel();
+        previewView.setAlpha(0f);
+        previewView.setVisibility(View.VISIBLE);
+        previewView.animate()
                 .setDuration(showDuration)
                 .alpha(1f)
                 .setListener(null);
     }
 
     @Override
-    public void hide(final FrameLayout previewFrameLayout, PreviewView previewView) {
-        previewFrameLayout.animate().setListener(null);
-        previewFrameLayout.animate().cancel();
-        previewFrameLayout.setVisibility(View.VISIBLE);
-        previewFrameLayout.setAlpha(1f);
-        previewFrameLayout.animate()
+    public void hide(final FrameLayout previewView, PreviewBar previewBar) {
+        previewView.animate().setListener(null);
+        previewView.animate().cancel();
+        previewView.setVisibility(View.VISIBLE);
+        previewView.setAlpha(1f);
+        previewView.animate()
                 .setDuration(hideDuration)
                 .alpha(0f)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        previewFrameLayout.setAlpha(1.0f);
-                        previewFrameLayout.setVisibility(View.INVISIBLE);
+                        previewView.setAlpha(1.0f);
+                        previewView.setVisibility(View.INVISIBLE);
                     }
 
                     @Override
                     public void onAnimationCancel(Animator animation) {
                         super.onAnimationCancel(animation);
-                        previewFrameLayout.setAlpha(1.0f);
-                        previewFrameLayout.setVisibility(View.INVISIBLE);
+                        previewView.setAlpha(1.0f);
+                        previewView.setVisibility(View.INVISIBLE);
                     }
                 });
     }
 
     @Override
-    public void cancel(FrameLayout previewFrameLayout, PreviewView previewView) {
+    public void cancel(FrameLayout previewView, PreviewBar previewBar) {
 
     }
 

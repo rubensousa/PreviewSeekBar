@@ -29,10 +29,10 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.github.rubensousa.previewseekbar.PreviewAnimator;
+import com.github.rubensousa.previewseekbar.PreviewBar;
 import com.github.rubensousa.previewseekbar.PreviewDelegate;
 import com.github.rubensousa.previewseekbar.PreviewLoader;
 import com.github.rubensousa.previewseekbar.PreviewSeekBar;
-import com.github.rubensousa.previewseekbar.PreviewView;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.TimeBar;
 
@@ -44,7 +44,7 @@ import java.util.List;
  * <p>
  * When the user scrubs this TimeBar, a preview will appear above the scrubber.
  */
-public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
+public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
         TimeBar.OnScrubListener {
 
     private List<OnPreviewChangeListener> listeners;
@@ -100,7 +100,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
                 R.styleable.PreviewTimeBar_previewFrameLayout, View.NO_ID);
 
         delegate = new PreviewDelegate(this);
-        delegate.setEnabled(isEnabled());
+        delegate.setPreviewEnabled(isEnabled());
         delegate.setAnimationEnabled(typedArray.getBoolean(
                 R.styleable.PreviewTimeBar_previewAnimationEnabled, true));
 
@@ -112,7 +112,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (!delegate.hasPreviewFrameLayout() && getWidth() != 0 && getHeight() != 0 && !isInEditMode()) {
+        if (!delegate.hasPreviewFrameLayout() && !isInEditMode()) {
             delegate.onLayout((ViewGroup) getParent(), frameLayoutId);
         }
     }
@@ -133,8 +133,8 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
     }
 
     @Override
-    public void attachPreviewFrameLayout(@NonNull FrameLayout frameLayout) {
-        delegate.attachPreviewFrameLayout(frameLayout);
+    public void attachPreviewView(@NonNull FrameLayout previewView) {
+        delegate.attachPreviewView(previewView);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
 
     @Override
     public boolean isPreviewEnabled() {
-        return delegate.isEnabled();
+        return delegate.isPreviewEnabled();
     }
 
     @Override
@@ -183,8 +183,8 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
     }
 
     @Override
-    public void setPreviewEnabled(boolean previewEnabled) {
-        delegate.setEnabled(previewEnabled);
+    public void setPreviewEnabled(boolean enabled) {
+        delegate.setPreviewEnabled(enabled);
     }
 
     @Override

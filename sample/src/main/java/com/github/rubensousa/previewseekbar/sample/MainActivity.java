@@ -28,13 +28,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
-import com.github.rubensousa.previewseekbar.PreviewView;
+import com.github.rubensousa.previewseekbar.PreviewBar;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
 import com.google.android.exoplayer2.ui.PlayerView;
 
 public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
-        PreviewView.OnPreviewChangeListener {
+        PreviewBar.OnPreviewChangeListener {
 
     private static final int PICK_FILE_REQUEST_CODE = 2;
 
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     @Override
-    public void onStartPreview(PreviewView previewView, int progress) {
+    public void onStartPreview(PreviewBar previewBar, int progress) {
         if (getResources().getBoolean(R.bool.landscape)) {
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -133,12 +133,12 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     @Override
-    public void onStopPreview(PreviewView previewView, int progress) {
+    public void onStopPreview(PreviewBar previewBar, int progress) {
         exoPlayerManager.stopPreview(progress);
     }
 
     @Override
-    public void onPreview(PreviewView previewView, int progress, boolean fromUser) {
+    public void onPreview(PreviewBar previewBar, int progress, boolean fromUser) {
 
     }
 
