@@ -181,21 +181,21 @@ public class PreviewMorphAnimator implements PreviewAnimator {
     /**
      * Starts the translation to the center of the preview frame
      */
-    private void startShowTranslation(final FrameLayout previewFrameLayout,
+    private void startShowTranslation(final FrameLayout previewView,
                                       PreviewBar previewBar,
                                       final View overlayView,
                                       final View morphView) {
         isMovingToShow = true;
-        final float targetScale = getMorphScale(previewFrameLayout, morphView);
+        final float targetScale = getMorphScale(previewView, morphView);
         overlayView.setVisibility(View.INVISIBLE);
-        previewFrameLayout.setVisibility(View.INVISIBLE);
+        previewView.setVisibility(View.INVISIBLE);
         morphView.setVisibility(View.VISIBLE);
 
-        animateMorphViewX(morphView, getMorphEndX(previewFrameLayout, previewBar),
+        animateMorphViewX(morphView, getMorphEndX(previewView, previewBar),
                 showTranslationDuration);
 
         morphView.animate()
-                .y(getMorphEndY(previewFrameLayout, morphView))
+                .y(getMorphEndY(previewView, morphView))
                 .scaleY(targetScale)
                 .scaleX(targetScale)
                 .setDuration(showTranslationDuration)
@@ -206,8 +206,8 @@ public class PreviewMorphAnimator implements PreviewAnimator {
                         super.onAnimationEnd(animation);
                         isMovingToShow = false;
                         overlayView.setAlpha(1.0f);
-                        if (previewFrameLayout.isAttachedToWindow()) {
-                            startCircularReveal(previewFrameLayout, overlayView, morphView);
+                        if (previewView.isAttachedToWindow()) {
+                            startCircularReveal(previewView, overlayView, morphView);
                         }
                     }
                 }).start();
@@ -216,21 +216,21 @@ public class PreviewMorphAnimator implements PreviewAnimator {
     /**
      * Starts the circular reveal of the preview with an overlay above that fades out
      */
-    private void startCircularReveal(final FrameLayout previewFrameLayout,
+    private void startCircularReveal(final FrameLayout previewView,
                                      final View overlayView,
                                      final View morphView) {
         isMorphingToShow = true;
 
-        float startRadius = previewFrameLayout.getHeight() / 2f;
-        float endRadius = getRadius(previewFrameLayout);
+        float startRadius = previewView.getHeight() / 2f;
+        float endRadius = getRadius(previewView);
         long duration = morphShowDuration;
 
-        morphAnimator = ViewAnimationUtils.createCircularReveal(previewFrameLayout,
-                getCenterX(previewFrameLayout),
-                getCenterY(previewFrameLayout),
+        morphAnimator = ViewAnimationUtils.createCircularReveal(previewView,
+                getCenterX(previewView),
+                getCenterY(previewView),
                 startRadius,
                 endRadius);
-        morphAnimator.setTarget(previewFrameLayout);
+        morphAnimator.setTarget(previewView);
         morphAnimator.setInterpolator(new AccelerateInterpolator());
         morphAnimator.setDuration(duration);
         morphAnimator.addListener(new AnimatorListenerAdapter() {
@@ -244,7 +244,7 @@ public class PreviewMorphAnimator implements PreviewAnimator {
             }
         });
         morphAnimator.start();
-        previewFrameLayout.setVisibility(View.VISIBLE);
+        previewView.setVisibility(View.VISIBLE);
         overlayView.setVisibility(View.VISIBLE);
         morphView.setVisibility(View.INVISIBLE);
         overlayView.animate()
@@ -253,30 +253,30 @@ public class PreviewMorphAnimator implements PreviewAnimator {
 
     }
 
-    private void startReverseCircularReveal(final FrameLayout previewFrameLayout,
+    private void startReverseCircularReveal(final FrameLayout previewView,
                                             final PreviewBar previewBar,
                                             final View overlayView,
                                             final View morphView) {
         isMorphingToHide = true;
 
-        float startRadius = getRadius(previewFrameLayout);
-        float endRadius = previewFrameLayout.getHeight() / 2f;
+        float startRadius = getRadius(previewView);
+        float endRadius = previewView.getHeight() / 2f;
         long duration = morphHideDuration;
 
-        morphAnimator = ViewAnimationUtils.createCircularReveal(previewFrameLayout,
-                getCenterX(previewFrameLayout),
-                getCenterY(previewFrameLayout),
+        morphAnimator = ViewAnimationUtils.createCircularReveal(previewView,
+                getCenterX(previewView),
+                getCenterY(previewView),
                 startRadius,
                 endRadius);
         morphAnimator.setDuration(duration);
         morphAnimator.setInterpolator(new AccelerateInterpolator());
-        morphAnimator.setTarget(previewFrameLayout);
+        morphAnimator.setTarget(previewView);
         morphAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 isMorphingToHide = false;
-                startHideTranslation(previewFrameLayout, previewBar, overlayView, morphView);
+                startHideTranslation(previewView, previewBar, overlayView, morphView);
             }
         });
         overlayView.setVisibility(View.VISIBLE);
@@ -288,13 +288,13 @@ public class PreviewMorphAnimator implements PreviewAnimator {
     /**
      * Starts the translation to the center of the scrubber
      */
-    private void startHideTranslation(FrameLayout previewFrameLayout,
+    private void startHideTranslation(FrameLayout previewView,
                                       PreviewBar previewBar,
                                       View overlayView,
                                       final View morphView) {
         isMovingToHide = true;
         overlayView.setVisibility(View.INVISIBLE);
-        previewFrameLayout.setVisibility(View.INVISIBLE);
+        previewView.setVisibility(View.INVISIBLE);
         morphView.setVisibility(View.VISIBLE);
 
         animateMorphViewX(morphView, getMorphStartX(previewBar, getOffset(previewBar)),
@@ -339,7 +339,7 @@ public class PreviewMorphAnimator implements PreviewAnimator {
         translationAnimator.start();
     }
 
-    private void cancelPendingAnimations(FrameLayout previewFrameLayout,
+    private void cancelPendingAnimations(FrameLayout previewView,
                                          View overlayView,
                                          View morphView) {
         if (morphAnimator != null) {
@@ -352,8 +352,8 @@ public class PreviewMorphAnimator implements PreviewAnimator {
             translationAnimator.cancel();
             translationAnimator = null;
         }
-        previewFrameLayout.animate().setListener(null);
-        previewFrameLayout.animate().cancel();
+        previewView.animate().setListener(null);
+        previewView.animate().cancel();
         overlayView.animate().setListener(null);
         overlayView.animate().cancel();
         morphView.animate().setListener(null);
@@ -365,15 +365,15 @@ public class PreviewMorphAnimator implements PreviewAnimator {
      * <p>
      * This overlay is used for the circular reveal
      */
-    private View getOrCreateOverlayView(FrameLayout previewFrameLayout) {
-        View overlay = previewFrameLayout.findViewById(R.id.previewSeekBarOverlayViewId);
+    private View getOrCreateOverlayView(FrameLayout previewView) {
+        View overlay = previewView.findViewById(R.id.previewSeekBarOverlayViewId);
 
         if (overlay != null) {
             return overlay;
         }
 
         // Create frame view for the circular reveal
-        overlay = new View(previewFrameLayout.getContext());
+        overlay = new View(previewView.getContext());
         overlay.setVisibility(View.INVISIBLE);
         overlay.setId(R.id.previewSeekBarOverlayViewId);
 
@@ -382,15 +382,18 @@ public class PreviewMorphAnimator implements PreviewAnimator {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
 
-        previewFrameLayout.addView(overlay, layoutParams);
+        previewView.addView(overlay, layoutParams);
         return overlay;
     }
 
-    @SuppressWarnings("SuspiciousNameCombination")
-    private View getOrCreateMorphView(FrameLayout previewFrameLayout,
+    /**
+     * Creates the morph view that'll move from the thumb of the PreviewBar
+     * to the center of the preview view
+     */
+    private View getOrCreateMorphView(FrameLayout previewView,
                                       PreviewBar previewBar) {
 
-        final ViewGroup parent = (ViewGroup) previewFrameLayout.getParent();
+        final ViewGroup parent = (ViewGroup) previewView.getParent();
         View morphView = parent.findViewById(R.id.previewSeekBarMorphViewId);
 
         if (morphView != null) {
@@ -398,7 +401,7 @@ public class PreviewMorphAnimator implements PreviewAnimator {
         }
 
         // Create morph view
-        morphView = new View(previewFrameLayout.getContext());
+        morphView = new View(previewView.getContext());
         morphView.setVisibility(View.INVISIBLE);
         morphView.setBackgroundResource(R.drawable.previewseekbar_morph);
         morphView.setId(R.id.previewSeekBarMorphViewId);
@@ -433,8 +436,8 @@ public class PreviewMorphAnimator implements PreviewAnimator {
         return (float) previewBar.getProgress() / previewBar.getMax();
     }
 
-    private float getMorphScale(FrameLayout previewFrameLayout, View morphView) {
-        return (float) (previewFrameLayout.getHeight() / morphView.getLayoutParams().height);
+    private float getMorphScale(FrameLayout previewView, View morphView) {
+        return (float) (previewView.getHeight() / morphView.getLayoutParams().height);
     }
 
     private float getRadius(View view) {
@@ -473,19 +476,19 @@ public class PreviewMorphAnimator implements PreviewAnimator {
     /**
      * The destination X of the view that'll morph into the preview
      */
-    private float getMorphEndX(FrameLayout previewFrameLayout,
+    private float getMorphEndX(FrameLayout previewView,
                                PreviewBar previewBar) {
-        return previewFrameLayout.getX()
-                + (previewFrameLayout.getWidth() / 2f)
+        return previewView.getX()
+                + (previewView.getWidth() / 2f)
                 - previewBar.getThumbOffset() / 2f;
     }
 
     /**
      * The destination Y of the view that'll morph into the preview
      */
-    private float getMorphEndY(FrameLayout previewFrameLayout, View morphView) {
-        return (int) (previewFrameLayout.getY()
-                + previewFrameLayout.getHeight() / 2f)
+    private float getMorphEndY(FrameLayout previewView, View morphView) {
+        return (int) (previewView.getY()
+                + previewView.getHeight() / 2f)
                 - morphView.getHeight() / 2f;
     }
 
