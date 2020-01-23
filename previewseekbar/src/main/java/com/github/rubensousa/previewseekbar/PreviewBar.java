@@ -24,6 +24,8 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.github.rubensousa.previewseekbar.animator.PreviewAnimator;
+
 /**
  * A progress bar that displays a preview when it's scrubbed.
  * <p>

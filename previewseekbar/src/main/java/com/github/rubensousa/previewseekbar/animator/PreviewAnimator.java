@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.rubensousa.previewseekbar;
+package com.github.rubensousa.previewseekbar.animator;
 
 import android.widget.FrameLayout;
+
+import com.github.rubensousa.previewseekbar.PreviewBar;
 
 /**
  * Animates the FrameLayout container that has the View responsible for showing a preview.

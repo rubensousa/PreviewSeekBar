@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.rubensousa.previewseekbar;
+package com.github.rubensousa.previewseekbar.animator;
 
 
 import android.animation.Animator;
@@ -30,6 +30,9 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
 import androidx.core.graphics.drawable.DrawableCompat;
+
+import com.github.rubensousa.previewseekbar.PreviewBar;
+import com.github.rubensousa.previewseekbar.R;
 
 /**
  * A {@link PreviewAnimator} that morphs the {@link PreviewBar} thumb

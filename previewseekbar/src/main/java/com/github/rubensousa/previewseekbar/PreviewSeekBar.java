@@ -14,6 +14,8 @@ import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.github.rubensousa.previewseekbar.animator.PreviewAnimator;
+
 import java.util.ArrayList;
 import java.util.List;
 

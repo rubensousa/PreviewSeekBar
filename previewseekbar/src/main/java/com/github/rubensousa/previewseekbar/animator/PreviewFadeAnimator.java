@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.github.rubensousa.previewseekbar;
+package com.github.rubensousa.previewseekbar.animator;
 
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import com.github.rubensousa.previewseekbar.PreviewBar;
 
 /**
  * A {@link PreviewAnimator} that just fades the preview frame

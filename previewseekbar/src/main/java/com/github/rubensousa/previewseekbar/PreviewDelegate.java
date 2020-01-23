@@ -24,6 +24,10 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.github.rubensousa.previewseekbar.animator.PreviewAnimator;
+import com.github.rubensousa.previewseekbar.animator.PreviewFadeAnimator;
+import com.github.rubensousa.previewseekbar.animator.PreviewMorphAnimator;
+
 /**
  * Handles the logic to display and animate a preview view when a {@link PreviewBar} is scrubbed
  */
