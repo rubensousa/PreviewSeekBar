@@ -56,8 +56,7 @@ public class PreviewFadeAnimator implements PreviewAnimator {
         previewView.setVisibility(View.VISIBLE);
         previewView.animate()
                 .setDuration(showDuration)
-                .alpha(1f)
-                .setListener(null);
+                .alpha(1f);
     }
 
     @Override
@@ -88,7 +87,8 @@ public class PreviewFadeAnimator implements PreviewAnimator {
 
     @Override
     public void cancel(FrameLayout previewView, PreviewBar previewBar) {
-
+        previewView.animate().setListener(null);
+        previewView.animate().cancel();
     }
 
 }
