@@ -76,6 +76,7 @@
         app:layout_constraintEnd_toStartOf="@id/exo_duration"
         app:layout_constraintStart_toEndOf="@+id/exo_position"
         app:layout_constraintTop_toTopOf="@+id/exo_position"
+        app:previewAnimationEnabled="true"
         app:previewFrameLayout="@id/previewFrameLayout"
         app:scrubber_dragged_size="24dp"
         app:scrubber_enabled_size="16dp" />
