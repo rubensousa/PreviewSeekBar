@@ -18,6 +18,7 @@
 - Allow disabling/enabling the preview mode with PreviewBar's setPreviewEnabled
 - Added new attribute previewThumbTint to PreviewSeekBar to change the scrubber color
 - Added new attribute previewEnabled to PreviewSeekBar to enable or disable previews. Defaults to true
+- Added new setProgressTint and setProgressTintResource to tint the PreviewSeekBar progress color
 - Instead of restarting the morph animation completely,
 PreviewMorphAnimator now resumes from where it was previously animating
 

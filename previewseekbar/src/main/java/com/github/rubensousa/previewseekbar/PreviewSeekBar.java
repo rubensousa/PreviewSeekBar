@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.core.content.ContextCompat;
@@ -220,6 +222,16 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
     @Override
     public void setPreviewAnimationEnabled(boolean enable) {
         delegate.setAnimationEnabled(enable);
+    }
+
+    public void setProgressTint(@ColorInt int color) {
+        Drawable drawable = DrawableCompat.wrap(getProgressDrawable());
+        DrawableCompat.setTint(drawable, color);
+        setProgressDrawable(drawable);
+    }
+
+    public void setProgressTintResource(@ColorRes int colorResource) {
+        setProgressTint(ContextCompat.getColor(getContext(), colorResource));
     }
 
     private void onProgressChanged(int progress, boolean fromUser) {
