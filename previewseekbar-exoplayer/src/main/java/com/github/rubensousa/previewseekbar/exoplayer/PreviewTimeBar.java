@@ -123,6 +123,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
 
     @Override
     public void setPreviewThumbTint(int color) {
+        setScrubberColor(color);
         scrubberColor = color;
     }
 
