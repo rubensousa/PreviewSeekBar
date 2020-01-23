@@ -34,7 +34,7 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
     private PreviewAnimator animator;
     private PreviewView previewView;
 
-    private boolean showing;
+    private boolean showingPreview;
     private boolean hasPreviewFrameLayout;
     private boolean enabled;
     private boolean animationEnabled;
@@ -71,7 +71,7 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
     @Override
     public void onStopPreview(PreviewView previewView, int progress) {
         hide();
-        showing = false;
+        showingPreview = false;
         isUserScrubbing = false;
         startedScrubbing = false;
     }
@@ -88,37 +88,37 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
             animator.move(previewFrameLayout, previewView);
         }
 
-        if (!showing && !isUserScrubbing && fromUser && enabled) {
+        if (!showingPreview && !isUserScrubbing && fromUser && enabled) {
             show();
             isUserScrubbing = true;
         }
 
-        if (previewLoader != null && showing) {
+        if (previewLoader != null && showingPreview) {
             previewLoader.loadPreview(progress, previewView.getMax());
         }
     }
 
     public void show() {
-        if (!showing && hasPreviewFrameLayout) {
+        if (!showingPreview && hasPreviewFrameLayout) {
             if (animationEnabled) {
                 animator.show(previewFrameLayout, previewView);
             } else {
                 animator.cancel(previewFrameLayout, previewView);
                 previewFrameLayout.setVisibility(View.VISIBLE);
             }
-            showing = true;
+            showingPreview = true;
         }
     }
 
     public void hide() {
-        if (showing && hasPreviewFrameLayout) {
+        if (showingPreview && hasPreviewFrameLayout) {
             if (animationEnabled) {
                 animator.hide(previewFrameLayout, previewView);
             } else {
                 animator.cancel(previewFrameLayout, previewView);
                 previewFrameLayout.setVisibility(View.INVISIBLE);
             }
-            showing = false;
+            showingPreview = false;
         }
     }
 
@@ -149,8 +149,8 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         return enabled;
     }
 
-    public boolean isShowing() {
-        return showing;
+    public boolean isShowingPreview() {
+        return showingPreview;
     }
 
     public void setEnabled(boolean enabled) {

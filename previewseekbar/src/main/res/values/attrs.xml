@@ -18,5 +18,6 @@
     <declare-styleable name="PreviewSeekBar">
         <attr name="previewFrameLayout" format="reference" />
         <attr name="previewAnimationEnabled" format="boolean" />
+        <attr name="previewThumbTint" format="color" />
     </declare-styleable>
 </resources>

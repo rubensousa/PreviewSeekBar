@@ -1,7 +1,6 @@
 package com.github.rubensousa.previewseekbar;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -26,6 +25,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView {
     private List<PreviewView.OnPreviewChangeListener> listeners;
     private PreviewDelegate delegate;
     private int frameLayoutId = View.NO_ID;
+    private int scrubberColor = 0;
     private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -59,15 +59,28 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView {
     private void init(Context context, AttributeSet attrs) {
         listeners = new ArrayList<>();
         delegate = new PreviewDelegate(this);
-        if (attrs != null) {
-            TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
-                    R.styleable.PreviewSeekBar, 0, 0);
-            frameLayoutId = typedArray.getResourceId(R.styleable.PreviewSeekBar_previewFrameLayout,
-                    View.NO_ID);
-            delegate.setAnimationEnabled(typedArray.getBoolean(
-                    R.styleable.PreviewSeekBar_previewAnimationEnabled, true));
-            typedArray.recycle();
-        }
+
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
+                R.styleable.PreviewSeekBar, 0, 0);
+
+        TypedArray themeTypedArray = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.colorAccent});
+
+        final int defaultThumbColor = themeTypedArray.getColor(0, 0);
+
+        themeTypedArray.recycle();
+
+        frameLayoutId = typedArray.getResourceId(R.styleable.PreviewSeekBar_previewFrameLayout,
+                View.NO_ID);
+
+        scrubberColor = typedArray.getColor(R.styleable.PreviewSeekBar_previewThumbTint,
+                defaultThumbColor);
+
+        setPreviewThumbTint(scrubberColor);
+        delegate.setAnimationEnabled(typedArray.getBoolean(
+                R.styleable.PreviewSeekBar_previewAnimationEnabled, true));
+        typedArray.recycle();
+
         delegate.setEnabled(isEnabled());
         super.setOnSeekBarChangeListener(seekBarChangeListener);
     }
@@ -86,7 +99,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView {
         // This can be called by the constructor of the PreviewSeekBar
         if (delegate != null) {
             delegate.updateProgress(progress, getMax());
-            if (delegate.isShowing()) {
+            if (delegate.isShowingPreview()) {
                 for (OnPreviewChangeListener listener : listeners) {
                     listener.onPreview(this, progress, false);
                 }
@@ -98,7 +111,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView {
     public void setProgress(int progress, boolean animate) {
         super.setProgress(progress, animate);
         delegate.updateProgress(progress, getMax());
-        if (delegate.isShowing()) {
+        if (delegate.isShowingPreview()) {
             for (OnPreviewChangeListener listener : listeners) {
                 listener.onPreview(this, progress, false);
             }
@@ -129,37 +142,26 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView {
     }
 
     @Override
-    public void setPreviewColorTint(int color) {
+    public void setPreviewThumbTint(int color) {
         Drawable drawable = DrawableCompat.wrap(getThumb());
         DrawableCompat.setTint(drawable, color);
         setThumb(drawable);
-
-        drawable = DrawableCompat.wrap(getProgressDrawable());
-        DrawableCompat.setTint(drawable, color);
-        setProgressDrawable(drawable);
+        scrubberColor = color;
     }
 
     @Override
-    public void setPreviewColorResourceTint(int colorResource) {
-        setPreviewColorTint(ContextCompat.getColor(getContext(), colorResource));
+    public void setPreviewThumbTintResource(int colorResource) {
+        setPreviewThumbTint(ContextCompat.getColor(getContext(), colorResource));
     }
 
     @Override
     public int getScrubberColor() {
-        ColorStateList list = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            list = getThumbTintList();
-        }
-        if (list != null) {
-            return list.getDefaultColor();
-        } else {
-            return 0;
-        }
+        return scrubberColor;
     }
 
     @Override
     public boolean isShowingPreview() {
-        return delegate.isShowing();
+        return delegate.isShowingPreview();
     }
 
     @Override
@@ -208,6 +210,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView {
         delegate.setAnimator(animator);
     }
 
+    @Override
     public void setPreviewAnimationEnabled(boolean enable) {
         delegate.setAnimationEnabled(enable);
     }

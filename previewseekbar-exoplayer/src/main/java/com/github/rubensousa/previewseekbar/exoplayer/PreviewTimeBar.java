@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat;
 import com.github.rubensousa.previewseekbar.PreviewAnimator;
 import com.github.rubensousa.previewseekbar.PreviewDelegate;
 import com.github.rubensousa.previewseekbar.PreviewLoader;
+import com.github.rubensousa.previewseekbar.PreviewSeekBar;
 import com.github.rubensousa.previewseekbar.PreviewView;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.TimeBar;
@@ -38,6 +39,11 @@ import com.google.android.exoplayer2.ui.TimeBar;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A {@link DefaultTimeBar} that mimics the behavior of a {@link PreviewSeekBar}.
+ * <p>
+ * When the user scrubs this TimeBar, a preview will appear above the scrubber.
+ */
 public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
         TimeBar.OnScrubListener {
 
@@ -112,13 +118,13 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
     }
 
     @Override
-    public void setPreviewColorTint(int color) {
+    public void setPreviewThumbTint(int color) {
         scrubberColor = color;
     }
 
     @Override
-    public void setPreviewColorResourceTint(int colorResource) {
-        setPreviewColorTint(ContextCompat.getColor(getContext(), colorResource));
+    public void setPreviewThumbTintResource(int colorResource) {
+        setPreviewThumbTint(ContextCompat.getColor(getContext(), colorResource));
     }
 
     @Override
@@ -148,7 +154,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
         if (newPosition != scrubProgress) {
             this.scrubProgress = newPosition;
             delegate.updateProgress(newPosition, duration);
-            if (delegate.isShowing()) {
+            if (delegate.isShowingPreview()) {
                 for (OnPreviewChangeListener listener : listeners) {
                     listener.onPreview(this, scrubProgress, false);
                 }
@@ -158,7 +164,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
 
     @Override
     public boolean isShowingPreview() {
-        return delegate.isShowing();
+        return delegate.isShowingPreview();
     }
 
     @Override
@@ -213,24 +219,25 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
 
     @Override
     public void onScrubStart(TimeBar timeBar, long position) {
+        scrubProgress = (int) position;
         for (OnPreviewChangeListener listener : listeners) {
-            scrubProgress = (int) position;
             listener.onStartPreview(this, (int) position);
         }
     }
 
     @Override
     public void onScrubMove(TimeBar timeBar, long position) {
+        scrubProgress = (int) position;
         for (OnPreviewChangeListener listener : listeners) {
-            scrubProgress = (int) position;
             listener.onPreview(this, (int) position, true);
         }
     }
 
     @Override
     public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
+        scrubProgress = (int) position;
         for (OnPreviewChangeListener listener : listeners) {
-            listener.onStopPreview(this, (int) position);
+            listener.onStopPreview(this, scrubProgress);
         }
     }
 
@@ -239,6 +246,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewView,
         delegate.setAnimator(animator);
     }
 
+    @Override
     public void setPreviewAnimationEnabled(boolean enable) {
         delegate.setAnimationEnabled(enable);
     }

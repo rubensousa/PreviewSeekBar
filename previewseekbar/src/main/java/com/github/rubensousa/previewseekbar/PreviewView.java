@@ -56,13 +56,15 @@ public interface PreviewView {
 
     void setPreviewAnimator(@NonNull PreviewAnimator animator);
 
+    void setPreviewAnimationEnabled(boolean enabled);
+
     void setPreviewEnabled(boolean previewEnabled);
 
     void setPreviewLoader(@Nullable PreviewLoader previewLoader);
 
-    void setPreviewColorTint(@ColorInt int color);
+    void setPreviewThumbTint(@ColorInt int color);
 
-    void setPreviewColorResourceTint(@ColorRes int colorResource);
+    void setPreviewThumbTintResource(@ColorRes int colorResource);
 
     void attachPreviewFrameLayout(@NonNull FrameLayout frameLayout);
 
