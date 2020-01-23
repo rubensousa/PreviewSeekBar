@@ -38,10 +38,10 @@ import androidx.core.graphics.drawable.DrawableCompat;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class PreviewMorphAnimator implements PreviewAnimator {
 
-    private static final int MORPH_SHOW_DURATION = 150;
-    private static final int MORPH_HIDE_DURATION = 150;
-    private static final int TRANSLATION_SHOW_DURATION = 150;
-    private static final int TRANSLATION_HIDE_DURATION = 150;
+    private static final int MORPH_SHOW_DURATION = 125;
+    private static final int MORPH_HIDE_DURATION = 125;
+    private static final int TRANSLATION_SHOW_DURATION = 100;
+    private static final int TRANSLATION_HIDE_DURATION = 100;
 
     private long showTranslationDuration;
     private long morphShowDuration;
