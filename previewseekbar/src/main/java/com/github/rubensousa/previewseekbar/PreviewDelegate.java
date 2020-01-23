@@ -169,7 +169,9 @@ public class PreviewDelegate {
             // and the real position of the preview
             if (!isUserScrubbing && !hasUserStartedScrubbing) {
                 previewView.setX(updatePreviewX(progress, max));
-                animator.move(previewView, previewBar);
+                if (animationEnabled) {
+                    animator.move(previewView, previewBar);
+                }
             }
         }
     }
@@ -241,7 +243,9 @@ public class PreviewDelegate {
         if (fromUser) {
             final int targetX = updatePreviewX(progress, previewBar.getMax());
             previewView.setX(targetX);
-            animator.move(previewView, previewBar);
+            if (animationEnabled) {
+                animator.move(previewView, previewBar);
+            }
         }
 
         if (!showingPreview && !isUserScrubbing && fromUser && previewEnabled) {
