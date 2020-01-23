@@ -8,6 +8,7 @@
 ### New features and improvements
 
 - Updated PreviewSeekBar to 3.0.0
+- Added new attribute previewEnabled to PreviewTimeBar to enable or disable previews. Defaults to true
 
 ### Bug fixes
 

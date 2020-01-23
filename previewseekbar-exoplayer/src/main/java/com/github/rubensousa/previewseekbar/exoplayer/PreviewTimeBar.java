@@ -103,6 +103,8 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
         delegate.setPreviewEnabled(isEnabled());
         delegate.setAnimationEnabled(typedArray.getBoolean(
                 R.styleable.PreviewTimeBar_previewAnimationEnabled, true));
+        delegate.setPreviewEnabled(typedArray.getBoolean(
+                R.styleable.PreviewTimeBar_previewEnabled, true));
 
         typedArray.recycle();
 
@@ -185,7 +187,9 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
 
     @Override
     public void showPreview() {
-        delegate.show();
+        if (isPreviewEnabled()) {
+            delegate.show();
+        }
     }
 
     @Override

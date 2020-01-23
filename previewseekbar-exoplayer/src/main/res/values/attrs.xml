@@ -17,5 +17,6 @@
     <declare-styleable name="PreviewTimeBar">
         <attr name="previewFrameLayout" format="reference" />
         <attr name="previewAnimationEnabled" format="boolean" />
+        <attr name="previewEnabled" format="boolean" />
     </declare-styleable>
 </resources>

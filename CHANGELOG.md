@@ -16,7 +16,8 @@
 	- PreviewMorphAnimator (API 21+)
 - Added support for disabling preview animations with PreviewBar's setPreviewAnimationEnabled
 - Allow disabling/enabling the preview mode with PreviewBar's setPreviewEnabled
-- Added new attribute previewThumbTint to PreviewSeekBar
+- Added new attribute previewThumbTint to PreviewSeekBar to change the scrubber color
+- Added new attribute previewEnabled to PreviewSeekBar to enable or disable previews. Defaults to true
 - Instead of restarting the morph animation completely,
 PreviewMorphAnimator now resumes from where it was previously animating
 

@@ -80,11 +80,13 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
                 defaultThumbColor);
 
         setPreviewThumbTint(scrubberColor);
+
         delegate.setAnimationEnabled(typedArray.getBoolean(
                 R.styleable.PreviewSeekBar_previewAnimationEnabled, true));
-        typedArray.recycle();
+        delegate.setPreviewEnabled(typedArray.getBoolean(
+                R.styleable.PreviewSeekBar_previewEnabled, true));
 
-        delegate.setPreviewEnabled(isEnabled());
+        typedArray.recycle();
         super.setOnSeekBarChangeListener(seekBarChangeListener);
     }
 
@@ -183,16 +185,14 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
 
     @Override
     public void showPreview() {
-        if (isEnabled()) {
+        if (isPreviewEnabled()) {
             delegate.show();
         }
     }
 
     @Override
     public void hidePreview() {
-        if (isEnabled()) {
-            delegate.hide();
-        }
+        delegate.hide();
     }
 
     @Override
