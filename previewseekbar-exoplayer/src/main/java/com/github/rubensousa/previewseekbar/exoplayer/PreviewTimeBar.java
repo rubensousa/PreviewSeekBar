@@ -128,6 +128,12 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
     }
 
     @Override
+    public void setScrubberColor(int scrubberColor) {
+        super.setScrubberColor(scrubberColor);
+        this.scrubberColor = scrubberColor;
+    }
+
+    @Override
     public void setPreviewThumbTintResource(int colorResource) {
         setPreviewThumbTint(ContextCompat.getColor(getContext(), colorResource));
     }
