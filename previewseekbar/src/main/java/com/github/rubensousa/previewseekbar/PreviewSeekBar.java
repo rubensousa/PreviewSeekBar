@@ -20,13 +20,12 @@ import java.util.List;
 /**
  * A {@link PreviewBar} that extends from {@link AppCompatSeekBar}.
  * <p>
- *
  */
 public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
 
     private List<PreviewBar.OnPreviewChangeListener> listeners;
     private PreviewDelegate delegate;
-    private int frameLayoutId = View.NO_ID;
+    private int previewId = View.NO_ID;
     private int scrubberColor = 0;
     private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new OnSeekBarChangeListener() {
         @Override
@@ -72,7 +71,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
 
         themeTypedArray.recycle();
 
-        frameLayoutId = typedArray.getResourceId(R.styleable.PreviewSeekBar_previewFrameLayout,
+        previewId = typedArray.getResourceId(R.styleable.PreviewSeekBar_previewFrameLayout,
                 View.NO_ID);
 
         scrubberColor = typedArray.getColor(R.styleable.PreviewSeekBar_previewThumbTint,
@@ -90,8 +89,12 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (!delegate.hasPreviewFrameLayout() && !isInEditMode()) {
-            delegate.onLayout((ViewGroup) getParent(), frameLayoutId);
+        if (!delegate.isPreviewViewAttached() && !isInEditMode()) {
+            final FrameLayout previewView = PreviewDelegate.findPreviewView(
+                    (ViewGroup) getParent(), previewId);
+            if (previewView != null) {
+                delegate.attachPreviewView(previewView);
+            }
         }
     }
 

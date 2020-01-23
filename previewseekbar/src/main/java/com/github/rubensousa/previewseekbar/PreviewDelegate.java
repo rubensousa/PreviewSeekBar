@@ -35,7 +35,7 @@ public class PreviewDelegate {
     private PreviewBar previewBar;
 
     private boolean showingPreview;
-    private boolean hasPreviewFrameLayout;
+    private boolean previewViewAttached;
     private boolean previewEnabled;
     private boolean animationEnabled;
     /**
@@ -78,11 +78,25 @@ public class PreviewDelegate {
         }
     }
 
+    @Nullable
+    public static FrameLayout findPreviewView(@NonNull ViewGroup parent, int previewViewId) {
+        if (previewViewId == View.NO_ID) {
+            return null;
+        }
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child.getId() == previewViewId && child instanceof FrameLayout) {
+                return (FrameLayout) child;
+            }
+        }
+        return null;
+    }
+
     /**
      * Shows the preview view
      */
     public void show() {
-        if (!showingPreview && hasPreviewFrameLayout) {
+        if (!showingPreview && previewViewAttached) {
             if (animationEnabled) {
                 animator.show(previewView, previewBar);
             } else {
@@ -90,21 +104,6 @@ public class PreviewDelegate {
                 previewView.setVisibility(View.VISIBLE);
             }
             showingPreview = true;
-        }
-    }
-
-    /**
-     * Hides the preview view
-     */
-    public void hide() {
-        if (showingPreview && hasPreviewFrameLayout) {
-            if (animationEnabled) {
-                animator.hide(previewView, previewBar);
-            } else {
-                animator.cancel(previewView, previewBar);
-                previewView.setVisibility(View.INVISIBLE);
-            }
-            showingPreview = false;
         }
     }
 
@@ -122,19 +121,19 @@ public class PreviewDelegate {
         this.animator = animator;
     }
 
-    public void onLayout(ViewGroup previewParent, int frameLayoutId) {
-        if (!hasPreviewFrameLayout) {
-            FrameLayout frameLayout = findFrameLayout(previewParent, frameLayoutId);
-            if (frameLayout != null) {
-                attachPreviewView(frameLayout);
+    /**
+     * Hides the preview view
+     */
+    public void hide() {
+        if (showingPreview && previewViewAttached) {
+            if (animationEnabled) {
+                animator.hide(previewView, previewBar);
+            } else {
+                animator.cancel(previewView, previewBar);
+                previewView.setVisibility(View.INVISIBLE);
             }
+            showingPreview = false;
         }
-    }
-
-    public void attachPreviewView(@NonNull FrameLayout previewView) {
-        this.previewView = previewView;
-        this.previewView.setVisibility(View.INVISIBLE);
-        hasPreviewFrameLayout = true;
     }
 
     public boolean isPreviewEnabled() {
@@ -153,8 +152,14 @@ public class PreviewDelegate {
         this.animationEnabled = enabled;
     }
 
+    public void attachPreviewView(@NonNull FrameLayout previewView) {
+        this.previewView = previewView;
+        this.previewView.setVisibility(View.INVISIBLE);
+        previewViewAttached = true;
+    }
+
     public void updateProgress(int progress, int max) {
-        if (hasPreviewFrameLayout()) {
+        if (isPreviewViewAttached()) {
             // This is a manual update, so check if the user isn't currently scrubbing
             // to avoid inconsistencies between the current scrubbed position
             // and the real position of the preview
@@ -165,33 +170,12 @@ public class PreviewDelegate {
         }
     }
 
-    public boolean hasPreviewFrameLayout() {
-        return hasPreviewFrameLayout;
-    }
-
     private void onStartPreview() {
         hasUserStartedScrubbing = true;
     }
 
-    private void onPreview(int progress, boolean fromUser) {
-        if (!hasPreviewFrameLayout) {
-            return;
-        }
-
-        if (fromUser) {
-            final int targetX = updatePreviewX(progress, previewBar.getMax());
-            previewView.setX(targetX);
-            animator.move(previewView, previewBar);
-        }
-
-        if (!showingPreview && !isUserScrubbing && fromUser && previewEnabled) {
-            show();
-            isUserScrubbing = true;
-        }
-
-        if (previewLoader != null && showingPreview) {
-            previewLoader.loadPreview(progress, previewBar.getMax());
-        }
+    public boolean isPreviewViewAttached() {
+        return previewViewAttached;
     }
 
     private void onStopPreview() {
@@ -245,18 +229,25 @@ public class PreviewDelegate {
         }
     }
 
-    @Nullable
-    private FrameLayout findFrameLayout(ViewGroup parent, int id) {
-        if (id == View.NO_ID || parent == null) {
-            return null;
+    private void onPreview(int progress, boolean fromUser) {
+        if (!previewViewAttached) {
+            return;
         }
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            if (child.getId() == id && child instanceof FrameLayout) {
-                return (FrameLayout) child;
-            }
+
+        if (fromUser) {
+            final int targetX = updatePreviewX(progress, previewBar.getMax());
+            previewView.setX(targetX);
+            animator.move(previewView, previewBar);
         }
-        return null;
+
+        if (!showingPreview && !isUserScrubbing && fromUser && previewEnabled) {
+            show();
+            isUserScrubbing = true;
+        }
+
+        if (previewLoader != null && showingPreview) {
+            previewLoader.loadPreview(progress, previewBar.getMax());
+        }
     }
 
 }

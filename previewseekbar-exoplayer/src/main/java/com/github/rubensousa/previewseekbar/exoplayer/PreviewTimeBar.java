@@ -52,7 +52,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
     private int scrubProgress;
     private int duration;
     private int scrubberColor;
-    private int frameLayoutId;
+    private int previewId;
     private int scrubberPadding;
 
     public PreviewTimeBar(Context context, AttributeSet attrs) {
@@ -96,7 +96,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
         typedArray = context.getTheme().obtainStyledAttributes(
                 attrs, R.styleable.PreviewTimeBar, 0, 0);
 
-        frameLayoutId = typedArray.getResourceId(
+        previewId = typedArray.getResourceId(
                 R.styleable.PreviewTimeBar_previewFrameLayout, View.NO_ID);
 
         delegate = new PreviewDelegate(this);
@@ -112,8 +112,12 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (!delegate.hasPreviewFrameLayout() && !isInEditMode()) {
-            delegate.onLayout((ViewGroup) getParent(), frameLayoutId);
+        if (!delegate.isPreviewViewAttached() && !isInEditMode()) {
+            final FrameLayout previewView = PreviewDelegate.findPreviewView(
+                    (ViewGroup) getParent(), previewId);
+            if (previewView != null) {
+                delegate.attachPreviewView(previewView);
+            }
         }
     }
 
