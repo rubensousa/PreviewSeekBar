@@ -20,7 +20,6 @@ package com.github.rubensousa.previewseekbar.sample.exoplayer;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Handler;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -40,7 +39,6 @@ public class ExoPlayerMediaSourceBuilder {
     private Context context;
     private Uri uri;
     private int streamType;
-    private Handler mainHandler = new Handler();
 
     public ExoPlayerMediaSourceBuilder(Context context) {
         this.context = context;

@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.widget.ImageView;
 
 import com.bumptech.glide.request.target.Target;
+import com.github.rubensousa.previewseekbar.PreviewBar;
 import com.github.rubensousa.previewseekbar.PreviewLoader;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideApp;
@@ -31,7 +32,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.util.Util;
 
 
-public class ExoPlayerManager implements PreviewLoader {
+public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnPreviewChangeListener {
 
     private ExoPlayerMediaSourceBuilder mediaSourceBuilder;
     private PlayerView playerView;
@@ -56,6 +57,8 @@ public class ExoPlayerManager implements PreviewLoader {
         this.previewTimeBar = previewTimeBar;
         this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext());
         this.thumbnailsUrl = thumbnailsUrl;
+        this.previewTimeBar.addOnPreviewChangeListener(this);
+        this.previewTimeBar.setPreviewLoader(this);
     }
 
     public void play(Uri uri) {
@@ -86,11 +89,6 @@ public class ExoPlayerManager implements PreviewLoader {
         }
     }
 
-    public void stopPreview(long position) {
-        player.seekTo(position);
-        player.setPlayWhenReady(true);
-    }
-
     private void releasePlayers() {
         if (player != null) {
             player.release();
@@ -117,11 +115,30 @@ public class ExoPlayerManager implements PreviewLoader {
 
     @Override
     public void loadPreview(long currentPosition, long max) {
-        player.setPlayWhenReady(false);
+        if (player.isPlaying()) {
+            player.setPlayWhenReady(false);
+        }
         GlideApp.with(imageView)
                 .load(thumbnailsUrl)
                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .transform(new GlideThumbnailTransformation(currentPosition))
                 .into(imageView);
     }
+
+    @Override
+    public void onStartPreview(PreviewBar previewBar, int progress) {
+
+    }
+
+    @Override
+    public void onStopPreview(PreviewBar previewBar, int progress) {
+        player.seekTo(progress);
+        player.setPlayWhenReady(true);
+    }
+
+    @Override
+    public void onPreview(PreviewBar previewBar, int progress, boolean fromUser) {
+
+    }
+
 }

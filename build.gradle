@@ -21,7 +21,7 @@ ext {
     minSdkVersion = 19
     targetSdkVersion = compileSdkVersion
     appcompatVersion = '1.1.0'
-    materialVersion = '1.0.0'
+    materialVersion = '1.1.0-rc02'
     mediaVersion = '1.1.0'
     constraintLayoutVersion = '1.1.3'
     exoPlayerVersion = '2.11.1'
