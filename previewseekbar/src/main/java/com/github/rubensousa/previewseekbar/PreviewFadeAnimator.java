@@ -84,4 +84,9 @@ public class PreviewFadeAnimator implements PreviewAnimator {
                 });
     }
 
+    @Override
+    public void cancel(FrameLayout previewFrameLayout, PreviewView previewView) {
+
+    }
+
 }

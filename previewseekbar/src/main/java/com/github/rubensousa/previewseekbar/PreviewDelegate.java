@@ -82,16 +82,17 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
             return;
         }
 
-        if (!showing && !isUserScrubbing && fromUser && enabled) {
-            final int targetX = updateFrameX(progress, previewView.getMax());
-            previewFrameLayout.setX(targetX);
-            show();
-            isUserScrubbing = true;
-        } else if (showing && fromUser) {
+        if (fromUser) {
             final int targetX = updateFrameX(progress, previewView.getMax());
             previewFrameLayout.setX(targetX);
             animator.move(previewFrameLayout, previewView);
         }
+
+        if (!showing && !isUserScrubbing && fromUser && enabled) {
+            show();
+            isUserScrubbing = true;
+        }
+
         if (previewLoader != null && showing) {
             previewLoader.loadPreview(progress, previewView.getMax());
         }
@@ -101,8 +102,8 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
         if (!showing && hasPreviewFrameLayout) {
             if (animationEnabled) {
                 animator.show(previewFrameLayout, previewView);
-                // animator.show();
             } else {
+                animator.cancel(previewFrameLayout, previewView);
                 previewFrameLayout.setVisibility(View.VISIBLE);
             }
             showing = true;
@@ -114,6 +115,7 @@ public class PreviewDelegate implements PreviewView.OnPreviewChangeListener {
             if (animationEnabled) {
                 animator.hide(previewFrameLayout, previewView);
             } else {
+                animator.cancel(previewFrameLayout, previewView);
                 previewFrameLayout.setVisibility(View.INVISIBLE);
             }
             showing = false;

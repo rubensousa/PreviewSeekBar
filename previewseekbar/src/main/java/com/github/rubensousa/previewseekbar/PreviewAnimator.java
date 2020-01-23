@@ -31,4 +31,6 @@ public interface PreviewAnimator {
 
     void hide(FrameLayout previewFrameLayout, PreviewView previewView);
 
+    void cancel(FrameLayout previewFrameLayout, PreviewView previewView);
+
 }
