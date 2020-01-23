@@ -1,3 +1,20 @@
+# 2.11.1.0
+
+### Breaking changes
+
+- Migrated to AndroidX
+- Minimum supported API changed from 16 to 19
+
+### New features and improvements
+
+- Updated PreviewSeekBar to 3.0.0
+
+### Bug fixes
+
+- Fixed PreviewTimeBar not changing the scrubber color when setPreviewThumbTint is called
+- Fixed PreviewTimeBar not using the correct thumb size
+- Fixed PreviewTimeBar not moving the preview if the player position changes programmatically
+
 # 2.8.1.0
 
 #### Starting from this version, the previewseekbar-exoplayer extension is tied to the ExoPlayer version
