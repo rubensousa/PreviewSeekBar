@@ -110,12 +110,6 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
     }
 
     @Override
-    public void setProgress(int progress, boolean animate) {
-        super.setProgress(progress, animate);
-        delegate.updateProgress(progress, getMax());
-    }
-
-    @Override
     public synchronized void setMax(int max) {
         super.setMax(max);
         // This can be called by the constructor of the PreviewSeekBar
