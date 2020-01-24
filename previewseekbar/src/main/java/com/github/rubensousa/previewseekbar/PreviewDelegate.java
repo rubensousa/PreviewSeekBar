@@ -184,6 +184,10 @@ public class PreviewDelegate {
         }
     }
 
+    public boolean isUserScrubbing() {
+        return isUserScrubbing;
+    }
+
     private void onStartPreview() {
         hasUserStartedScrubbing = true;
     }
@@ -196,6 +200,8 @@ public class PreviewDelegate {
         if (previewAutoHide) {
             hide();
         }
+        isUserScrubbing = false;
+        hasUserStartedScrubbing = false;
     }
 
 
@@ -247,16 +253,17 @@ public class PreviewDelegate {
             return;
         }
 
-        if (fromUser) {
-            final int targetX = updatePreviewX(progress, previewBar.getMax());
-            previewView.setX(targetX);
-            if (animationEnabled) {
-                animator.move(previewView, previewBar);
-            }
+        final int targetX = updatePreviewX(progress, previewBar.getMax());
+        previewView.setX(targetX);
+
+        if (animationEnabled) {
+            animator.move(previewView, previewBar);
         }
 
-        if (!showingPreview && !isUserScrubbing && fromUser && previewEnabled) {
-            show();
+        if (!isUserScrubbing && fromUser && previewEnabled) {
+            if (!showingPreview) {
+                show();
+            }
             isUserScrubbing = true;
         }
 

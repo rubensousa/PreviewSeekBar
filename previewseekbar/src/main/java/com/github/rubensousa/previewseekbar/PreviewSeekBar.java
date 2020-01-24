@@ -111,7 +111,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
         // This can be called by the constructor of the PreviewSeekBar
         if (delegate != null) {
             delegate.updateProgress(progress, getMax());
-            if (delegate.isShowingPreview()) {
+            if (delegate.isShowingPreview() && !delegate.isUserScrubbing()) {
                 for (OnPreviewChangeListener listener : listeners) {
                     listener.onPreview(this, progress, false);
                 }
@@ -123,7 +123,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
     public void setProgress(int progress, boolean animate) {
         super.setProgress(progress, animate);
         delegate.updateProgress(progress, getMax());
-        if (delegate.isShowingPreview()) {
+        if (delegate.isShowingPreview() && !delegate.isUserScrubbing()) {
             for (OnPreviewChangeListener listener : listeners) {
                 listener.onPreview(this, progress, false);
             }

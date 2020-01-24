@@ -169,7 +169,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
         if (newPosition != scrubProgress) {
             this.scrubProgress = newPosition;
             delegate.updateProgress(newPosition, duration);
-            if (delegate.isShowingPreview()) {
+            if (delegate.isShowingPreview() && !delegate.isUserScrubbing()) {
                 for (OnPreviewChangeListener listener : listeners) {
                     listener.onPreview(this, scrubProgress, false);
                 }
