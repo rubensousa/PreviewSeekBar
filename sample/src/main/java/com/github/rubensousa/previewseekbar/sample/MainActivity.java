@@ -18,6 +18,7 @@
 package com.github.rubensousa.previewseekbar.sample;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 if (checkedId == R.id.fadeAnimationRadioButton) {
                     previewTimeBar.setPreviewAnimator(new PreviewFadeAnimator());
                     previewSeekBar.setPreviewAnimator(new PreviewFadeAnimator());
-                } else {
+                } else if (Build.VERSION.SDK_INT >= 21) {
                     previewTimeBar.setPreviewAnimator(new PreviewMorphAnimator());
                     previewSeekBar.setPreviewAnimator(new PreviewMorphAnimator());
                 }
