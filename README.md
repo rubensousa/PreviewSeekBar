@@ -1,7 +1,6 @@
 # PreviewSeekBar
 
-A SeekBar suited for showing a preview of something. As seen in Google Play Movies.
-
+A SeekBar suited for showing a video preview. As seen in Google Play Movies
 
 ### Google Play Movies
 
@@ -27,9 +26,169 @@ dependencies {
 }
 ```
 
+## How to use with ExoPlayer
+
+### Add a custom controller to your PlayerView
+
+```xml
+<com.google.android.exoplayer2.ui.PlayerView
+    android:id="@+id/playerView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:controller_layout_id="@layout/exoplayer_controls"/>
+```
+
+Here's the sample's exoplayer_controls: https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/res/layout/exoplayer_controls.xml
+
+### Change your TimeBar to a PreviewTimeBar
+
+```xml
+<FrameLayout
+    android:id="@+id/previewFrameLayout"
+    android:layout_width="@dimen/video_preview_width"
+    android:layout_height="@dimen/video_preview_height"
+    android:background="@drawable/video_frame">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</FrameLayout>
+
+<com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar
+    android:id="@+id/exo_progress"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    app:previewAnimationEnabled="true"
+    app:previewFrameLayout="@id/previewFrameLayout"/>
+```
+
+Place the View you want to use to display the preview in the FrameLayout above. 
+In this example it's an ImageView but you can place any View inside.
+PreviewTimeBar will animate and show that FrameLayout for you automatically.
+
+**The FrameLayout must have the same parent as the PreviewTimeBar if you want the default animations to work**
+
+### Create a PreviewLoader and pass it to the PreviewTimeBar
+
+**Note**: A PreviewLoader is an interface that you need to implement yourself. 
+This library isn't opinionated about how you actually show a preview.
+Check the sample code for an example on how it can be done using thumbnail sprites.
+
+```java
+PreviewLoader imagePreviewLoader = ImagePreviewLoader();
+
+previewTimeBar.setPreviewLoader(imagePreviewLoader);
+```
+
+In this project's sample, Glide is used with a custom transformation to crop the thumbnails from a thumbnail sprite.
+
+[GlideThumbnailTransformation](https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/java/com/github/rubensousa/previewseekbar/sample/glide/GlideThumbnailTransformation.java)
+
+```java
+@Override
+public void loadPreview(long currentPosition, long max) {
+    GlideApp.with(imageView)
+            .load(thumbnailsUrl)
+            .override(GlideThumbnailTransformation.IMAGE_WIDTH,
+                    GlideThumbnailTransformation.IMAGE_HEIGHT)
+            .transform(new GlideThumbnailTransformation(currentPosition))
+            .into(imageView);
+}
+```
+
+### Listen for scrub events to control playback state
+
+When the user starts scrubbing the PreviewTimeBar, you should pause the video playback
+After the user is done selecting the new video position, you can resume it.
+
+```java
+previewTimeBar.addOnScrubListener(new PreviewBar.OnScrubListener() {
+    @Override
+    public void onScrubStart(PreviewBar previewBar) {
+        player.setPlayWhenReady(false);
+    }
+
+    @Override
+    public void onScrubMove(PreviewBar previewBar, int progress, boolean fromUser) {
+        
+    }
+
+    @Override
+    public void onScrubStop(PreviewBar previewBar) {
+        player.setPlayWhenReady(true);
+    }
+});
+```
+
+### Customize the PreviewTimeBar
+
+Available XML attributes:
+
+```xml
+<attr name="previewAnimationEnabled" format="boolean" />
+<attr name="previewEnabled" format="boolean" />
+<attr name="previewAutoHide" format="boolean" />
+```
+
+```java
+// Disables auto hiding the preview. 
+// Default is true, which means the preview is hidden 
+// when the user stops scrubbing the PreviewSeekBar
+previewTimeBar.setAutoHidePreview(false);
+
+// Shows the preview
+previewTimeBar.showPreview();
+
+// Hides the preview
+previewTimeBar.hidePreview();
+
+// Disables revealing the preview
+previewTimeBar.setPreviewEnabled(false);
+
+// Disables the current animation
+previewTimeBar.setPreviewAnimationEnabled(false);
+
+// Change the default animation
+previewTimeBar.setPreviewAnimator(new PreviewFadeAnimator());
+
+// Changes the color of the thumb
+previewTimeBar.setPreviewThumbTint(Color.RED);
+
+// Listen for scrub touch changes
+previewTimeBar.addOnScrubListener(new PreviewBar.OnScrubListener() {
+    @Override
+    public void onScrubStart(PreviewBar previewBar) {
+        
+    }
+
+    @Override
+    public void onScrubMove(PreviewBar previewBar, int progress, boolean fromUser) {
+        
+    }
+
+    @Override
+    public void onScrubStop(PreviewBar previewBar) {
+        
+    }
+});
+
+// Listen for preview visibility changes
+previewTimeBar.addOnPreviewVisibilityListener(new PreviewBar.OnPreviewVisibilityListener() {
+    @Override
+    public void onVisibilityChanged(PreviewBar previewBar, boolean isPreviewShowing) {
+        
+    }
+});
+
+```
+
 ## How to use with a standard SeekBar
 
-1. Setup your layout like the following:
+### Setup your layout like the following:
 
 ```xml
 <FrameLayout
@@ -59,11 +218,7 @@ PreviewSeekBar will animate and show that FrameLayout for you automatically.
 
 **The FrameLayout must have the same parent as the PreviewSeekBar if you want the default animations to work**
 
-2. Create a PreviewLoader and pass it to the PreviewSeekBar
-
-**Note**: A PreviewLoader is an interface that you need to implement yourself. 
-This library isn't opinionated about how you actually show a preview.
-Check the sample code for an example on how it's done with ExoPlayer using thumbnail sprites.
+### Create a PreviewLoader and pass it to the PreviewSeekBar
 
 ```java
 
@@ -74,115 +229,21 @@ PreviewLoader imagePreviewLoader = ImagePreviewLoader();
 previewSeekbar.setPreviewLoader(imagePreviewLoader);
 ```
 
-3. Customize the PreviewSeekBar
+### Customization
 
-```java
-// Disables auto hiding the preview. 
-// Default is true, which means the preview is hidden 
-// when the user stops scrubbing the PreviewSeekBar
-previewSeekBar.setAutoHidePreview(false);
-
-// Shows the preview
-previewSeekBar.showPreview();
-
-// Hides the preview
-previewSeekBar.hidePreview();
-
-// Disables revealing the preview
-previewSeekBar.setPreviewEnabled(false);
-
-// Disables the current animation
-previewSeekBar.setPreviewAnimationEnabled(false);
-
-// Change the default animation
-previewSeekBar.setPreviewAnimator(new PreviewFadeAnimator());
-
-// Changes the color of the thumb
-previewSeekBar.setPreviewThumbTint(Color.RED);
-
-// Listen for scrub touch changes
-previewSeekBar.addOnScrubListener(new PreviewBar.OnScrubListener() {
-    @Override
-    public void onScrubStart(PreviewBar previewBar) {
-        
-    }
-
-    @Override
-    public void onScrubMove(PreviewBar previewBar, int progress, boolean fromUser) {
-        
-    }
-
-    @Override
-    public void onScrubStop(PreviewBar previewBar) {
-        
-    }
-});
-
-// Listen for preview visibility changes
-previewSeekBar.addOnPreviewVisibilityListener(new PreviewBar.OnPreviewVisibilityListener() {
-    @Override
-    public void onVisibilityChanged(PreviewBar previewBar, boolean isPreviewShowing) {
-        
-    }
-});
-
-```
-
-## How to use with ExoPlayer
-
-1. Add a custom controller to your SimpleExoPlayerView
+Available XML attributes for styling:
 
 ```xml
-<com.google.android.exoplayer2.ui.SimpleExoPlayerView
-    android:id="@+id/player_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:controller_layout_id="@layout/exoplayer_controls"/>
+<attr name="previewAnimationEnabled" format="boolean" />
+<attr name="previewEnabled" format="boolean" />
+<attr name="previewThumbTint" format="color" />
+<attr name="previewAutoHide" format="boolean" />
 ```
 
-Here's the sample's exoplayer_controls: https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/res/layout/exoplayer_controls.xml
+## Important note
 
-The PreviewTimeBar inside exoplayer_controls should be similar to this:
+**This library is just an UI component for displaying previews. It doesn't handle generating thumbnail sprites from videos.**
 
-```xml
-<FrameLayout
-    android:id="@+id/previewFrameLayout"
-    android:layout_width="@dimen/video_preview_width"
-    android:layout_height="@dimen/video_preview_height"
-    android:background="@drawable/video_frame">
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-</FrameLayout>
-
-<com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar
-    android:id="@+id/exo_progress"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:previewFrameLayout="@id/previewFrameLayout"/>
-```
-
-#### Create your own ExoPlayerLoader that seeks the video to the current position
-
-In this sample, Glide is used with a custom transformation to crop the thumbnails from a thumbnail sprite.
-
-[GlideThumbnailTransformation](https://github.com/rubensousa/PreviewSeekBar/blob/master/sample/src/main/java/com/github/rubensousa/previewseekbar/sample/glide/GlideThumbnailTransformation.java)
-
-```java
-@Override
-public void loadPreview(long currentPosition, long max) {
-    player.setPlayWhenReady(false);
-    GlideApp.with(imageView)
-            .load(thumbnailsUrl)
-            .override(GlideThumbnailTransformation.IMAGE_WIDTH,
-                    GlideThumbnailTransformation.IMAGE_HEIGHT)
-            .transform(new GlideThumbnailTransformation(currentPosition))
-            .into(imageView);
-}
-```
 
 ## License
 
