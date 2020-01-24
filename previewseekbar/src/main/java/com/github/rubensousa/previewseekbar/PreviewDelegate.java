@@ -52,6 +52,7 @@ public class PreviewDelegate {
      * True if the user is currently scrubbing
      * Will only be true after a first pass
      * on {@link PreviewDelegate#onScrubMove(int, boolean)}
+     * to avoid detecting clicks as scrub movements
      */
     private boolean isUserScrubbing;
 
