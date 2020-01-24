@@ -10,6 +10,7 @@
 - Updated PreviewSeekBar to 3.0.0
 - Allow disabling/enabling the preview mode with setPreviewEnabled. Includes new xml attribute previewEnabled
 - Added support for disabling/enabling auto hiding of previews with setAutoHidePreview. Includes new xml attribute previewAutoHide
+- Added support for listening to preview visibility changes with OnVisibilityChangeListener
 
 ### Bug fixes
 

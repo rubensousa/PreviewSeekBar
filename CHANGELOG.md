@@ -7,6 +7,7 @@
 - Renamed getDefaultColor to getScrubberColor
 - Renamed setPreviewColorTint/setPreviewColorResourceTint to setPreviewThumbTint/setPreviewThumbTintResource
 - Renamed attachPreviewFrameLayout to attachPreviewView
+- Renamed OnPreviewChangeListener to OnScrubListener
 - Minimum supported API changed from 16 to 19
 
 ### New features and improvements
@@ -14,6 +15,7 @@
 - Added support for custom animators. Default animators available:
 	- PreviewFadeAnimator (API 19+)
 	- PreviewMorphAnimator (API 21+)
+- Added support for listening to preview visibility changes with OnVisibilityChangeListener
 - Added support for disabling preview animations with setPreviewAnimationEnabled
 - Added support for disabling/enabling auto hiding of previews with setAutoHidePreview. Includes new xml attribute previewAutoHide
 - Allow disabling/enabling the preview mode with setPreviewEnabled. Includes new xml attribute previewEnabled

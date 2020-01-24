@@ -36,18 +36,13 @@ import com.github.rubensousa.previewseekbar.animator.PreviewAnimator;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.TimeBar;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A {@link DefaultTimeBar} that mimics the behavior of a {@link PreviewSeekBar}.
  * <p>
  * When the user scrubs this TimeBar, a preview will appear above the scrubber.
  */
-public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
-        TimeBar.OnScrubListener {
+public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
 
-    private List<OnPreviewChangeListener> listeners;
     private PreviewDelegate delegate;
     private int scrubProgress;
     private int duration;
@@ -57,7 +52,6 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
 
     public PreviewTimeBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        listeners = new ArrayList<>();
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
                 com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar, 0, 0);
         scrubberColor = typedArray.getInt(
@@ -110,7 +104,25 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
 
         typedArray.recycle();
 
-        addListener(this);
+        addListener(new TimeBar.OnScrubListener() {
+            @Override
+            public void onScrubStart(TimeBar timeBar, long position) {
+                scrubProgress = (int) position;
+                delegate.onScrubStart();
+            }
+
+            @Override
+            public void onScrubMove(TimeBar timeBar, long position) {
+                scrubProgress = (int) position;
+                delegate.onScrubMove((int) position, true);
+            }
+
+            @Override
+            public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
+                scrubProgress = (int) position;
+                delegate.onScrubStop();
+            }
+        });
     }
 
     @Override
@@ -169,11 +181,6 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
         if (newPosition != scrubProgress) {
             this.scrubProgress = newPosition;
             delegate.updateProgress(newPosition, duration);
-            if (delegate.isShowingPreview() && !delegate.isUserScrubbing()) {
-                for (OnPreviewChangeListener listener : listeners) {
-                    listener.onPreview(this, scrubProgress, false);
-                }
-            }
         }
     }
 
@@ -189,9 +196,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
 
     @Override
     public void showPreview() {
-        if (isPreviewEnabled()) {
-            delegate.show();
-        }
+        delegate.show();
     }
 
     @Override
@@ -230,37 +235,23 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
     }
 
     @Override
-    public void addOnPreviewChangeListener(OnPreviewChangeListener listener) {
-        listeners.add(listener);
+    public void addOnScrubListener(PreviewBar.OnScrubListener listener) {
+        delegate.addOnScrubListener(listener);
     }
 
     @Override
-    public void removeOnPreviewChangeListener(OnPreviewChangeListener listener) {
-        listeners.remove(listener);
+    public void removeOnScrubListener(PreviewBar.OnScrubListener listener) {
+        delegate.removeOnScrubListener(listener);
     }
 
     @Override
-    public void onScrubStart(TimeBar timeBar, long position) {
-        scrubProgress = (int) position;
-        for (OnPreviewChangeListener listener : listeners) {
-            listener.onStartPreview(this, (int) position);
-        }
+    public void addOnPreviewVisibilityListener(PreviewBar.OnPreviewVisibilityListener listener) {
+        delegate.addOnPreviewVisibilityListener(listener);
     }
 
     @Override
-    public void onScrubMove(TimeBar timeBar, long position) {
-        scrubProgress = (int) position;
-        for (OnPreviewChangeListener listener : listeners) {
-            listener.onPreview(this, (int) position, true);
-        }
-    }
-
-    @Override
-    public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
-        scrubProgress = (int) position;
-        for (OnPreviewChangeListener listener : listeners) {
-            listener.onStopPreview(this, scrubProgress);
-        }
+    public void removeOnPreviewVisibilityListener(PreviewBar.OnPreviewVisibilityListener listener) {
+        delegate.removeOnPreviewVisibilityListener(listener);
     }
 
     @Override
@@ -276,4 +267,5 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar,
     private int dpToPx(DisplayMetrics displayMetrics, int dps) {
         return (int) (dps * displayMetrics.density + 0.5f);
     }
+
 }

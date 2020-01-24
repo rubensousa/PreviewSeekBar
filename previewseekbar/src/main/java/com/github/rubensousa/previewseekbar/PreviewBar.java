@@ -94,7 +94,11 @@ public interface PreviewBar {
     void setPreviewAnimationEnabled(boolean enabled);
 
     /**
-     * @param previewLoader the loader that's responsible for loading the previews
+     * Sets a {@link PreviewLoader} that'll display preview during calls to
+     * {@link OnScrubListener#onScrubMove(PreviewBar, int, boolean)}}
+     *
+     * @param previewLoader a PreviewLoader that'll display previews
+     *                      or null to clear the current one
      */
     void setPreviewLoader(@Nullable PreviewLoader previewLoader);
 
@@ -116,30 +120,25 @@ public interface PreviewBar {
      */
     void attachPreviewView(@NonNull FrameLayout previewView);
 
-    void addOnPreviewChangeListener(OnPreviewChangeListener listener);
+    void addOnScrubListener(OnScrubListener listener);
 
-    void removeOnPreviewChangeListener(OnPreviewChangeListener listener);
+    void removeOnScrubListener(OnScrubListener listener);
+
+    void addOnPreviewVisibilityListener(OnPreviewVisibilityListener listener);
+
+    void removeOnPreviewVisibilityListener(OnPreviewVisibilityListener listener);
 
     /**
      * Listener for Preview scrub events
      */
-    interface OnPreviewChangeListener {
+    interface OnScrubListener {
 
         /**
          * Is called when the user started scrubbing this PreviewBar
          *
          * @param previewBar the PreviewBar that started being scrubbed
-         * @param progress   the current progress
          */
-        void onStartPreview(PreviewBar previewBar, int progress);
-
-        /**
-         * Is called when the user stopped scrubbing this PreviewBar
-         *
-         * @param previewBar the PreviewBar that was scrubbed
-         * @param progress   the current progress
-         */
-        void onStopPreview(PreviewBar previewBar, int progress);
+        void onScrubStart(PreviewBar previewBar);
 
         /**
          * Is called when this PreviewBar is being scrubbed by the user or manually.
@@ -148,7 +147,27 @@ public interface PreviewBar {
          * @param progress   the current progress
          * @param fromUser   true if this event was triggered by the user or false otherwise
          */
-        void onPreview(PreviewBar previewBar, int progress, boolean fromUser);
+        void onScrubMove(PreviewBar previewBar, int progress, boolean fromUser);
+
+        /**
+         * Is called when the user stopped scrubbing this PreviewBar
+         *
+         * @param previewBar the PreviewBar that was scrubbed
+         */
+        void onScrubStop(PreviewBar previewBar);
     }
+
+    /**
+     * Listener for visibility change events
+     */
+    interface OnPreviewVisibilityListener {
+
+        /**
+         * @param previewBar       the PreviewBar that contains the preview
+         * @param isPreviewShowing true if the preview is now showing, false otherwise
+         */
+        void onVisibilityChanged(PreviewBar previewBar, boolean isPreviewShowing);
+    }
+
 
 }

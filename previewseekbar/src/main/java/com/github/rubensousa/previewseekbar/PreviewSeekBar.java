@@ -18,35 +18,14 @@ import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.github.rubensousa.previewseekbar.animator.PreviewAnimator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A {@link PreviewBar} that extends from {@link AppCompatSeekBar}.
- * <p>
  */
 public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
 
-    private List<PreviewBar.OnPreviewChangeListener> listeners;
     private PreviewDelegate delegate;
     private int previewId = View.NO_ID;
     private int scrubberColor = 0;
-    private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new OnSeekBarChangeListener() {
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            PreviewSeekBar.this.onProgressChanged(progress, fromUser);
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-            PreviewSeekBar.this.onStartTrackingTouch(seekBar);
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-            PreviewSeekBar.this.onStopTrackingTouch(seekBar);
-        }
-    };
 
     public PreviewSeekBar(Context context) {
         this(context, null);
@@ -62,7 +41,6 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        listeners = new ArrayList<>();
         delegate = new PreviewDelegate(this);
 
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
@@ -90,7 +68,24 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
         delegate.setAutoHidePreview(typedArray.getBoolean(
                 R.styleable.PreviewSeekBar_previewAutoHide, true));
         typedArray.recycle();
-        super.setOnSeekBarChangeListener(seekBarChangeListener);
+
+        // Register a custom listener to handle the previews
+        super.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                delegate.onScrubMove(progress, fromUser);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                delegate.onScrubStart();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                delegate.onScrubStop();
+            }
+        });
     }
 
     @Override
@@ -111,11 +106,6 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
         // This can be called by the constructor of the PreviewSeekBar
         if (delegate != null) {
             delegate.updateProgress(progress, getMax());
-            if (delegate.isShowingPreview() && !delegate.isUserScrubbing()) {
-                for (OnPreviewChangeListener listener : listeners) {
-                    listener.onPreview(this, progress, false);
-                }
-            }
         }
     }
 
@@ -123,11 +113,6 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
     public void setProgress(int progress, boolean animate) {
         super.setProgress(progress, animate);
         delegate.updateProgress(progress, getMax());
-        if (delegate.isShowingPreview() && !delegate.isUserScrubbing()) {
-            for (OnPreviewChangeListener listener : listeners) {
-                listener.onPreview(this, progress, false);
-            }
-        }
     }
 
     @Override
@@ -140,8 +125,8 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
     }
 
     /**
-     * Use {@link PreviewBar.OnPreviewChangeListener}
-     * instead with {@link PreviewSeekBar#addOnPreviewChangeListener(OnPreviewChangeListener)}
+     * Use a {@link OnScrubListener}
+     * instead with {@link PreviewSeekBar#addOnScrubListener(OnScrubListener)}
      */
     @Override
     public void setOnSeekBarChangeListener(OnSeekBarChangeListener l) {
@@ -188,9 +173,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
 
     @Override
     public void showPreview() {
-        if (isPreviewEnabled()) {
-            delegate.show();
-        }
+        delegate.show();
     }
 
     @Override
@@ -209,15 +192,23 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
     }
 
     @Override
-    public void addOnPreviewChangeListener(OnPreviewChangeListener listener) {
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
-        }
+    public void addOnScrubListener(PreviewBar.OnScrubListener listener) {
+        delegate.addOnScrubListener(listener);
     }
 
     @Override
-    public void removeOnPreviewChangeListener(OnPreviewChangeListener listener) {
-        listeners.remove(listener);
+    public void removeOnScrubListener(PreviewBar.OnScrubListener listener) {
+        delegate.removeOnScrubListener(listener);
+    }
+
+    @Override
+    public void addOnPreviewVisibilityListener(PreviewBar.OnPreviewVisibilityListener listener) {
+        delegate.addOnPreviewVisibilityListener(listener);
+    }
+
+    @Override
+    public void removeOnPreviewVisibilityListener(PreviewBar.OnPreviewVisibilityListener listener) {
+        delegate.removeOnPreviewVisibilityListener(listener);
     }
 
     @Override
@@ -238,24 +229,6 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
 
     public void setProgressTintResource(@ColorRes int colorResource) {
         setProgressTint(ContextCompat.getColor(getContext(), colorResource));
-    }
-
-    private void onProgressChanged(int progress, boolean fromUser) {
-        for (OnPreviewChangeListener listener : listeners) {
-            listener.onPreview(this, progress, fromUser);
-        }
-    }
-
-    private void onStartTrackingTouch(SeekBar seekBar) {
-        for (OnPreviewChangeListener listener : listeners) {
-            listener.onStartPreview(this, seekBar.getProgress());
-        }
-    }
-
-    private void onStopTrackingTouch(SeekBar seekBar) {
-        for (OnPreviewChangeListener listener : listeners) {
-            listener.onStopPreview(this, seekBar.getProgress());
-        }
     }
 
 }

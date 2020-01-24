@@ -28,6 +28,9 @@ import com.github.rubensousa.previewseekbar.animator.PreviewAnimator;
 import com.github.rubensousa.previewseekbar.animator.PreviewFadeAnimator;
 import com.github.rubensousa.previewseekbar.animator.PreviewMorphAnimator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Handles the logic to display and animate a preview view when a {@link PreviewBar} is scrubbed
  */
@@ -37,6 +40,8 @@ public class PreviewDelegate {
     private PreviewLoader previewLoader;
     private PreviewAnimator animator;
     private PreviewBar previewBar;
+    private List<PreviewBar.OnScrubListener> scrubListeners;
+    private List<PreviewBar.OnPreviewVisibilityListener> visibilityListeners;
 
     private boolean showingPreview;
     private boolean previewViewAttached;
@@ -44,37 +49,16 @@ public class PreviewDelegate {
     private boolean animationEnabled;
     private boolean previewAutoHide;
     /**
-     * True when the user has started scrubbing.
-     * Will be true until {@link PreviewDelegate#onStopPreview()} gets called
-     */
-    private boolean hasUserStartedScrubbing;
-
-    /**
      * True if the user is currently scrubbing
      * Will only be true after a first pass
-     * on {@link PreviewDelegate#onPreview(int, boolean)}
+     * on {@link PreviewDelegate#onScrubMove(int, boolean)}
      */
     private boolean isUserScrubbing;
 
     public PreviewDelegate(PreviewBar previewBar) {
+        this.scrubListeners = new ArrayList<>();
+        this.visibilityListeners = new ArrayList<>();
         this.previewBar = previewBar;
-        // We need to register ourselves to handle the animations
-        this.previewBar.addOnPreviewChangeListener(new PreviewBar.OnPreviewChangeListener() {
-            @Override
-            public void onStartPreview(PreviewBar previewBar, int progress) {
-                PreviewDelegate.this.onStartPreview();
-            }
-
-            @Override
-            public void onStopPreview(PreviewBar previewBar, int progress) {
-                PreviewDelegate.this.onStopPreview();
-            }
-
-            @Override
-            public void onPreview(PreviewBar previewBar, int progress, boolean fromUser) {
-                PreviewDelegate.this.onPreview(progress, fromUser);
-            }
-        });
         this.animationEnabled = true;
         this.previewAutoHide = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -98,11 +82,40 @@ public class PreviewDelegate {
         return null;
     }
 
-    /**
-     * Shows the preview view
-     */
+    public void onScrubStart() {
+        for (PreviewBar.OnScrubListener listener : scrubListeners) {
+            listener.onScrubStart(previewBar);
+        }
+    }
+
+    public void onScrubMove(int progress, boolean fromUser) {
+        if (!previewViewAttached) {
+            return;
+        }
+
+        final int targetX = updatePreviewX(progress, previewBar.getMax());
+        previewView.setX(targetX);
+
+        if (animationEnabled) {
+            animator.move(previewView, previewBar);
+        }
+
+        if (!isUserScrubbing && fromUser && previewEnabled) {
+            isUserScrubbing = true;
+            show();
+        }
+
+        for (PreviewBar.OnScrubListener listener : scrubListeners) {
+            listener.onScrubMove(previewBar, progress, fromUser);
+        }
+
+        if (previewLoader != null && showingPreview) {
+            previewLoader.loadPreview(progress, previewBar.getMax());
+        }
+    }
+
     public void show() {
-        if (!showingPreview && previewViewAttached) {
+        if (!showingPreview && previewViewAttached && previewEnabled) {
             if (animationEnabled) {
                 animator.show(previewView, previewBar);
             } else {
@@ -110,21 +123,36 @@ public class PreviewDelegate {
                 previewView.setVisibility(View.VISIBLE);
             }
             showingPreview = true;
+            for (PreviewBar.OnPreviewVisibilityListener listener : visibilityListeners) {
+                listener.onVisibilityChanged(previewBar, true);
+            }
         }
     }
 
-    /**
-     * Sets a {@link PreviewLoader} that'll display preview during calls to
-     * {@link PreviewBar.OnPreviewChangeListener#onPreview(PreviewBar, int, boolean)}}
-     *
-     * @param previewLoader a PreviewLoader that'll display previews or null to clear the current one
-     */
+    public void onScrubStop() {
+        isUserScrubbing = false;
+        if (previewAutoHide) {
+            hide();
+        }
+        for (PreviewBar.OnScrubListener listener : scrubListeners) {
+            listener.onScrubStop(previewBar);
+        }
+    }
+
     public void setPreviewLoader(@Nullable PreviewLoader previewLoader) {
         this.previewLoader = previewLoader;
     }
 
     public void setAnimator(@NonNull PreviewAnimator animator) {
         this.animator = animator;
+    }
+
+    public boolean isPreviewEnabled() {
+        return previewEnabled;
+    }
+
+    public boolean isShowingPreview() {
+        return showingPreview;
     }
 
     /**
@@ -139,17 +167,10 @@ public class PreviewDelegate {
                 previewView.setVisibility(View.INVISIBLE);
             }
             showingPreview = false;
-            isUserScrubbing = false;
-            hasUserStartedScrubbing = false;
+            for (PreviewBar.OnPreviewVisibilityListener listener : visibilityListeners) {
+                listener.onVisibilityChanged(previewBar, false);
+            }
         }
-    }
-
-    public boolean isPreviewEnabled() {
-        return previewEnabled;
-    }
-
-    public boolean isShowingPreview() {
-        return showingPreview;
     }
 
     public void setPreviewEnabled(boolean previewEnabled) {
@@ -170,40 +191,38 @@ public class PreviewDelegate {
         previewViewAttached = true;
     }
 
-    public void updateProgress(int progress, int max) {
-        if (isPreviewViewAttached()) {
-            // This is a manual update, so check if the user isn't currently scrubbing
-            // to avoid inconsistencies between the current scrubbed position
-            // and the real position of the preview
-            if (!isUserScrubbing && !hasUserStartedScrubbing) {
-                previewView.setX(updatePreviewX(progress, max));
-                if (animationEnabled) {
-                    animator.move(previewView, previewBar);
-                }
-            }
-        }
+    public boolean isPreviewViewAttached() {
+        return previewViewAttached;
     }
 
     public boolean isUserScrubbing() {
         return isUserScrubbing;
     }
 
-    private void onStartPreview() {
-        hasUserStartedScrubbing = true;
-    }
-
-    public boolean isPreviewViewAttached() {
-        return previewViewAttached;
-    }
-
-    private void onStopPreview() {
-        if (previewAutoHide) {
-            hide();
+    public void updateProgress(int progress, int max) {
+        // This is a manual update, so check if the user isn't currently scrubbing
+        // to avoid inconsistencies between the current scrubbed position
+        // and the real position of the preview
+        if (isShowingPreview() && !isUserScrubbing()) {
+            onScrubMove(progress, false);
         }
-        isUserScrubbing = false;
-        hasUserStartedScrubbing = false;
     }
 
+    public void addOnScrubListener(PreviewBar.OnScrubListener listener) {
+        if (!scrubListeners.contains(listener)) {
+            scrubListeners.add(listener);
+        }
+    }
+
+    public void removeOnScrubListener(PreviewBar.OnScrubListener listener) {
+        scrubListeners.remove(listener);
+    }
+
+    public void addOnPreviewVisibilityListener(PreviewBar.OnPreviewVisibilityListener listener) {
+        if (!visibilityListeners.contains(listener)) {
+            visibilityListeners.add(listener);
+        }
+    }
 
     /**
      * Get the x position for the preview view. This method takes into account padding
@@ -248,28 +267,8 @@ public class PreviewDelegate {
         }
     }
 
-    private void onPreview(int progress, boolean fromUser) {
-        if (!previewViewAttached) {
-            return;
-        }
-
-        final int targetX = updatePreviewX(progress, previewBar.getMax());
-        previewView.setX(targetX);
-
-        if (animationEnabled) {
-            animator.move(previewView, previewBar);
-        }
-
-        if (!isUserScrubbing && fromUser && previewEnabled) {
-            if (!showingPreview) {
-                show();
-            }
-            isUserScrubbing = true;
-        }
-
-        if (previewLoader != null && showingPreview) {
-            previewLoader.loadPreview(progress, previewBar.getMax());
-        }
+    public void removeOnPreviewVisibilityListener(PreviewBar.OnPreviewVisibilityListener listener) {
+        visibilityListeners.remove(listener);
     }
 
 }
