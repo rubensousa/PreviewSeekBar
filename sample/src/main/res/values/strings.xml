@@ -5,6 +5,7 @@
     <string name="url_smooth">http://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism</string>
     <string name="url_hls">https://mnmedias.api.telequebec.tv/m3u8/29880.m3u8</string>
     <string name="animation_switch">Animations enabled</string>
+    <string name="preview_auto_hide">Hide previews automatically</string>
     <string name="preview_switch">Preview enabled</string>
     <string name="preview_timebar">Example with PreviewTimeBar (ExoPlayer)</string>
     <string name="preview_seekbar">Example with PreviewSeekBar</string>
@@ -14,6 +15,8 @@
     <string name="preview_animation_fade">Fade animation</string>
     <string name="preview_animation_morph">Morph animation</string>
     <string name="preview_animation_none">Disable animations</string>
+    <string name="video_preview_showing">Video preview is showing</string>
+    <string name="video_preview_hiding">Video preview is hiding</string>
 
 
 </resources>

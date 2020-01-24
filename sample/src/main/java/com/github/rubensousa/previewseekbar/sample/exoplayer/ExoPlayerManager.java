@@ -32,7 +32,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.util.Util;
 
 
-public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnPreviewChangeListener {
+public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnScrubListener {
 
     private ExoPlayerMediaSourceBuilder mediaSourceBuilder;
     private PlayerView playerView;
@@ -40,6 +40,7 @@ public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnPreviewChan
     private PreviewTimeBar previewTimeBar;
     private String thumbnailsUrl;
     private ImageView imageView;
+    private boolean resumeVideoOnPreviewStop;
     private Player.EventListener eventListener = new Player.EventListener() {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -57,8 +58,9 @@ public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnPreviewChan
         this.previewTimeBar = previewTimeBar;
         this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext());
         this.thumbnailsUrl = thumbnailsUrl;
-        this.previewTimeBar.addOnPreviewChangeListener(this);
+        this.previewTimeBar.addOnScrubListener(this);
         this.previewTimeBar.setPreviewLoader(this);
+        this.resumeVideoOnPreviewStop = true;
     }
 
     public void play(Uri uri) {
@@ -87,6 +89,10 @@ public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnPreviewChan
         if (Util.SDK_INT > 23) {
             releasePlayers();
         }
+    }
+
+    public void setResumeVideoOnPreviewStop(boolean resume) {
+        this.resumeVideoOnPreviewStop = resume;
     }
 
     private void releasePlayers() {
@@ -126,19 +132,20 @@ public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnPreviewChan
     }
 
     @Override
-    public void onStartPreview(PreviewBar previewBar, int progress) {
+    public void onScrubStart(PreviewBar previewBar) {
+        player.setPlayWhenReady(false);
+    }
+
+    @Override
+    public void onScrubMove(PreviewBar previewBar, int progress, boolean fromUser) {
 
     }
 
     @Override
-    public void onStopPreview(PreviewBar previewBar, int progress) {
-        player.seekTo(progress);
-        player.setPlayWhenReady(true);
-    }
-
-    @Override
-    public void onPreview(PreviewBar previewBar, int progress, boolean fromUser) {
-
+    public void onScrubStop(PreviewBar previewBar) {
+        if (resumeVideoOnPreviewStop) {
+            player.setPlayWhenReady(true);
+        }
     }
 
 }

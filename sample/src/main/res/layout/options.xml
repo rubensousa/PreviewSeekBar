@@ -28,6 +28,14 @@
         android:padding="16dp"
         android:text="@string/preview_switch" />
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/previewAutoHideSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:padding="16dp"
+        android:text="@string/preview_auto_hide" />
+
     <RadioGroup
         android:id="@+id/previewAnimationRadioGroup"
         android:layout_width="match_parent"

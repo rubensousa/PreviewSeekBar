@@ -19,6 +19,7 @@ package com.github.rubensousa.previewseekbar.sample;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
@@ -26,6 +27,7 @@ import android.widget.RadioGroup;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import com.github.rubensousa.previewseekbar.PreviewBar;
 import com.github.rubensousa.previewseekbar.PreviewSeekBar;
 import com.github.rubensousa.previewseekbar.animator.PreviewFadeAnimator;
 import com.github.rubensousa.previewseekbar.animator.PreviewMorphAnimator;
@@ -48,13 +50,33 @@ public class MainActivity extends AppCompatActivity {
         previewTimeBar = playerView.findViewById(R.id.exo_progress);
         previewSeekBar = findViewById(R.id.previewSeekBar);
 
+        previewTimeBar.addOnPreviewVisibilityListener((previewBar, isPreviewShowing) -> {
+            Log.d("PreviewShowing", String.valueOf(isPreviewShowing));
+        });
+
+        previewTimeBar.addOnScrubListener(new PreviewBar.OnScrubListener() {
+            @Override
+            public void onScrubStart(PreviewBar previewBar) {
+                Log.d("Scrub", "START");
+            }
+
+            @Override
+            public void onScrubMove(PreviewBar previewBar, int progress, boolean fromUser) {
+                Log.d("Scrub", "MOVE to " + progress / 1000 + " FROM USER: " + fromUser);
+            }
+
+            @Override
+            public void onScrubStop(PreviewBar previewBar) {
+                Log.d("Scrub", "STOP");
+            }
+        });
+
         exoPlayerManager = new ExoPlayerManager(playerView, previewTimeBar,
                 findViewById(R.id.imageView), getString(R.string.url_thumbnails));
 
         exoPlayerManager.play(Uri.parse(getString(R.string.url_dash)));
 
         setupOptions();
-
         requestFullScreenIfLandscape();
     }
 
@@ -97,6 +119,16 @@ public class MainActivity extends AppCompatActivity {
                 (buttonView, isChecked) -> {
                     previewTimeBar.setPreviewEnabled(isChecked);
                     previewSeekBar.setPreviewEnabled(isChecked);
+                }
+        );
+
+        // Enable or disable auto-hide mode of previews
+        SwitchCompat previewAutoHideSwitch = findViewById(R.id.previewAutoHideSwitch);
+        previewAutoHideSwitch.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    exoPlayerManager.setResumeVideoOnPreviewStop(isChecked);
+                    previewTimeBar.setAutoHidePreview(isChecked);
+                    previewSeekBar.setAutoHidePreview(isChecked);
                 }
         );
 
