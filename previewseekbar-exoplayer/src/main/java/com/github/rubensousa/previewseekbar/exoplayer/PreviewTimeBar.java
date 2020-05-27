@@ -104,25 +104,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
 
         typedArray.recycle();
 
-        addListener(new TimeBar.OnScrubListener() {
-            @Override
-            public void onScrubStart(TimeBar timeBar, long position) {
-                scrubProgress = (int) position;
-                delegate.onScrubStart();
-            }
-
-            @Override
-            public void onScrubMove(TimeBar timeBar, long position) {
-                scrubProgress = (int) position;
-                delegate.onScrubMove((int) position, true);
-            }
-
-            @Override
-            public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
-                scrubProgress = (int) position;
-                delegate.onScrubStop();
-            }
-        });
+        addListener(new TimeBarDefaultOnScrubListener());
     }
 
     @Override
@@ -141,12 +123,6 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
     public void setPreviewThumbTint(int color) {
         setScrubberColor(color);
         scrubberColor = color;
-    }
-
-    @Override
-    public void setScrubberColor(int scrubberColor) {
-        super.setScrubberColor(scrubberColor);
-        this.scrubberColor = scrubberColor;
     }
 
     @Override
@@ -195,6 +171,11 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
     }
 
     @Override
+    public void setPreviewEnabled(boolean enabled) {
+        delegate.setPreviewEnabled(enabled);
+    }
+
+    @Override
     public void showPreview() {
         delegate.show();
     }
@@ -207,11 +188,6 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
     @Override
     public void setAutoHidePreview(boolean autoHide) {
         delegate.setAutoHidePreview(autoHide);
-    }
-
-    @Override
-    public void setPreviewEnabled(boolean enabled) {
-        delegate.setPreviewEnabled(enabled);
     }
 
     @Override
@@ -232,6 +208,12 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
     @Override
     public int getScrubberColor() {
         return scrubberColor;
+    }
+
+    @Override
+    public void setScrubberColor(int scrubberColor) {
+        super.setScrubberColor(scrubberColor);
+        this.scrubberColor = scrubberColor;
     }
 
     @Override
@@ -268,4 +250,28 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
         return (int) (dps * displayMetrics.density + 0.5f);
     }
 
+    /**
+     * Listens for scrub events to show, hide or move the preview frame
+     */
+    private class TimeBarDefaultOnScrubListener implements TimeBar.OnScrubListener {
+
+        @Override
+        public void onScrubStart(TimeBar timeBar, long position) {
+            scrubProgress = (int) position;
+            delegate.onScrubStart();
+        }
+
+        @Override
+        public void onScrubMove(TimeBar timeBar, long position) {
+            scrubProgress = (int) position;
+            delegate.onScrubMove((int) position, true);
+        }
+
+        @Override
+        public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
+            scrubProgress = (int) position;
+            delegate.onScrubStop();
+        }
+
+    }
 }

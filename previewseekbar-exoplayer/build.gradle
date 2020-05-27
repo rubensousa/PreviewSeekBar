@@ -14,11 +14,4 @@ dependencies {
     api "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
 }
 
-ext {
-    VERSION_NAME = "2.11.1.0"
-    POM_ARTIFACT_ID = "previewseekbar-exoplayer"
-    POM_DESCRIPTION = "ExoPlayer components for PreviewSeekBar"
-}
-
-apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
-apply from: rootProject.file('gradle/gradle-bintray-upload.gradle')
+apply from: rootProject.file('gradle/publish.gradle')

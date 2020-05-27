@@ -22,7 +22,7 @@ dependencies {
 
     // ExoPlayer extension that contains a TimeBar. 
     // Grab this one if you're going to integrate with ExoPlayer
-    implementation 'com.github.rubensousa:previewseekbar-exoplayer:2.11.1.0'
+    implementation 'com.github.rubensousa:previewseekbar-exoplayer:2.11.4.0'
 }
 ```
 
