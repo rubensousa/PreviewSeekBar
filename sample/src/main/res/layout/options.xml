@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/previewToggleButton"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/preview_toggle" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/previewToggleColors"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/preview_change_colors" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/previewEnabledSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:padding="16dp"
+        android:text="@string/preview_switch" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/previewAutoHideSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:padding="16dp"
+        android:text="@string/preview_auto_hide" />
+
+    <RadioGroup
+        android:id="@+id/previewAnimationRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkedButton="@id/morphAnimationRadioButton">
+
+        <RadioButton
+            android:id="@+id/morphAnimationRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:text="@string/preview_animation_morph" />
+
+        <RadioButton
+            android:id="@+id/fadeAnimationRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:text="@string/preview_animation_fade" />
+
+        <RadioButton
+            android:id="@+id/noAnimationRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:text="@string/preview_animation_none" />
+
+    </RadioGroup>
+
+
+</LinearLayout>

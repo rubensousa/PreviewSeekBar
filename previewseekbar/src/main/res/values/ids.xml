@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2018 Rúben Sousa
+  ~ Copyright 2020 Rúben Sousa
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,12 +13,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <resources>
-    <declare-styleable name="PreviewSeekBar">
-        <attr name="previewFrameLayout" format="reference" />
-        <attr name="previewAnimationEnabled" format="boolean" />
-        <attr name="previewEnabled" format="boolean" />
-        <attr name="previewThumbTint" format="color" />
-        <attr name="previewAutoHide" format="boolean" />
-    </declare-styleable>
+    <item name="previewSeekBarOverlayViewId" type="id" />
+    <item name="previewSeekBarMorphViewId" type="id" />
 </resources>

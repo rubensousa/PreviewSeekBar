@@ -1,37 +1,38 @@
 package com.github.rubensousa.previewseekbar;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 
-import java.util.ArrayList;
-import java.util.List;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatSeekBar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+
+import com.github.rubensousa.previewseekbar.animator.PreviewAnimator;
 
 /**
- * A SeekBar that morphs its indicator into a preview frame while scrubbing.
+ * A {@link PreviewBar} that extends from {@link AppCompatSeekBar}.
  */
-public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
-        SeekBar.OnSeekBarChangeListener {
+public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
 
-    private List<PreviewView.OnPreviewChangeListener> listeners;
     private PreviewDelegate delegate;
-    private int frameLayoutId = View.NO_ID;
+    private int previewId = View.NO_ID;
+    private int scrubberColor = 0;
 
     public PreviewSeekBar(Context context) {
-        this(context, null, 0);
+        this(context, null);
     }
 
     public PreviewSeekBar(Context context, AttributeSet attrs) {
-        this(context, attrs, android.support.v7.appcompat.R.attr.seekBarStyle);
+        this(context, attrs, R.attr.seekBarStyle);
     }
 
     public PreviewSeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -39,90 +40,144 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
         init(context, attrs);
     }
 
+    private void init(Context context, AttributeSet attrs) {
+        delegate = new PreviewDelegate(this);
+
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
+                R.styleable.PreviewSeekBar, 0, 0);
+
+        TypedArray themeTypedArray = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.colorAccent});
+
+        final int defaultThumbColor = themeTypedArray.getColor(0, 0);
+
+        themeTypedArray.recycle();
+
+        previewId = typedArray.getResourceId(R.styleable.PreviewSeekBar_previewFrameLayout,
+                View.NO_ID);
+
+        scrubberColor = typedArray.getColor(R.styleable.PreviewSeekBar_previewThumbTint,
+                defaultThumbColor);
+
+        setPreviewThumbTint(scrubberColor);
+
+        delegate.setAnimationEnabled(typedArray.getBoolean(
+                R.styleable.PreviewSeekBar_previewAnimationEnabled, true));
+        delegate.setPreviewEnabled(typedArray.getBoolean(
+                R.styleable.PreviewSeekBar_previewEnabled, true));
+        delegate.setAutoHidePreview(typedArray.getBoolean(
+                R.styleable.PreviewSeekBar_previewAutoHide, true));
+        typedArray.recycle();
+
+        // Register a custom listener to handle the previews
+        super.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                delegate.onScrubMove(progress, fromUser);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                delegate.onScrubStart();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                delegate.onScrubStop();
+            }
+        });
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (!delegate.isSetup() && getWidth() != 0 && getHeight() != 0 && !isInEditMode()) {
-            delegate.onLayout((ViewGroup) getParent(), frameLayoutId);
+        if (!delegate.isPreviewViewAttached() && !isInEditMode()) {
+            final FrameLayout previewView = PreviewDelegate.findPreviewView(
+                    (ViewGroup) getParent(), previewId);
+            if (previewView != null) {
+                delegate.attachPreviewView(previewView);
+            }
         }
     }
 
-    private void init(Context context, AttributeSet attrs) {
-        if (attrs != null) {
-            TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
-                    R.styleable.PreviewSeekBar, 0, 0);
-            frameLayoutId = a.getResourceId(R.styleable.PreviewSeekBar_previewFrameLayout,
-                    View.NO_ID);
+    @Override
+    public synchronized void setProgress(int progress) {
+        super.setProgress(progress);
+        // This can be called by the constructor of the PreviewSeekBar
+        if (delegate != null) {
+            delegate.updateProgress(progress, getMax());
         }
-        listeners = new ArrayList<>();
-        delegate = new PreviewDelegate(this, getDefaultColor());
-        delegate.setEnabled(isEnabled());
-        super.setOnSeekBarChangeListener(this);
     }
 
+    @Override
+    public synchronized void setMax(int max) {
+        super.setMax(max);
+        // This can be called by the constructor of the PreviewSeekBar
+        if (delegate != null) {
+            delegate.updateProgress(getProgress(), getMax());
+        }
+    }
+
+    /**
+     * Use a {@link OnScrubListener}
+     * instead with {@link PreviewSeekBar#addOnScrubListener(OnScrubListener)}
+     */
     @Override
     public void setOnSeekBarChangeListener(OnSeekBarChangeListener l) {
-        // No-op
+
     }
 
     @Override
-    public void attachPreviewFrameLayout(FrameLayout frameLayout) {
-        delegate.attachPreviewFrameLayout(frameLayout);
+    public void attachPreviewView(@NonNull FrameLayout previewView) {
+        delegate.attachPreviewView(previewView);
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        delegate.setEnabled(enabled);
-    }
-
-    @Override
-    public void setPreviewColorTint(int color) {
-        delegate.setPreviewColorTint(color);
+    public void setPreviewThumbTint(int color) {
         Drawable drawable = DrawableCompat.wrap(getThumb());
         DrawableCompat.setTint(drawable, color);
         setThumb(drawable);
-
-        drawable = DrawableCompat.wrap(getProgressDrawable());
-        DrawableCompat.setTint(drawable, color);
-        setProgressDrawable(drawable);
+        scrubberColor = color;
     }
 
     @Override
-    public void setPreviewColorResourceTint(int color) {
-        setPreviewColorTint(ContextCompat.getColor(getContext(), color));
+    public void setPreviewThumbTintResource(int colorResource) {
+        setPreviewThumbTint(ContextCompat.getColor(getContext(), colorResource));
     }
 
     @Override
-    public int getDefaultColor() {
-        ColorStateList list = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            list = getThumbTintList();
-        }
-        if (list != null) {
-            return list.getDefaultColor();
-        } else {
-            return 0;
-        }
+    public int getScrubberColor() {
+        return scrubberColor;
     }
 
     @Override
     public boolean isShowingPreview() {
-        return delegate.isShowing();
+        return delegate.isShowingPreview();
+    }
+
+    @Override
+    public boolean isPreviewEnabled() {
+        return delegate.isPreviewEnabled();
+    }
+
+    @Override
+    public void setPreviewEnabled(boolean enabled) {
+        delegate.setPreviewEnabled(enabled);
     }
 
     @Override
     public void showPreview() {
-        if (isEnabled()) {
-            delegate.show();
-        }
+        delegate.show();
     }
 
     @Override
     public void hidePreview() {
-        if (isEnabled()) {
-            delegate.hide();
-        }
+        delegate.hide();
+    }
+
+    @Override
+    public void setAutoHidePreview(boolean autoHide) {
+        delegate.setAutoHidePreview(autoHide);
     }
 
     @Override
@@ -131,36 +186,43 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewView,
     }
 
     @Override
-    public void addOnPreviewChangeListener(OnPreviewChangeListener listener) {
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
-        }
+    public void addOnScrubListener(PreviewBar.OnScrubListener listener) {
+        delegate.addOnScrubListener(listener);
     }
 
     @Override
-    public void removeOnPreviewChangeListener(OnPreviewChangeListener listener) {
-        listeners.remove(listener);
+    public void removeOnScrubListener(PreviewBar.OnScrubListener listener) {
+        delegate.removeOnScrubListener(listener);
     }
 
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        for (OnPreviewChangeListener listener : listeners) {
-            listener.onPreview(this, progress, fromUser);
-        }
+    public void addOnPreviewVisibilityListener(PreviewBar.OnPreviewVisibilityListener listener) {
+        delegate.addOnPreviewVisibilityListener(listener);
     }
 
     @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        for (OnPreviewChangeListener listener : listeners) {
-            listener.onStartPreview(this, seekBar.getProgress());
-        }
+    public void removeOnPreviewVisibilityListener(PreviewBar.OnPreviewVisibilityListener listener) {
+        delegate.removeOnPreviewVisibilityListener(listener);
     }
 
     @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        for (OnPreviewChangeListener listener : listeners) {
-            listener.onStopPreview(this, seekBar.getProgress());
-        }
+    public void setPreviewAnimator(@NonNull PreviewAnimator animator) {
+        delegate.setAnimator(animator);
+    }
+
+    @Override
+    public void setPreviewAnimationEnabled(boolean enable) {
+        delegate.setAnimationEnabled(enable);
+    }
+
+    public void setProgressTint(@ColorInt int color) {
+        Drawable drawable = DrawableCompat.wrap(getProgressDrawable());
+        DrawableCompat.setTint(drawable, color);
+        setProgressDrawable(drawable);
+    }
+
+    public void setProgressTintResource(@ColorRes int colorResource) {
+        setProgressTint(ContextCompat.getColor(getContext(), colorResource));
     }
 
 }

@@ -17,7 +17,7 @@
 package com.github.rubensousa.previewseekbar.sample.glide;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
@@ -28,9 +28,9 @@ import java.security.MessageDigest;
 
 public class GlideThumbnailTransformation extends BitmapTransformation {
 
-    public static final int MAX_LINES = 7;
-    public static final int MAX_COLUMNS = 7;
-    public static final int THUMBNAILS_EACH = 5000; // millisseconds
+    private static final int MAX_LINES = 7;
+    private static final int MAX_COLUMNS = 7;
+    private static final int THUMBNAILS_EACH = 5000; // milliseconds
 
     private int x;
     private int y;
@@ -64,16 +64,20 @@ public class GlideThumbnailTransformation extends BitmapTransformation {
     }
 
     @Override
-    public int hashCode() {
-        return (String.valueOf(x) + String.valueOf(y)).hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GlideThumbnailTransformation that = (GlideThumbnailTransformation) o;
+
+        if (x != that.x) return false;
+        return y == that.y;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof GlideThumbnailTransformation)) {
-            return false;
-        }
-        GlideThumbnailTransformation transformation = (GlideThumbnailTransformation) obj;
-        return transformation.getX() == x && transformation.getY() == y;
+    public int hashCode() {
+        int result = x;
+        result = 31 * result + y;
+        return result;
     }
 }

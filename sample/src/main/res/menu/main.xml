@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/action_local"
         android:icon="@drawable/ic_sd_card"
-        android:orderInCategory="300"
-        android:title="Local"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_test"
-        android:orderInCategory="200"
-        android:title="Test"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_toggle"
-        android:orderInCategory="100"
-        android:title="Toggle"
+        android:title="@string/preview_local_video"
         app:showAsAction="always" />
 </menu>

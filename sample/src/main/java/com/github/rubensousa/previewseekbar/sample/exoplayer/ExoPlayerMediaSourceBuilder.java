@@ -20,16 +20,12 @@ package com.github.rubensousa.previewseekbar.sample.exoplayer;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Handler;
 
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -43,11 +39,10 @@ public class ExoPlayerMediaSourceBuilder {
     private Context context;
     private Uri uri;
     private int streamType;
-    private Handler mainHandler = new Handler();
 
     public ExoPlayerMediaSourceBuilder(Context context) {
         this.context = context;
-        this.bandwidthMeter = new DefaultBandwidthMeter();
+        this.bandwidthMeter = new DefaultBandwidthMeter.Builder(context).build();
     }
 
     public void setUri(Uri uri) {
@@ -58,21 +53,15 @@ public class ExoPlayerMediaSourceBuilder {
     public MediaSource getMediaSource(boolean preview) {
         switch (streamType) {
             case C.TYPE_SS:
-                return new SsMediaSource(uri, new DefaultDataSourceFactory(context, null,
-                        getHttpDataSourceFactory(preview)),
-                        new DefaultSsChunkSource.Factory(getDataSourceFactory(preview)),
-                        mainHandler, null);
+                return new SsMediaSource.Factory(new DefaultDataSourceFactory(context, null,
+                        getHttpDataSourceFactory(preview))).createMediaSource(uri);
             case C.TYPE_DASH:
-                return new DashMediaSource(uri,
-                        new DefaultDataSourceFactory(context, null,
-                                getHttpDataSourceFactory(preview)),
-                        new DefaultDashChunkSource.Factory(getDataSourceFactory(preview)),
-                        mainHandler, null);
+                return new DashMediaSource.Factory(new DefaultDataSourceFactory(context, null,
+                        getHttpDataSourceFactory(preview))).createMediaSource(uri);
             case C.TYPE_HLS:
-                return new HlsMediaSource(uri, getDataSourceFactory(preview), mainHandler, null);
+                return new HlsMediaSource.Factory(getDataSourceFactory(preview)).createMediaSource(uri);
             case C.TYPE_OTHER:
-                return new ExtractorMediaSource(uri, getDataSourceFactory(preview),
-                        new DefaultExtractorsFactory(), mainHandler, null);
+                return new ProgressiveMediaSource.Factory(getDataSourceFactory(preview)).createMediaSource(uri);
             default: {
                 throw new IllegalStateException("Unsupported type: " + streamType);
             }

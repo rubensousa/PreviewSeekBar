@@ -17,49 +17,75 @@
 
 package com.github.rubensousa.previewseekbar.sample;
 
-import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.RadioGroup;
 
-import com.github.rubensousa.previewseekbar.PreviewView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+
+import com.github.rubensousa.previewseekbar.PreviewBar;
+import com.github.rubensousa.previewseekbar.PreviewSeekBar;
+import com.github.rubensousa.previewseekbar.animator.PreviewFadeAnimator;
+import com.github.rubensousa.previewseekbar.animator.PreviewMorphAnimator;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 
-
-public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
-        PreviewView.OnPreviewChangeListener {
-
-    private static final int PICK_FILE_REQUEST_CODE = 2;
+public class MainActivity extends AppCompatActivity {
 
     private ExoPlayerManager exoPlayerManager;
     private PreviewTimeBar previewTimeBar;
+    private PreviewSeekBar previewSeekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SimpleExoPlayerView playerView = findViewById(R.id.player_view);
+        PlayerView playerView = findViewById(R.id.player_view);
         previewTimeBar = playerView.findViewById(R.id.exo_progress);
-        previewTimeBar.addOnPreviewChangeListener(this);
+        previewSeekBar = findViewById(R.id.previewSeekBar);
+
+        previewTimeBar.addOnPreviewVisibilityListener((previewBar, isPreviewShowing) -> {
+            Log.d("PreviewShowing", String.valueOf(isPreviewShowing));
+        });
+
+        previewTimeBar.addOnScrubListener(new PreviewBar.OnScrubListener() {
+            @Override
+            public void onScrubStart(PreviewBar previewBar) {
+                Log.d("Scrub", "START");
+            }
+
+            @Override
+            public void onScrubMove(PreviewBar previewBar, int progress, boolean fromUser) {
+                Log.d("Scrub", "MOVE to " + progress / 1000 + " FROM USER: " + fromUser);
+            }
+
+            @Override
+            public void onScrubStop(PreviewBar previewBar) {
+                Log.d("Scrub", "STOP");
+            }
+        });
+
         exoPlayerManager = new ExoPlayerManager(playerView, previewTimeBar,
-                (ImageView) findViewById(R.id.imageView), getString(R.string.url_thumbnails));
+                findViewById(R.id.imageView), getString(R.string.url_thumbnails));
+
         exoPlayerManager.play(Uri.parse(getString(R.string.url_dash)));
-        previewTimeBar.setPreviewLoader(exoPlayerManager);
+
+        setupOptions();
         requestFullScreenIfLandscape();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            exoPlayerManager.play(data.getData());
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            requestFullScreenIfLandscape();
         }
     }
 
@@ -87,62 +113,86 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         exoPlayerManager.onStop();
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        if (item.getItemId() == R.id.action_local) {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("video/*.mp4");
-            startActivityForResult(intent, PICK_FILE_REQUEST_CODE);
-        } else if (item.getItemId() == R.id.action_toggle) {
+    private void setupOptions() {
+        // Enable or disable the previews
+        SwitchCompat previewSwitch = findViewById(R.id.previewEnabledSwitch);
+        previewSwitch.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    previewTimeBar.setPreviewEnabled(isChecked);
+                    previewSeekBar.setPreviewEnabled(isChecked);
+                }
+        );
+
+        // Enable or disable auto-hide mode of previews
+        SwitchCompat previewAutoHideSwitch = findViewById(R.id.previewAutoHideSwitch);
+        previewAutoHideSwitch.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    exoPlayerManager.setResumeVideoOnPreviewStop(isChecked);
+                    previewTimeBar.setAutoHidePreview(isChecked);
+                    previewSeekBar.setAutoHidePreview(isChecked);
+                }
+        );
+
+        // Change the animations
+        RadioGroup animationRadioGroup = findViewById(R.id.previewAnimationRadioGroup);
+        animationRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.noAnimationRadioButton) {
+                previewTimeBar.setPreviewAnimationEnabled(false);
+                previewSeekBar.setPreviewAnimationEnabled(false);
+            } else {
+                previewTimeBar.setPreviewAnimationEnabled(true);
+                previewSeekBar.setPreviewAnimationEnabled(true);
+                if (checkedId == R.id.fadeAnimationRadioButton) {
+                    previewTimeBar.setPreviewAnimator(new PreviewFadeAnimator());
+                    previewSeekBar.setPreviewAnimator(new PreviewFadeAnimator());
+                } else if (Build.VERSION.SDK_INT >= 21) {
+                    previewTimeBar.setPreviewAnimator(new PreviewMorphAnimator());
+                    previewSeekBar.setPreviewAnimator(new PreviewMorphAnimator());
+                }
+            }
+        });
+
+        // Toggle previews
+        Button toggleButton = findViewById(R.id.previewToggleButton);
+        toggleButton.setOnClickListener(v -> {
             if (previewTimeBar.isShowingPreview()) {
                 previewTimeBar.hidePreview();
-                exoPlayerManager.stopPreview(previewTimeBar.getProgress());
             } else {
                 previewTimeBar.showPreview();
                 exoPlayerManager.loadPreview(previewTimeBar.getProgress(),
                         previewTimeBar.getMax());
             }
-        } else {
-            startActivity(new Intent(this, LocalActivity.class));
-        }
-        return true;
+            if (previewSeekBar.isShowingPreview()) {
+                previewSeekBar.hidePreview();
+            } else {
+                previewSeekBar.showPreview();
+            }
+        });
+
+        // Change colors
+        Button changeColorsButton = findViewById(R.id.previewToggleColors);
+        changeColorsButton.setOnClickListener(v -> {
+            final int seekBarColor = previewSeekBar.getScrubberColor();
+            final int timeBarColor = previewTimeBar.getScrubberColor();
+            previewSeekBar.setPreviewThumbTint(timeBarColor);
+            previewSeekBar.setProgressTint(timeBarColor);
+            previewTimeBar.setPreviewThumbTint(seekBarColor);
+            previewTimeBar.setPlayedColor(seekBarColor);
+        });
+
     }
 
     private void requestFullScreenIfLandscape() {
         if (getResources().getBoolean(R.bool.landscape)) {
             getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    View.SYSTEM_UI_FLAG_IMMERSIVE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
-        } else {
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            toolbar.inflateMenu(R.menu.main);
-            toolbar.setOnMenuItemClickListener(this);
-        }
-    }
-
-
-    @Override
-    public void onStartPreview(PreviewView previewView, int progress) {
-        if (getResources().getBoolean(R.bool.landscape)) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            // Hide the nav bar and status bar
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_FULLSCREEN);
         }
     }
 
-    @Override
-    public void onStopPreview(PreviewView previewView, int progress) {
-        exoPlayerManager.stopPreview(progress);
-    }
-
-    @Override
-    public void onPreview(PreviewView previewView, int progress, boolean fromUser) {
-
-    }
 }
