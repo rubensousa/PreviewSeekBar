@@ -38,7 +38,7 @@ public class GlideThumbnailTransformation extends BitmapTransformation {
     public GlideThumbnailTransformation(long position) {
         int square = (int) position / THUMBNAILS_EACH;
         y = square / MAX_LINES;
-        x = square % MAX_COLUMNS;
+        x = square % MAX_LINES;
     }
 
     private int getX() {
