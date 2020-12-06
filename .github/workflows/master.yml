@@ -1,12 +1,12 @@
 name: Release
 
 on:
-   pull_request:
-     paths-ignore:
-       - '**/*.md'
-       - '**/*.txt'
-     branches:
-       - 'master'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+    branches:
+      - 'master'
   push:
     paths-ignore:
       - '**/*.md'
