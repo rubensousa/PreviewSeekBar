@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply from: rootProject.file('gradle/publish.gradle')
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -6,10 +7,17 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
     }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+
 }
 
 dependencies {
-    api "androidx.appcompat:appcompat:$appcompatVersion"
+    implementation "androidx.appcompat:appcompat:$appcompatVersion"
 }
 
-apply from: rootProject.file('gradle/publish.gradle')

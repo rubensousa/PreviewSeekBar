@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply from: rootProject.file('gradle/publish.gradle')
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -6,12 +7,16 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
     }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:$appcompatVersion"
     api project(':previewseekbar')
-    api "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
+    implementation "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
 }
-
-apply from: rootProject.file('gradle/publish.gradle')

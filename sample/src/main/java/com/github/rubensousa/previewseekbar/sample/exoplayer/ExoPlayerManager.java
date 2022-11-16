@@ -20,28 +20,30 @@ package com.github.rubensousa.previewseekbar.sample.exoplayer;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.github.rubensousa.previewseekbar.PreviewBar;
 import com.github.rubensousa.previewseekbar.PreviewLoader;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
-import com.github.rubensousa.previewseekbar.sample.glide.GlideApp;
+import com.github.rubensousa.previewseekbar.sample.R;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideThumbnailTransformation;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.exoplayer2.util.Util;
 
 
 public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnScrubListener {
 
-    private ExoPlayerMediaSourceBuilder mediaSourceBuilder;
-    private PlayerView playerView;
-    private SimpleExoPlayer player;
+    private static final String VIDEO_PATH = "asset:///video.mp4";
+
+    private StyledPlayerView playerView;
+    private ExoPlayer player;
     private PreviewTimeBar previewTimeBar;
-    private String thumbnailsUrl;
     private ImageView imageView;
     private boolean resumeVideoOnPreviewStop;
-    private Player.EventListener eventListener = new Player.EventListener() {
+    private Player.Listener eventListener = new Player.Listener() {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             if (playbackState == Player.STATE_READY && playWhenReady) {
@@ -50,21 +52,15 @@ public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnScrubListen
         }
     };
 
-    public ExoPlayerManager(PlayerView playerView,
-                            PreviewTimeBar previewTimeBar, ImageView imageView,
-                            String thumbnailsUrl) {
+    public ExoPlayerManager(StyledPlayerView playerView,
+                            PreviewTimeBar previewTimeBar,
+                            ImageView imageView) {
         this.playerView = playerView;
         this.imageView = imageView;
         this.previewTimeBar = previewTimeBar;
-        this.mediaSourceBuilder = new ExoPlayerMediaSourceBuilder(playerView.getContext());
-        this.thumbnailsUrl = thumbnailsUrl;
         this.previewTimeBar.addOnScrubListener(this);
         this.previewTimeBar.setPreviewLoader(this);
         this.resumeVideoOnPreviewStop = true;
-    }
-
-    public void play(Uri uri) {
-        mediaSourceBuilder.setUri(uri);
     }
 
     public void onStart() {
@@ -111,11 +107,15 @@ public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnScrubListen
         playerView.setControllerShowTimeoutMs(15000);
     }
 
-    private SimpleExoPlayer createPlayer() {
-        SimpleExoPlayer player = new SimpleExoPlayer.Builder(playerView.getContext()).build();
+    private ExoPlayer createPlayer() {
+        ExoPlayer player = new ExoPlayer.Builder(playerView.getContext())
+                .build();
         player.setPlayWhenReady(true);
-        player.prepare(mediaSourceBuilder.getMediaSource(false));
+        player.setMediaItem(new MediaItem.Builder()
+                .setUri(Uri.parse(VIDEO_PATH))
+                .build());
         player.addListener(eventListener);
+        player.prepare();
         return player;
     }
 
@@ -124,8 +124,8 @@ public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnScrubListen
         if (player.isPlaying()) {
             player.setPlayWhenReady(false);
         }
-        GlideApp.with(imageView)
-                .load(thumbnailsUrl)
+        Glide.with(imageView)
+                .load(R.raw.thumbnail_sprite)
                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .transform(new GlideThumbnailTransformation(currentPosition))
                 .into(imageView);

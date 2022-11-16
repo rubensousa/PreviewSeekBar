@@ -17,7 +17,6 @@
 
 package com.github.rubensousa.previewseekbar.sample;
 
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,7 +33,7 @@ import com.github.rubensousa.previewseekbar.animator.PreviewFadeAnimator;
 import com.github.rubensousa.previewseekbar.animator.PreviewMorphAnimator;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        PlayerView playerView = findViewById(R.id.player_view);
+        StyledPlayerView playerView = findViewById(R.id.player_view);
         previewTimeBar = playerView.findViewById(R.id.exo_progress);
         previewSeekBar = findViewById(R.id.previewSeekBar);
 
@@ -73,9 +72,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         exoPlayerManager = new ExoPlayerManager(playerView, previewTimeBar,
-                findViewById(R.id.imageView), getString(R.string.url_thumbnails));
-
-        exoPlayerManager.play(Uri.parse(getString(R.string.url_dash)));
+                findViewById(R.id.imageView));
 
         setupOptions();
         requestFullScreenIfLandscape();
