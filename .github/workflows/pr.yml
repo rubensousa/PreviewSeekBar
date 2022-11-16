@@ -1,0 +1,36 @@
+name: Pull requests
+
+on:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.MD'
+    branches:
+      - 'master'
+
+concurrency:
+  group: build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '11'
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Install Android SDK
+        uses: malinskiy/action-android/install-sdk@release/0.1.4
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest --stacktrace
+
+      - name: Assemble library
+        run: ./gradlew assembleRelease
