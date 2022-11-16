@@ -1,4 +1,10 @@
+# 3.1.0
+
+- Bumped `androidx.appcompat:appcompat` to 1.5.1
+- Released to mavenCentral
+
 # 3.0.0
+
 
 ### Breaking changes
 

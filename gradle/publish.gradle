@@ -15,38 +15,6 @@
  */
 
 /*
- * BSD 3-Clause License
- *
- * Copyright (c) 2019, Sky Italia
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * * Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
- *
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
- *
- * * Neither the name of the copyright holder nor the names of its
- *   contributors may be used to endorse or promote products derived from
- *   this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-/*
  * Copyright 2020 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -93,104 +61,54 @@
  * POM_LICENCE_URL=http://www.apache.org/licenses/LICENSE-2.0.txt
  * POM_LICENCE_DIST=repo
  */
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.10.1"
+ext["signing.keyId"] = getSecretKeyId()
+ext["signing.password"] = getSecretKeyPassword()
+ext["signing.secretKeyRingFile"] = getSecretKeyRingFilePath()
+
+String getSecretKeyPassword() {
+    if (hasProperty("ossrhSecretKeyPassword")) {
+        return ossrhSecretKeyPassword
+    } else {
+        return ""
     }
 }
 
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
+String getSecretKeyId() {
+    if (hasProperty("ossrhSecretKeyId")) {
+        return ossrhSecretKeyId
+    } else {
+        return ""
+    }
+}
 
+String getSecretKeyRingFilePath() {
+    if (hasProperty("ossrhSecretKeyRingFile")) {
+        return ossrhSecretKeyRingFile
+    } else {
+        return ""
+    }
+}
 
-def isDokkaAvailable = project.tasks.findByName('dokka')
+String getSonatypeUsername() {
+    if (hasProperty("ossrhUsername")) {
+        return ossrhUsername
+    } else {
+        return ""
+    }
+}
 
-// Check if the project has dokka setup before trying to apply the plugin
-// If dokka isn't setup, javadocs won't be generated for kotlin files
-if (isDokkaAvailable) {
-    apply plugin: 'org.jetbrains.dokka'
+String getSonatypePassword() {
+    if (hasProperty("ossrhPassword")) {
+        return ossrhPassword
+    } else {
+        return ""
+    }
 }
 
 afterEvaluate { project ->
-
-    def publishSources = shouldPublishSources()
-    def publishDocs = shouldPublishDocs()
-
-    if (publishDocs) {
-
-        // If dokka is setup, generate the javadocs for kotlin files
-        if (isDokkaAvailable) {
-            task dokkaJavadoc(type: dokka.class) {
-                outputFormat = 'javadoc'
-                outputDirectory = "$buildDir/javadoc"
-            }
-
-            task dokkaJavadocsJar(type: Jar, dependsOn: dokkaJavadoc) {
-                getArchiveClassifier().set('javadoc')
-                from dokkaJavadoc.outputDirectory
-            }
-        }
-
-        task androidJavadocs(type: Javadoc) {
-            source = android.sourceSets.main.java.source
-            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-            excludes = ['**/*.kt']
-        }
-
-        task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-            getArchiveClassifier().set('javadoc')
-            from androidJavadocs.destinationDir
-        }
-
-        if (JavaVersion.current().isJava8Compatible()) {
-            allprojects {
-                tasks.withType(Javadoc) {
-                    options.addStringOption('Xdoclint:none', '-quiet')
-                }
-            }
-        }
-
-        if (JavaVersion.current().isJava9Compatible()) {
-            allprojects {
-                tasks.withType(Javadoc) {
-                    options.addBooleanOption('html5', true)
-                }
-            }
-        }
-
-        android.libraryVariants.all { variant ->
-            tasks.androidJavadocs.doFirst {
-                classpath += files(variant.javaCompileProvider.get().classpath.files
-                        .join(File.pathSeparator))
-            }
-        }
-
-        if (isDokkaAvailable) {
-            artifacts {
-                archives dokkaJavadocsJar
-            }
-        } else {
-            artifacts {
-                archives androidJavadocsJar
-            }
-        }
-    }
-
-    if (publishSources) {
-        task androidSourcesJar(type: Jar) {
-            getArchiveClassifier().set('sources')
-            from android.sourceSets.main.java.source
-        }
-
-        artifacts {
-            archives androidSourcesJar
-        }
-    }
-
     publishing {
         publications {
             release(MavenPublication) {
@@ -198,35 +116,20 @@ afterEvaluate { project ->
                 groupId LIBRARY_GROUP
                 version LIBRARY_VERSION
                 artifactId LIBRARY_ARTIFACT
-                if (publishSources) {
-                    artifact androidSourcesJar
-                }
-                if (publishDocs) {
-                    if (isDokkaAvailable) {
-                        artifact dokkaJavadocsJar
-                    } else {
-                        artifact androidJavadocsJar
-                    }
-                }
                 configurePom(pom)
             }
         }
-    }
-}
+        repositories {
+            maven {
+                name = "sonatype"
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
 
-def shouldPublishSources() {
-    if (hasProperty("LIBRARY_PUBLISH_SOURCES")) {
-        return LIBRARY_PUBLISH_SOURCES == "true"
-    } else {
-        return true
-    }
-}
-
-def shouldPublishDocs() {
-    if (hasProperty("LIBRARY_PUBLISH_DOCS")) {
-        return LIBRARY_PUBLISH_DOCS == "true"
-    } else {
-        return true
+                credentials {
+                    username getSonatypeUsername()
+                    password getSonatypePassword()
+                }
+            }
+        }
     }
 }
 
@@ -242,13 +145,10 @@ def configurePom(pom) {
         developerConnection = POM_SCM_DEV_CONNECTION
     }
 
-    if (hasProperty('POM_LICENSE_NAME')) {
-        pom.licenses {
-            license {
-                name = POM_LICENSE_NAME
-                url = POM_LICENSE_URL
-                distribution = POM_LICENSE_DIST
-            }
+    pom.licenses {
+        license {
+            name = "The Apache Software License, Version 2.0"
+            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
         }
     }
 
@@ -263,23 +163,6 @@ def configurePom(pom) {
 group LIBRARY_GROUP
 version LIBRARY_VERSION
 
-bintray {
-    user = bintray_user
-    key = bintray_apikey
-    publications = ['release']
-    pkg {
-        repo = 'maven'
-        name = LIBRARY_ARTIFACT
-        desc = POM_DESCRIPTION
-        description = POM_DESCRIPTION
-        publish = true
-        publicDownloadNumbers = true
-        licenses = POM_LICENSES.split(",")
-        vcsUrl = POM_VCS_URL
-        version {
-            name = this.version
-            released = new Date()
-            vcsTag = this.version
-        }
-    }
+signing {
+    sign publishing.publications
 }

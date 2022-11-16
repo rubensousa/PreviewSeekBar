@@ -18,11 +18,11 @@ Add the following to your app's build.gradle:
 ```groovy
 dependencies {
     // Base implementation with a standard SeekBar
-    implementation 'com.github.rubensousa:previewseekbar:3.0.0'
+    implementation 'com.github.rubensousa:previewseekbar:3.1.0'
 
     // ExoPlayer extension that contains a TimeBar. 
     // Grab this one if you're going to integrate with ExoPlayer
-    implementation 'com.github.rubensousa:previewseekbar-exoplayer:2.11.4.0'
+    implementation 'com.github.rubensousa:previewseekbar-exoplayer:2.18.1.0'
 }
 ```
 

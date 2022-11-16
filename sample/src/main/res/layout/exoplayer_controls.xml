@@ -36,12 +36,8 @@
             style="@style/ExoMediaButton.Rewind" />
 
         <ImageButton
-            android:id="@id/exo_play"
+            android:id="@id/exo_play_pause"
             style="@style/ExoMediaButton.Play" />
-
-        <ImageButton
-            android:id="@id/exo_pause"
-            style="@style/ExoMediaButton.Pause" />
 
         <ImageButton
             android:id="@id/exo_ffwd"

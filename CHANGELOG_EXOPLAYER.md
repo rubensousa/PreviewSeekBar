@@ -1,3 +1,8 @@
+# 2.18.1.0
+
+- Bumped `com.google.android.exoplayer:exoplayer-ui` to 2.18.1
+- Released to mavenCentral
+
 # 2.11.4.0
 
 ### Breaking changes
