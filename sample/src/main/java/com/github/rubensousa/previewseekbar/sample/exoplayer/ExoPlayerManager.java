@@ -20,6 +20,14 @@ package com.github.rubensousa.previewseekbar.sample.exoplayer;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import androidx.annotation.OptIn;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.common.util.Util;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.github.rubensousa.previewseekbar.PreviewBar;
@@ -27,18 +35,13 @@ import com.github.rubensousa.previewseekbar.PreviewLoader;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.sample.R;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideThumbnailTransformation;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.ui.StyledPlayerView;
-import com.google.android.exoplayer2.util.Util;
 
-
+@OptIn(markerClass = UnstableApi.class)
 public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnScrubListener {
 
     private static final String VIDEO_PATH = "asset:///video.mp4";
 
-    private StyledPlayerView playerView;
+    private PlayerView playerView;
     private ExoPlayer player;
     private PreviewTimeBar previewTimeBar;
     private ImageView imageView;
@@ -52,7 +55,7 @@ public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnScrubListen
         }
     };
 
-    public ExoPlayerManager(StyledPlayerView playerView,
+    public ExoPlayerManager(PlayerView playerView,
                             PreviewTimeBar previewTimeBar,
                             ImageView imageView) {
         this.playerView = playerView;

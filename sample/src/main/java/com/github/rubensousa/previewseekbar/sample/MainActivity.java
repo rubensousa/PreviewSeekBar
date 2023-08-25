@@ -24,8 +24,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.ui.PlayerView;
 
 import com.github.rubensousa.previewseekbar.PreviewBar;
 import com.github.rubensousa.previewseekbar.PreviewSeekBar;
@@ -33,7 +36,6 @@ import com.github.rubensousa.previewseekbar.animator.PreviewFadeAnimator;
 import com.github.rubensousa.previewseekbar.animator.PreviewMorphAnimator;
 import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
-import com.google.android.exoplayer2.ui.StyledPlayerView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        StyledPlayerView playerView = findViewById(R.id.player_view);
+        PlayerView playerView = findViewById(R.id.player_view);
         previewTimeBar = playerView.findViewById(R.id.exo_progress);
         previewSeekBar = findViewById(R.id.previewSeekBar);
 
@@ -110,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         exoPlayerManager.onStop();
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     private void setupOptions() {
         // Enable or disable the previews
         SwitchCompat previewSwitch = findViewById(R.id.previewEnabledSwitch);

@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk rootProject.ext.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -26,8 +26,10 @@ android {
 
 dependencies {
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
+    implementation "androidx.annotation:annotation:$annotationVersion"
     implementation "com.google.android.material:material:$materialVersion"
-    implementation "com.google.android.exoplayer:exoplayer:$exoPlayerVersion"
+    implementation "androidx.media3:media3-ui:$media3Version"
+    implementation "androidx.media3:media3-exoplayer:$media3Version"
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation project(':previewseekbar')
