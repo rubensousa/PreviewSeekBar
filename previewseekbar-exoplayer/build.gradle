@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply from: rootProject.file('gradle/publish.gradle')
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -14,9 +14,13 @@ android {
             withJavadocJar()
         }
     }
+    namespace 'com.github.rubensousa.previewseekbar.exoplayer'
 }
 
 dependencies {
     api project(':previewseekbar')
-    implementation "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
+    implementation "androidx.core:core:$coreVersion"
+    implementation "androidx.media3:media3-exoplayer:$media3Version"
+    implementation "androidx.media3:media3-ui:$media3Version"
+    implementation "androidx.annotation:annotation:$annotationVersion"
 }

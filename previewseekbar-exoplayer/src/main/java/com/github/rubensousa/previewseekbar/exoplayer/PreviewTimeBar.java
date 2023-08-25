@@ -26,21 +26,25 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.core.content.ContextCompat;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.ui.DefaultTimeBar;
+import androidx.media3.ui.TimeBar;
 
 import com.github.rubensousa.previewseekbar.PreviewBar;
 import com.github.rubensousa.previewseekbar.PreviewDelegate;
 import com.github.rubensousa.previewseekbar.PreviewLoader;
 import com.github.rubensousa.previewseekbar.PreviewSeekBar;
 import com.github.rubensousa.previewseekbar.animator.PreviewAnimator;
-import com.google.android.exoplayer2.ui.DefaultTimeBar;
-import com.google.android.exoplayer2.ui.TimeBar;
 
 /**
  * A {@link DefaultTimeBar} that mimics the behavior of a {@link PreviewSeekBar}.
  * <p>
  * When the user scrubs this TimeBar, a preview will appear above the scrubber.
  */
+
+@OptIn(markerClass = UnstableApi.class)
 public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
 
     private PreviewDelegate delegate;
@@ -53,26 +57,26 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
     public PreviewTimeBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
-                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar, 0, 0);
+                androidx.media3.ui.R.styleable.DefaultTimeBar, 0, 0);
         scrubberColor = typedArray.getInt(
-                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_color,
+                androidx.media3.ui.R.styleable.DefaultTimeBar_scrubber_color,
                 DEFAULT_SCRUBBER_COLOR);
 
         final Drawable scrubberDrawable = typedArray.getDrawable(
-                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_drawable);
+                androidx.media3.ui.R.styleable.DefaultTimeBar_scrubber_drawable);
 
         final int scrubberEnabledSize = typedArray.getDimensionPixelSize(
-                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_enabled_size,
+                androidx.media3.ui.R.styleable.DefaultTimeBar_scrubber_enabled_size,
                 dpToPx(context.getResources().getDisplayMetrics(),
                         DEFAULT_SCRUBBER_ENABLED_SIZE_DP));
 
         final int scrubberDisabledSize = typedArray.getDimensionPixelSize(
-                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_disabled_size,
+                androidx.media3.ui.R.styleable.DefaultTimeBar_scrubber_disabled_size,
                 dpToPx(context.getResources().getDisplayMetrics(),
                         DEFAULT_SCRUBBER_DISABLED_SIZE_DP));
 
         final int scrubberDraggedSize = typedArray.getDimensionPixelSize(
-                com.google.android.exoplayer2.ui.R.styleable.DefaultTimeBar_scrubber_dragged_size,
+                androidx.media3.ui.R.styleable.DefaultTimeBar_scrubber_dragged_size,
                 dpToPx(context.getResources().getDisplayMetrics(),
                         DEFAULT_SCRUBBER_DRAGGED_SIZE_DP));
 
@@ -256,19 +260,19 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
     private class TimeBarDefaultOnScrubListener implements TimeBar.OnScrubListener {
 
         @Override
-        public void onScrubStart(TimeBar timeBar, long position) {
+        public void onScrubStart(@NonNull TimeBar timeBar, long position) {
             scrubProgress = (int) position;
             delegate.onScrubStart();
         }
 
         @Override
-        public void onScrubMove(TimeBar timeBar, long position) {
+        public void onScrubMove(@NonNull TimeBar timeBar, long position) {
             scrubProgress = (int) position;
             delegate.onScrubMove((int) position, true);
         }
 
         @Override
-        public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
+        public void onScrubStop(@NonNull TimeBar timeBar, long position, boolean canceled) {
             scrubProgress = (int) position;
             delegate.onScrubStop();
         }
