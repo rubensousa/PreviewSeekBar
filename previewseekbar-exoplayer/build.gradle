@@ -19,6 +19,7 @@ android {
 
 dependencies {
     api project(':previewseekbar')
+    implementation "androidx.core:core:$coreVersion"
     implementation "androidx.media3:media3-exoplayer:$media3Version"
     implementation "androidx.media3:media3-ui:$media3Version"
     implementation "androidx.annotation:annotation:$annotationVersion"

@@ -19,6 +19,7 @@ ext {
     compileSdkVersion = 33
     minSdkVersion = 19
     targetSdkVersion = 31
+    coreVersion = '1.10.1'
     appcompatVersion = '1.6.1'
     materialVersion = '1.9.0'
     constraintLayoutVersion = '2.1.4'

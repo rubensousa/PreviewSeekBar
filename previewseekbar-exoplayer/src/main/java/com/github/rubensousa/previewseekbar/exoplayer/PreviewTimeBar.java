@@ -25,7 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
+import androidx.core.content.ContextCompat;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.ui.DefaultTimeBar;
 import androidx.media3.ui.TimeBar;
@@ -129,7 +131,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
 
     @Override
     public void setPreviewThumbTintResource(int colorResource) {
-        setPreviewThumbTint(getContext().getColor(colorResource));
+        setPreviewThumbTint(ContextCompat.getColor(getContext(), colorResource));
     }
 
     @Override
@@ -138,7 +140,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
     }
 
     @Override
-    public void attachPreviewView(FrameLayout previewView) {
+    public void attachPreviewView(@NonNull FrameLayout previewView) {
         delegate.attachPreviewView(previewView);
     }
 
@@ -239,7 +241,7 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
     }
 
     @Override
-    public void setPreviewAnimator(PreviewAnimator animator) {
+    public void setPreviewAnimator(@NonNull PreviewAnimator animator) {
         delegate.setAnimator(animator);
     }
 
@@ -258,19 +260,19 @@ public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
     private class TimeBarDefaultOnScrubListener implements TimeBar.OnScrubListener {
 
         @Override
-        public void onScrubStart(TimeBar timeBar, long position) {
+        public void onScrubStart(@NonNull TimeBar timeBar, long position) {
             scrubProgress = (int) position;
             delegate.onScrubStart();
         }
 
         @Override
-        public void onScrubMove(TimeBar timeBar, long position) {
+        public void onScrubMove(@NonNull TimeBar timeBar, long position) {
             scrubProgress = (int) position;
             delegate.onScrubMove((int) position, true);
         }
 
         @Override
-        public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
+        public void onScrubStop(@NonNull TimeBar timeBar, long position, boolean canceled) {
             scrubProgress = (int) position;
             delegate.onScrubStop();
         }
