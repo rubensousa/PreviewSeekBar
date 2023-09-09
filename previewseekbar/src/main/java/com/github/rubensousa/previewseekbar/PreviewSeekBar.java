@@ -32,7 +32,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
     }
 
     public PreviewSeekBar(Context context, AttributeSet attrs) {
-        this(context, attrs, R.attr.seekBarStyle);
+        this(context, attrs, androidx.appcompat.R.attr.seekBarStyle);
     }
 
     public PreviewSeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -47,7 +47,7 @@ public class PreviewSeekBar extends AppCompatSeekBar implements PreviewBar {
                 R.styleable.PreviewSeekBar, 0, 0);
 
         TypedArray themeTypedArray = context.getTheme().obtainStyledAttributes(
-                new int[]{R.attr.colorAccent});
+                new int[]{androidx.appcompat.R.attr.colorAccent});
 
         final int defaultThumbColor = themeTypedArray.getColor(0, 0);
 

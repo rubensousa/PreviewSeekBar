@@ -32,7 +32,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.github.rubensousa.previewseekbar.PreviewBar;
 import com.github.rubensousa.previewseekbar.PreviewLoader;
-import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
+import com.github.rubensousa.previewseekbar.media3.PreviewTimeBar;
 import com.github.rubensousa.previewseekbar.sample.R;
 import com.github.rubensousa.previewseekbar.sample.glide.GlideThumbnailTransformation;
 

@@ -7,12 +7,12 @@
     android:background="@android:color/black"
     tools:context="com.github.rubensousa.previewseekbar.sample.MainActivity">
 
-
-    <com.google.android.exoplayer2.ui.StyledPlayerView
+    <androidx.media3.ui.PlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:controller_layout_id="@layout/exoplayer_controls" />
+        app:controller_layout_id="@layout/exoplayer_controls"
+        app:layout_constraintTop_toBottomOf="@id/timeBarSampleTextView" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -66,19 +66,5 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="@string/app_name" />
-
-    </com.google.android.material.appbar.AppBarLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

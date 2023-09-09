@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.rubensousa.previewseekbar.exoplayer;
+package com.github.rubensousa.previewseekbar.media3;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -43,7 +43,6 @@ import com.github.rubensousa.previewseekbar.animator.PreviewAnimator;
  * <p>
  * When the user scrubs this TimeBar, a preview will appear above the scrubber.
  */
-
 @OptIn(markerClass = UnstableApi.class)
 public class PreviewTimeBar extends DefaultTimeBar implements PreviewBar {
 
