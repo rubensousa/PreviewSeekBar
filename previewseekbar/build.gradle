@@ -23,7 +23,6 @@ android {
 }
 
 dependencies {
-    implementation "androidx.core:core:$versions.core"
     implementation "androidx.appcompat:appcompat:$versions.appcompat"
 }
 
