@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.rubensousa.previewseekbar.sample.glide;
+package com.github.rubensousa.previewseekbar.sample;
 
 import android.graphics.Bitmap;
 import androidx.annotation.NonNull;

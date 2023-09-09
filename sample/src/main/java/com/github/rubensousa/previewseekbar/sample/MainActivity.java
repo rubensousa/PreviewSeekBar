@@ -17,7 +17,6 @@
 
 package com.github.rubensousa.previewseekbar.sample;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,7 +34,6 @@ import com.github.rubensousa.previewseekbar.PreviewSeekBar;
 import com.github.rubensousa.previewseekbar.animator.PreviewFadeAnimator;
 import com.github.rubensousa.previewseekbar.animator.PreviewMorphAnimator;
 import com.github.rubensousa.previewseekbar.media3.PreviewTimeBar;
-import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
 
 public class MainActivity extends AppCompatActivity {
 
