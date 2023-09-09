@@ -62,7 +62,7 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:text="18:20" />
 
-    <com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar
+    <com.github.rubensousa.previewseekbar.media3.PreviewTimeBar
         android:id="@+id/exo_progress"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

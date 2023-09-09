@@ -1,0 +1,27 @@
+apply plugin: 'com.android.library'
+apply from: rootProject.file('gradle/publish.gradle')
+
+android {
+    compileSdk versions.compileSdk
+    namespace 'com.github.rubensousa.previewseekbar.media3'
+
+    defaultConfig {
+        minSdk versions.minSdk
+        targetSdk versions.targetSdk
+    }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+dependencies {
+    api project(':previewseekbar')
+    implementation "androidx.core:core:$versions.core"
+    implementation "androidx.media3:media3-exoplayer:$versions.media3"
+    implementation "androidx.media3:media3-ui:$versions.media3"
+    implementation "androidx.annotation:annotation:$versions.annotation"
+}

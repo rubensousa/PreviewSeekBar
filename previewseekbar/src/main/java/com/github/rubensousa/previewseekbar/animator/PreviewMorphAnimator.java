@@ -20,9 +20,7 @@ package com.github.rubensousa.previewseekbar.animator;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
@@ -38,7 +36,6 @@ import com.github.rubensousa.previewseekbar.R;
  * A {@link PreviewAnimator} that morphs the {@link PreviewBar} thumb
  * into the preview view.
  */
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class PreviewMorphAnimator implements PreviewAnimator {
 
     private static final int MORPH_SHOW_DURATION = 125;

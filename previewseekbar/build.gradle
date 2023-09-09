@@ -1,11 +1,16 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+}
+
 apply from: rootProject.file('gradle/publish.gradle')
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk versions.compileSdk
+    namespace 'com.github.rubensousa.previewseekbar'
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdk versions.minSdk
+        targetSdk versions.targetSdk
     }
 
     publishing {
@@ -18,6 +23,6 @@ android {
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:$appcompatVersion"
+    implementation "androidx.appcompat:appcompat:$versions.appcompat"
 }
 

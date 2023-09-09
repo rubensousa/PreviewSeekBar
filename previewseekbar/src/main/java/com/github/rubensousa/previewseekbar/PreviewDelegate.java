@@ -62,11 +62,7 @@ public class PreviewDelegate {
         this.previewBar = previewBar;
         this.animationEnabled = true;
         this.previewAutoHide = true;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            animator = new PreviewMorphAnimator();
-        } else {
-            animator = new PreviewFadeAnimator();
-        }
+        animator = new PreviewMorphAnimator();
     }
 
     @Nullable

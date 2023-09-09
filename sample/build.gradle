@@ -1,19 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk rootProject.ext.compileSdkVersion
+    compileSdk versions.compileSdk
+    namespace "com.github.rubensousa.previewseekbar.sample"
+
+    defaultConfig {
+        applicationId "com.github.rubensousa.previewseekbar.sample"
+        minSdk versions.minSdk
+        targetSdk versions.targetSdk
+        versionCode 1
+        versionName "1.0"
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    defaultConfig {
-        applicationId "com.github.rubensousa.previewseekbar.sample"
-        minSdkVersion 21
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
     }
 
     buildTypes {
@@ -25,13 +26,13 @@ android {
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:$appcompatVersion"
-    implementation "androidx.annotation:annotation:$annotationVersion"
-    implementation "com.google.android.material:material:$materialVersion"
-    implementation "androidx.media3:media3-ui:$media3Version"
-    implementation "androidx.media3:media3-exoplayer:$media3Version"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
-    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$versions.kotlin"
+    implementation "androidx.appcompat:appcompat:$versions.appcompat"
+    implementation "com.google.android.material:material:$versions.material"
+    implementation "androidx.media3:media3-ui:$versions.media3"
+    implementation "androidx.media3:media3-exoplayer:$versions.media3"
+    implementation "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
+    implementation "com.github.bumptech.glide:glide:$versions.glide"
     implementation project(':previewseekbar')
-    implementation project(':previewseekbar-exoplayer')
+    implementation project(':previewseekbar-media3')
 }

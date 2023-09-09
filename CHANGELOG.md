@@ -1,3 +1,7 @@
+# 3.1.1
+
+- Bumped `androidx.appcompat:appcompat` to 1.6.1
+
 # 3.1.0
 
 - Bumped `androidx.appcompat:appcompat` to 1.5.1

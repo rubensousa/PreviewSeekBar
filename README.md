@@ -18,20 +18,18 @@ Add the following to your app's build.gradle:
 ```groovy
 dependencies {
     // Base implementation with a standard SeekBar
-    implementation 'com.github.rubensousa:previewseekbar:3.1.0'
-
-    // ExoPlayer extension that contains a TimeBar. 
-    // Grab this one if you're going to integrate with ExoPlayer
-    implementation 'com.github.rubensousa:previewseekbar-exoplayer:2.18.1.0'
+    implementation 'com.github.rubensousa:previewseekbar:3.1.1'
+    // Media3 extension that contains a TimeBar. 
+    implementation 'com.github.rubensousa:previewseekbar-media3:1.1.1.0'
 }
 ```
 
-## How to use with ExoPlayer
+## How to use with Media3
 
 ### Add a custom controller to your PlayerView
 
 ```xml
-<com.google.android.exoplayer2.ui.PlayerView
+<androidx.media3.ui.PlayerView
     android:id="@+id/playerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

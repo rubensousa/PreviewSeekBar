@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.github.rubensousa.previewseekbar.sample.exoplayer;
+package com.github.rubensousa.previewseekbar.sample;
 
 import android.net.Uri;
 import android.widget.ImageView;
@@ -32,9 +32,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.github.rubensousa.previewseekbar.PreviewBar;
 import com.github.rubensousa.previewseekbar.PreviewLoader;
-import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
-import com.github.rubensousa.previewseekbar.sample.R;
-import com.github.rubensousa.previewseekbar.sample.glide.GlideThumbnailTransformation;
+import com.github.rubensousa.previewseekbar.media3.PreviewTimeBar;
 
 @OptIn(markerClass = UnstableApi.class)
 public class ExoPlayerManager implements PreviewLoader, PreviewBar.OnScrubListener {

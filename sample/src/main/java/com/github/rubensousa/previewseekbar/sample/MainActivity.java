@@ -17,7 +17,6 @@
 
 package com.github.rubensousa.previewseekbar.sample;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -34,8 +33,7 @@ import com.github.rubensousa.previewseekbar.PreviewBar;
 import com.github.rubensousa.previewseekbar.PreviewSeekBar;
 import com.github.rubensousa.previewseekbar.animator.PreviewFadeAnimator;
 import com.github.rubensousa.previewseekbar.animator.PreviewMorphAnimator;
-import com.github.rubensousa.previewseekbar.exoplayer.PreviewTimeBar;
-import com.github.rubensousa.previewseekbar.sample.exoplayer.ExoPlayerManager;
+import com.github.rubensousa.previewseekbar.media3.PreviewTimeBar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -145,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 if (checkedId == R.id.fadeAnimationRadioButton) {
                     previewTimeBar.setPreviewAnimator(new PreviewFadeAnimator());
                     previewSeekBar.setPreviewAnimator(new PreviewFadeAnimator());
-                } else if (Build.VERSION.SDK_INT >= 21) {
+                } else {
                     previewTimeBar.setPreviewAnimator(new PreviewMorphAnimator());
                     previewSeekBar.setPreviewAnimator(new PreviewMorphAnimator());
                 }
