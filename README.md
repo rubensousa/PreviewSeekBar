@@ -21,6 +21,8 @@ dependencies {
     implementation 'com.github.rubensousa:previewseekbar:3.1.1'
     // Media3 extension that contains a TimeBar. 
     implementation 'com.github.rubensousa:previewseekbar-media3:1.1.1.0'
+    // (Deprecated) ExoPlayer Extension that contains a TimeBar.
+    implementation 'com.github.rubensousa:previewseekbar-exoplayer:2.18.1.0'
 }
 ```
 
